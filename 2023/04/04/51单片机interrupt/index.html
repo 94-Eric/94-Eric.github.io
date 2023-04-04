@@ -20,21 +20,20 @@
     var CONFIG = {"hostname":"94-eric.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="hexo网站主题使用总结前提条件GitHub注册账号，安装Git，安装nodejs以上前提条件准备好后，就可以开始我们的网页搭建啦！第一步，通过Git命令安装hexo主题，这一步就是给网页搭建主体框架首先，D盘建立文件夹Blog，这个文件夹是放所有含我们网页内容的文件的。点开Blog文件夹，鼠标右键打开Git Bush Here，输入npm命令安装Hexo： 1$ npm install &amp;quo">
+  <meta name="description" content="51单片机中断总结中断简介中断，顾名思义， 中途断开。通俗点说就是停下当前的执行程序转而执行新的程序，意思就是指计算机运行过程中，出现某些意外情况需主机干预时，机器能自动停止正在运行的程序并转入处理新情况的程序，处理完毕后又返回原被暂停的程序继续运行。对于单片机来讲，中断是指 CPU 在处理某一事件 A 时，发生了另一事件B，请求 CPU 迅速去处理(中断发生)；CPU 暂时停止当前的工作(中断响">
 <meta property="og:type" content="article">
-<meta property="og:title" content="主题使用总结">
-<meta property="og:url" content="https://94-eric.github.io/2023/04/01/%E4%B8%BB%E9%A2%98%E4%BD%BF%E7%94%A8%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:title" content="51单片机interrupt">
+<meta property="og:url" content="https://94-eric.github.io/2023/04/04/51%E5%8D%95%E7%89%87%E6%9C%BAinterrupt/index.html">
 <meta property="og:site_name" content="明珠的个人博客">
-<meta property="og:description" content="hexo网站主题使用总结前提条件GitHub注册账号，安装Git，安装nodejs以上前提条件准备好后，就可以开始我们的网页搭建啦！第一步，通过Git命令安装hexo主题，这一步就是给网页搭建主体框架首先，D盘建立文件夹Blog，这个文件夹是放所有含我们网页内容的文件的。点开Blog文件夹，鼠标右键打开Git Bush Here，输入npm命令安装Hexo： 1$ npm install &amp;quo">
+<meta property="og:description" content="51单片机中断总结中断简介中断，顾名思义， 中途断开。通俗点说就是停下当前的执行程序转而执行新的程序，意思就是指计算机运行过程中，出现某些意外情况需主机干预时，机器能自动停止正在运行的程序并转入处理新情况的程序，处理完毕后又返回原被暂停的程序继续运行。对于单片机来讲，中断是指 CPU 在处理某一事件 A 时，发生了另一事件B，请求 CPU 迅速去处理(中断发生)；CPU 暂时停止当前的工作(中断响">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2023-04-01T02:40:43.000Z">
-<meta property="article:modified_time" content="2023-04-04T13:33:36.025Z">
+<meta property="article:published_time" content="2023-04-04T13:14:12.000Z">
+<meta property="article:modified_time" content="2023-04-04T14:24:12.820Z">
 <meta property="article:author" content="听竹上清响风敲雪">
-<meta property="article:tag" content="hexo命令 网站搭建">
-<meta property="article:tag" content="hexo撰写文章">
+<meta property="article:tag" content="51单片机 interrupt 中断">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://94-eric.github.io/2023/04/01/%E4%B8%BB%E9%A2%98%E4%BD%BF%E7%94%A8%E6%80%BB%E7%BB%93/">
+<link rel="canonical" href="https://94-eric.github.io/2023/04/04/51%E5%8D%95%E7%89%87%E6%9C%BAinterrupt/">
 
 
 <script id="page-configurations">
@@ -47,7 +46,7 @@
   };
 </script>
 
-  <title>主题使用总结 | 明珠的个人博客</title>
+  <title>51单片机interrupt | 明珠的个人博客</title>
   
 
 
@@ -173,7 +172,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/04/01/%E4%B8%BB%E9%A2%98%E4%BD%BF%E7%94%A8%E6%80%BB%E7%BB%93/">
+    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/04/04/51%E5%8D%95%E7%89%87%E6%9C%BAinterrupt/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -186,7 +185,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          主题使用总结
+          51单片机interrupt
         </h1>
 
         <div class="post-meta">
@@ -195,16 +194,10 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2023-04-01 10:40:43" itemprop="dateCreated datePublished" datetime="2023-04-01T10:40:43+08:00">2023-04-01</time>
+              <time title="创建时间：2023-04-04 21:14:12 / 修改时间：22:24:12" itemprop="dateCreated datePublished" datetime="2023-04-04T21:14:12+08:00">2023-04-04</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-04-04 21:33:36" itemprop="dateModified" datetime="2023-04-04T21:33:36+08:00">2023-04-04</time>
-              </span>
 
           
             <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
@@ -219,14 +212,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>952</span>
+              <span>2.3k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
+              <span>2 分钟</span>
             </span>
 
         </div>
@@ -238,18 +231,15 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="hexo网站主题使用总结"><a href="#hexo网站主题使用总结" class="headerlink" title="hexo网站主题使用总结"></a>hexo网站主题使用总结</h2><h3 id="前提条件"><a href="#前提条件" class="headerlink" title="前提条件"></a>前提条件</h3><h3 id="GitHub注册账号，安装Git，安装nodejs"><a href="#GitHub注册账号，安装Git，安装nodejs" class="headerlink" title="GitHub注册账号，安装Git，安装nodejs"></a>GitHub注册账号，安装Git，安装nodejs</h3><p>以上前提条件准备好后，就可以开始我们的网页搭建啦！第一步，通过Git命令安装hexo主题，这一步就是给网页搭建主体框架<br>首先，D盘建立文件夹Blog，这个文件夹是放所有含我们网页内容的文件的。点开Blog文件夹，鼠标右键打开Git Bush Here，输入npm命令安装Hexo：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm install <span class="string">&quot;-g hexo-cli&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/">start hexo</a></p>
-<p>我已经安装过了，之前没截图，所以请大家参考这位大神的操作，按步骤操作就行：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/105715224">这里</a></p>
-<p>输入hexo init命令初始化网页：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo init</span><br></pre></td></tr></table></figure>
-<p>命令栏的最后行会提示INFO Istall dependencies，这就代表这步完成了<br>然后输入hexo g静态部署，g是generate，命令栏会看到一列generated，，稍等1分钟喝杯茶；<br>此时喝茶回来，网页部署已经完成，输入hexo s命令可以在浏览器上查看本地主机的网页。<br>只有一个通用的框架肯定不好看，配置主题参考这个：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/105584373">这里</a><br>目前的个人网页是Github免费送你的一条小通道，名字是通用的XXXXX.github.IO，想要酷炫的给人印象深刻的网址比如WWW.1.COM，就想要把这个域名给买下来，想深入了解就去看看价格，按年收费，此处不赘述，自行学习，也不推荐，防止广告嫌疑<br>网页出来了需要更新，怎么办呢，首先，在上文中说的D盘Blog文件夹中右键，点击Git Bash Here，在弹出的窗口中输入如下代码(new post是随便起的名字，按照自己的喜好命名即可)：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="string">&quot;hexo new &quot;</span>new post<span class="string">&quot;&quot;</span></span><br></pre></td></tr></table></figure>
-<p>此时就会在D&#x2F;Blog&#x2F;source&#x2F;_posts文件夹中创建了一个文件，命名为：new post.md，而这个文件就是将要发布到网站上的原始文件，记录文章内容，以下我们将要在这个文件中写下我们的第一篇博客.</p>
-<h2 id="文章内容的编写"><a href="#文章内容的编写" class="headerlink" title="文章内容的编写"></a>文章内容的编写</h2><p>像这种博客类的网页，一般用Markdown 语法，Markdown是一种可以使用普通文本编辑器编写的标记语言，通过简单的标记语法，它可以使普通文本内容具有一定的格式，Markdown常用语法点击此处了解，<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_36457584/article/details/87878558">Markdown</a></p>
-
+        <h2 id="51单片机中断总结"><a href="#51单片机中断总结" class="headerlink" title="51单片机中断总结"></a>51单片机中断总结</h2><h3 id="中断简介"><a href="#中断简介" class="headerlink" title="中断简介"></a>中断简介</h3><p>中断，顾名思义， 中途断开。通俗点说就是停下当前的执行程序转而执行新的程序，意思就是指计算机运行过程中，出现某些意外情况需主机干预时，机器能自动停止正在运行的程序并转入处理新情况的程序，处理完毕后又返回原被暂停的程序继续运行。对于单片机来讲，中断是指 CPU 在处理某一事件 A 时，发生了另一事件B，请求 CPU 迅速去处理(中断发生)；CPU 暂时停止当前的工作(中断响应)，转去处理事件 B(中断服务)；待 CPU 将事件 I 处理完毕后，再回到原来事件A被中断的地方继续处理事件 A(中断返回)，这一过程称为中断。单片机在执行程序时，中断也随时有可能发生，但无论何时发生，只要一旦发生，单片机将立即暂停当前程序，赶去处理中断程序，处理完中断程序后再返回刚才暂停处接着执行原来的程序。<br>引起 CPU 中断的根源称为中断源。中断源向 CPU 提出中断请求，CPU 暂时中断原来的事务 A，转去处理事件 B，对事件 B 处理完毕后，再回到原来被中断的地方(即断点)，称为中断返回。实现上述中断功能的部件称为中断系统(中断机构)。当中央处理机 CPU 正在处理某件事的时候外界发生了紧急事件请求，要求CPU 暂停当前的工作，转而去处理这个紧急事件，处理完以后，再回到原来被中断的地方，继续原来的工作，这样的过程称为中断。实现这种功能的部件称为中断系统，请示 CPU 中断的请求源称为中断源。微型机的中断系统一般允许多个中断源，当几个中断源同时向 CPU 请求中断，要求为它服务的时候，这就存在CPU 优先响应哪一个中断源请求的问题。通常根据中断源的轻重缓急排队，优先处理最紧急事件的中断请求源，即规定每一个中断源有一个优先级别。CPU 总是先响应优先级别最高的中断请求。<br>举个栗子，单片机流水灯程序，是个死循环，程序运行后8个灯一直闪，如果我们加入了中断程序：当单片机检测到有中断功能的引脚触发了中断时(比如通过按键方式，将他的引脚电平拉低，单片机检测到这个动作的下降沿，自动运行中断)，我们让蜂鸣器响4秒。那么程序运行将是这样的：首先上电，8个灯循环亮；假设我们在第4个灯亮起的时候，我们主动按下按键触发中断，此时流水灯不动了，第4个灯将保持亮的状态(系统开始执行中断)，蜂鸣器响4秒，然后中断服务结束，此时程序再回到第4个灯，按照原定的循环继续下去，直至再次触发中断。<br>当 CPU 正在处理一个中断源请求的时候(执行相应的中断服务程序)，发生了另外一个优先级比它还高的中断源请求。如果 CPU 能够暂停对原来中断源的服务程序，转而去处理优先级更高的中断请求源，处理完以后，再回到原低级中断服务程序，这样的过程称为中断嵌套。这样的中断系统称为多级中断系统，没有中断嵌套功能的中断系统称为单级中断系统。<br>中断的开启与关闭、设置启用哪一个中断等都是由单片机内部的一些特殊功能寄存器来决定的。</p>
+<h3 id="中断功能的使用"><a href="#中断功能的使用" class="headerlink" title="中断功能的使用"></a>中断功能的使用</h3><p>中断功能是比较固定的，看你的芯片具备哪些中断功能(外部中断、定时器中断、串口中断等)，中断的功能使用需要经过以下步骤(人硬件的要求，你要想用这个功能，就遵循这个步骤)：<br>1、中断允许控制，(决定中断要不要用，用哪一种类型的中断)，当然要打开了。怎么打开的？这个是中断允许寄存器IE控制的，所以对照芯片资料来设置这个寄存器即可。看个简单例子，代码很简单：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;EA = 1；//打开总中断开关&quot;</span></span><br><span class="line"><span class="string">&quot;EX0 = 1；//开外部中断 0&quot;</span></span><br></pre></td></tr></table></figure>
+<p>就是那样，看下面第二步~~~<br>2、中断请求标志 TCON，同上，对照芯片资料来设置这个寄存器，栗：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;IT0 = 0/1；//设置外部中断的触发方式&quot;</span></span><br></pre></td></tr></table></figure>
+<p>因为独立按键一端是共地的，当按下后对应单片机IO 口被拉低，而默认单片机 IO 口是高电平，这样就有一个下降沿过程，所以通常使用外部中断都是配置为下降沿触发，即 IT0&#x3D;1；<br>3、步骤1、2设置好中断后，我们还需要按照中断的模板程序写一个服务程序，也就是在触发中断时我们要实现什么功能(比如上文中提到的蜂鸣器响)。，服务程序格式如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;void Int0() interrupt 0 //外部中断 0 的中断函数</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">//执行所需的功能</span></span><br><span class="line"><span class="string">&#125;&quot;</span></span><br></pre></td></tr></table></figure>
+<h3 id="中断功能程序实例"><a href="#中断功能程序实例" class="headerlink" title="中断功能程序实例"></a>中断功能程序实例</h3><p>在编写程序时通常我们会将外部中断的配置放到一个自定义函数内便于管理维护，如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">void <span class="function"><span class="title">Int0Init</span></span>()</span><br><span class="line">&#123;</span><br><span class="line">	//设置INT0</span><br><span class="line">	IT0=1;//跳变沿触发方式-下降沿</span><br><span class="line">	EX0=1;//打开INT0的中断允许	</span><br><span class="line">	EA=1;//打开总中断	</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void <span class="function"><span class="title">main</span></span>()</span><br><span class="line">&#123;	</span><br><span class="line">	Int0Init();  //	老规矩初始化，设置外部中断</span><br><span class="line">	<span class="keyword">while</span>(1);		</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/*******************************************************************************</span><br><span class="line">* 函数名           : Int0()	interrupt 0</span><br><span class="line">* 函数功能		   : 外部中断0的中断函数</span><br><span class="line">* 输入             : 无</span><br><span class="line">* 输出             : 无</span><br><span class="line">*******************************************************************************/</span><br><span class="line"></span><br><span class="line">void Int0()	interrupt 0		//外部中断0的中断函数</span><br><span class="line">&#123;</span><br><span class="line">	delay(1000);	 //延时消抖</span><br><span class="line">	<span class="keyword">if</span>(k3==0)</span><br><span class="line">	&#123;</span><br><span class="line">		led=~led;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
     </div>
 
     
@@ -258,8 +248,7 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/hexo%E5%91%BD%E4%BB%A4-%E7%BD%91%E7%AB%99%E6%90%AD%E5%BB%BA/" rel="tag"># hexo命令 网站搭建</a>
-              <a href="/tags/hexo%E6%92%B0%E5%86%99%E6%96%87%E7%AB%A0/" rel="tag"># hexo撰写文章</a>
+              <a href="/tags/51%E5%8D%95%E7%89%87%E6%9C%BA-interrupt-%E4%B8%AD%E6%96%AD/" rel="tag"># 51单片机 interrupt 中断</a>
           </div>
 
         
@@ -268,13 +257,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2022/11/24/My-New-Post/" rel="prev" title="Test">
-      <i class="fa fa-chevron-left"></i> Test
+    <a href="/2023/04/01/%E5%8D%95%E7%89%87%E6%9C%BAIO%E5%8F%A3%E6%89%A9%E5%B1%95/" rel="prev" title="51单片机IO口扩展">
+      <i class="fa fa-chevron-left"></i> 51单片机IO口扩展
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2023/04/01/%E5%8D%95%E7%89%87%E6%9C%BAIO%E5%8F%A3%E6%89%A9%E5%B1%95/" rel="next" title="51单片机IO口扩展">
-      51单片机IO口扩展 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -338,7 +324,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#hexo%E7%BD%91%E7%AB%99%E4%B8%BB%E9%A2%98%E4%BD%BF%E7%94%A8%E6%80%BB%E7%BB%93"><span class="nav-number">1.</span> <span class="nav-text">hexo网站主题使用总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E6%8F%90%E6%9D%A1%E4%BB%B6"><span class="nav-number">1.1.</span> <span class="nav-text">前提条件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GitHub%E6%B3%A8%E5%86%8C%E8%B4%A6%E5%8F%B7%EF%BC%8C%E5%AE%89%E8%A3%85Git%EF%BC%8C%E5%AE%89%E8%A3%85nodejs"><span class="nav-number">1.2.</span> <span class="nav-text">GitHub注册账号，安装Git，安装nodejs</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E7%AB%A0%E5%86%85%E5%AE%B9%E7%9A%84%E7%BC%96%E5%86%99"><span class="nav-number">2.</span> <span class="nav-text">文章内容的编写</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#51%E5%8D%95%E7%89%87%E6%9C%BA%E4%B8%AD%E6%96%AD%E6%80%BB%E7%BB%93"><span class="nav-number">1.</span> <span class="nav-text">51单片机中断总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%AD%E6%96%AD%E7%AE%80%E4%BB%8B"><span class="nav-number">1.1.</span> <span class="nav-text">中断简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%AD%E6%96%AD%E5%8A%9F%E8%83%BD%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-number">1.2.</span> <span class="nav-text">中断功能的使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%AD%E6%96%AD%E5%8A%9F%E8%83%BD%E7%A8%8B%E5%BA%8F%E5%AE%9E%E4%BE%8B"><span class="nav-number">1.3.</span> <span class="nav-text">中断功能程序实例</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
