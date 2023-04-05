@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"94-eric.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="51单片机中断总结中断简介中断简介中断，顾名思义，中途断开。通俗点说就是停下当前的执行程序转而执行新的程序，意思就是指计算机运行过程中，出现某些意外情况需主机干预时，机器能自动停止正在运行的程序并转入处理新情况的程序，处理完毕后又返回原被暂停的程序继续运行。对于单片机来讲，中断是指 CPU 在处理某一事件 A 时，发生了另一事件B，请求 CPU 迅速去处理(中断发生)；CPU 暂时停止当前的工作(">
+<meta property="og:type" content="article">
+<meta property="og:title" content="51单片机interrupt">
+<meta property="og:url" content="https://94-eric.github.io/2023/04/04/51%E5%8D%95%E7%89%87%E6%9C%BAinterrupt/index.html">
+<meta property="og:site_name" content="明珠的个人博客">
+<meta property="og:description" content="51单片机中断总结中断简介中断简介中断，顾名思义，中途断开。通俗点说就是停下当前的执行程序转而执行新的程序，意思就是指计算机运行过程中，出现某些意外情况需主机干预时，机器能自动停止正在运行的程序并转入处理新情况的程序，处理完毕后又返回原被暂停的程序继续运行。对于单片机来讲，中断是指 CPU 在处理某一事件 A 时，发生了另一事件B，请求 CPU 迅速去处理(中断发生)；CPU 暂时停止当前的工作(">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-04-04T13:14:12.000Z">
+<meta property="article:modified_time" content="2023-04-05T12:31:15.865Z">
+<meta property="article:author" content="听竹上清响风敲雪">
+<meta property="article:tag" content="51单片机 interrupt 中断 定时器 计数器">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://94-eric.github.io/2023/04/04/51%E5%8D%95%E7%89%87%E6%9C%BAinterrupt/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>51单片机interrupt | 明珠的个人博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">明珠的个人博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">听竹上清响风敲雪</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-resources">
+
+    <a href="/resources/" rel="section"><i class="fa fa-download fa-fw"></i>资源</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/04/04/51%E5%8D%95%E7%89%87%E6%9C%BAinterrupt/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="听竹上清响风敲雪">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="明珠的个人博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          51单片机interrupt
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-04-04 21:14:12" itemprop="dateCreated datePublished" datetime="2023-04-04T21:14:12+08:00">2023-04-04</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-04-05 20:31:15" itemprop="dateModified" datetime="2023-04-05T20:31:15+08:00">2023-04-05</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="51单片机中断总结"><a href="#51单片机中断总结" class="headerlink" title="51单片机中断总结"></a>51单片机中断总结</h2><h3 id="中断简介"><a href="#中断简介" class="headerlink" title="中断简介"></a>中断简介</h3><p>中断简介<br>中断，顾名思义，中途断开。通俗点说就是停下当前的执行程序转而执行新的程序，意思就是指计算机运行过程中，出现某些意外情况需主机干预时，机器能自动停止正在运行的程序并转入处理新情况的程序，处理完毕后又返回原被暂停的程序继续运行。对于单片机来讲，中断是指 CPU 在处理某一事件 A 时，发生了另一事件B，请求 CPU 迅速去处理(中断发生)；CPU 暂时停止当前的工作(中断响应)，转去处理事件 B(中断服务)；待 CPU 将事件 I 处理完毕后，再回到原来事件A被中断的地方继续处理事件 A(中断返回)，这一过程称为中断。单片机在执行程序时，中断也随时有可能发生，但无论何时发生，只要一旦发生，单片机将立即暂停当前程序，赶去处理中断程序，处理完中断程序后再返回刚才暂停处接着执行原来的程序。<br>引起 CPU 中断的根源称为中断源。中断源向 CPU 提出中断请求，CPU 暂时中断原来的事务 A，转去处理事件 B，对事件 B 处理完毕后，再回到原来被中断的地方(即断点)，称为中断返回。实现上述中断功能的部件称为中断系统(中断机构)。当中央处理机 CPU 正在处理某件事的时候外界发生了紧急事件请求，要求CPU 暂停当前的工作，转而去处理这个紧急事件，处理完以后，再回到原来被中断的地方，继续原来的工作，这样的过程称为中断。实现这种功能的部件称为中断系统，请示 CPU 中断的请求源称为中断源。微型机的中断系统一般允许多个中断源，当几个中断源同时向 CPU 请求中断，要求为它服务的时候，这就存在CPU 优先响应哪一个中断源请求的问题。通常根据中断源的轻重缓急排队，优先处理最紧急事件的中断请求源，即规定每一个中断源有一个优先级别。CPU 总是先响应优先级别最高的中断请求。<br>举个栗子，单片机流水灯程序，是个死循环，程序运行后8个灯一直闪，如果我们加入了中断程序：当单片机检测到有中断功能的引脚触发了中断时(比如通过按键方式，将他的引脚电平拉低，单片机检测到这个动作的下降沿，自动运行中断)，我们让蜂鸣器响4秒。那么程序运行将是这样的：首先上电，8个灯循环亮；假设我们在第4个灯亮起的时候，我们主动按下按键触发中断，此时流水灯不动了，第4个灯将保持亮的状态(系统开始执行中断)，蜂鸣器响4秒，然后中断服务结束，此时程序再回到第4个灯，按照原定的循环继续下去，直至再次触发中断。<span id="more"></span><br>当 CPU 正在处理一个中断源请求的时候(执行相应的中断服务程序)，发生了另外一个优先级比它还高的中断源请求。如果 CPU 能够暂停对原来中断源的服务程序，转而去处理优先级更高的中断请求源，处理完以后，再回到原低级中断服务程序，这样的过程称为中断嵌套。这样的中断系统称为多级中断系统，没有中断嵌套功能的中断系统称为单级中断系统。<br>中断的开启与关闭、设置启用哪一个中断等都是由单片机内部的一些特殊功能寄存器来决定的。中断功能是比较固定的，看你的芯片具备哪些中断功能。</p>
+<h3 id="中断功能的使用-外部中断、定时器中断、串口中断等"><a href="#中断功能的使用-外部中断、定时器中断、串口中断等" class="headerlink" title="中断功能的使用(外部中断、定时器中断、串口中断等)"></a>中断功能的使用(外部中断、定时器中断、串口中断等)</h3><h4 id="外部中断"><a href="#外部中断" class="headerlink" title="外部中断"></a>外部中断</h4><p>这个中断可以人为主动触发，主动性高。<br>外部中断的功能使用需要经过以下步骤(人硬件的要求，你要想用这个功能，就遵循这个步骤)：<br>1、中断允许控制，(决定中断要不要用，用哪一种类型的中断)，当然要打开了。怎么打开的？这个是中断允许寄存器IE控制的，所以对照芯片资料来设置这个寄存器即可。看个简单例子，代码很简单：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;EA = 1；//打开总中断开关&quot;</span></span><br><span class="line"><span class="string">&quot;EX0 = 1；//开外部中断 0&quot;</span></span><br></pre></td></tr></table></figure>
+<p>就是那样，看下面第二步<br>2、中断请求标志 TCON，同上，对照芯片资料来设置这个寄存器，栗：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;IT0 = 0/1；//设置外部中断的触发方式&quot;</span></span><br></pre></td></tr></table></figure>
+<p>因为独立按键一端是共地的，当按下后对应单片机IO 口被拉低，而默认单片机 IO 口是高电平，这样就有一个下降沿过程，所以通常使用外部中断都是配置为下降沿触发，即 IT0&#x3D;1；<br>3、步骤1、2设置好中断后，我们还需要按照中断的模板程序写一个服务程序，也就是在触发中断时我们要实现什么功能(比如上文中提到的蜂鸣器响)。，服务程序格式如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;void Int0() interrupt 0 //外部中断 0 的中断函数</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">//执行所需的功能</span></span><br><span class="line"><span class="string">&#125;&quot;</span></span><br></pre></td></tr></table></figure>
+<h4 id="定时器中断"><a href="#定时器中断" class="headerlink" title="定时器中断"></a>定时器中断</h4><p>这个中断计时准确，写进程序里就不用人问事了，并且定时器&#x2F;计数器(这俩是类似的)和单片机的 CPU 是相互独立的。定时器&#x2F;计数器工作的过程是自动完成的，不需要 CPU 的参与，可以增加单片机的效率。<br>定时器简介：每条程序运行都是需要时间的，这个时间指的是程序相关的周期，是可以计算出来的，相关概念如下：<br>1.振荡周期：为单片机提供定时信号的振荡源的周期（晶振周期或外加振荡周期）。<br>2.状态周期：2个振荡周期为 1 个状态周期，用 S 表示。振荡周期又称S周期或时钟周期。<br>3.机器周期：1个机器周期含 6 个状态周期，12 个振荡周期。<br>4.指令周期：完成1条指令所占用的全部时间，它以机器周期为单位。<br>栗：<br>外接晶振为 12MHz 时，51单片机相关周期的具体值为：<br>振荡周期&#x3D;1&#x2F;12us;<br>状态周期&#x3D;1&#x2F;6us;<br>机器周期&#x3D;1us;<br>指令周期&#x3D;1-4us;</p>
+<p>51单片机有两组定时器&#x2F;计数器，因为既可以定时，又可以计数，故称之为定时器&#x2F;计数器。<br>51单片机中的定时器&#x2F;计数器是根据机器内部的时钟或者是外部的脉冲信号对寄存器中的数据加1。<br>定时器原理：每来一个脉冲，计数器就自动加1(所以计数数值等于脉冲时长，而脉冲时长就是上面举例中的周期)，当加到计数器最大数值时(全为1)，再输入一个脉冲就使计数器回零(硬件自动复位。东西就是这么做的，遵守规则使用它即可~)，且计数器的溢出使相应的中断标志位置 1，向CPU 发出中断请求（定时&#x2F;计数器中断允许时）。计数器的脉冲个数可以人为设置，比如我们软件制定个数后，它就会从指定的个数开始计数，根据后续的脉冲信号逐渐累加到最大值触发中断。定时器有所谓的8位，13位，16位甚至更多的分类，这个指的是定时器最大计数数值，8位最大值即2的8次方，以此类推。<br>定时器使用：首先初始化定时器，也就是我们要告诉单片机，我想用你的定时器，我需要它在程序运行1秒后进入中断去干另一件事。<br>想用定时器就得打开它的中断允许控制，和外部中断设置类似，查表的方式从芯片资料里找到它的相关寄存器，决定中断要不要用，用哪一种类型的中断(定时)。<br>1秒的时长，单片机是不懂的，它只知道，你给它信号它就要计数，直到计数数值达到最大值时，它的硬件就会再次归零从头开始计数。这时候我们要稍微坐下简单的加减法，我们已经直到定时器的计数最大值是2的N次方(8位即2的8次方→256，2的13次方→8192)，而在软件里(程序设定)我们还能够指定单片机从哪里计数，所以如果我们想让定时器计1000个数，那么我们就用最大值减去1000，让定时器从这里开始计数，满1000个计数后到达最大值硬件置位，根据这个置位信号，单片机就知道到了我们和它约定的时间了，他要去干中断里的活了。如何指定定时器从哪里计数，栗(用的16位计数器)：<br>前面机器周期的概念，它是CPU完成一个基本操作所需要的时间。其计算公式是：机器周期&#x3D;1&#x2F;单片机的时钟频率。51单片机内部时钟频率是外部时钟的12分频，也就是说当外部晶振的频率输入到单片机里面的时候要进行12分频。比如说我们用的是 12MHZ 晶振，那么单片机内部的时钟频率就是12&#x2F;12MHZ，当使用 12MHZ 的外部晶振的时候，机器周期&#x3D;1&#x2F;1M&#x3D;1us。如果我们想定时1ms的初值是多少呢？1ms&#x2F;1us&#x3D;1000。也就是要计数 1000 个，初值&#x3D;65535-1000+1（因为实际上计数器计数到 66636（2 的 16 次方）才溢出，所以后面要加1）&#x3D;64536&#x3D;FC18H，所以初值即为 THx&#x3D;0XFC，TLx&#x3D;0X18(芯片资料查表即可找到对应的寄存器地址，51单片机定时器就是这俩)。知道了如何计算定时&#x2F;计数器初值，那么想定时多长时间都可以计算出，当然由于定时计数器位数有限，我们不可能直接通过初值定时很长时间，如果要实现很长时间的定时，比如定时 1 秒钟。可以通过初值设置定时1ms，每当定时1ms结束后又重新赋初值，并且设定一个全局变量累计定时1ms 的次数，当累计到1000 次，表示已经定时 1 秒了。需要其他定时时间类似操作，这样我们就可以使用定时器来实现精确延时，比delay函数高了不止一个档次。</p>
+<h3 id="中断功能程序实例"><a href="#中断功能程序实例" class="headerlink" title="中断功能程序实例"></a>中断功能程序实例</h3><h4 id="外部中断程序实例"><a href="#外部中断程序实例" class="headerlink" title="外部中断程序实例"></a>外部中断程序实例</h4><p>以外部中断0为例，如下：(在编写程序时通常我们会将外部中断的配置放到一个自定义函数内便于管理维护)</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">void <span class="function"><span class="title">Int0Init</span></span>()</span><br><span class="line">&#123;</span><br><span class="line">	//设置INT0</span><br><span class="line">	IT0=1;//跳变沿触发方式-下降沿</span><br><span class="line">	EX0=1;//打开INT0的中断允许	</span><br><span class="line">	EA=1;//打开总中断	</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void <span class="function"><span class="title">main</span></span>()</span><br><span class="line">&#123;	</span><br><span class="line">	Int0Init();  //	老规矩初始化，设置外部中断</span><br><span class="line">	<span class="keyword">while</span>(1);		</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void Int0()	interrupt 0		//外部中断0的中断函数</span><br><span class="line">&#123;</span><br><span class="line">	delay(1000);	 //延时消抖</span><br><span class="line">	<span class="keyword">if</span>(k3==0)</span><br><span class="line">	&#123;</span><br><span class="line">		led=~led;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="定时器中断程序实例"><a href="#定时器中断程序实例" class="headerlink" title="定时器中断程序实例"></a>定时器中断程序实例</h4><p>以定时器 0 为例介绍配置定时器工作方式 1、设定1ms 初值，开启定时器计数功能以及总中断，程序功能是循环点亮LED 1秒，熄灭1秒:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">void <span class="function"><span class="title">Timer0Init</span></span>()</span><br><span class="line">&#123;</span><br><span class="line">TMOD|=0X01;//设定为定时器0，工作方式1，仅用TR0打开启动。TH0=0XFC</span><br><span class="line">TL0=0X18;</span><br><span class="line">ET0=1;//打开定时器0允许中断</span><br><span class="line">EA=1;//打开总中断</span><br><span class="line">TR0=1;//打开定时器</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void <span class="function"><span class="title">main</span></span>()</span><br><span class="line">&#123;</span><br><span class="line">Timer0Init(); //定时器0初始化</span><br><span class="line"><span class="keyword">while</span>(1);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void Timer0() interrupt 1</span><br><span class="line">&#123;</span><br><span class="line">static u16 i;</span><br><span class="line">TH0=0XFC; //给定时器赋值，定时1ms；为何这里再次指定，因为我们要循环使用，否则程序只循环一次就结束了</span><br><span class="line">TL0=0X18;</span><br><span class="line">i++;</span><br><span class="line"><span class="keyword">if</span>(i==1000) //循环1000次清零重新开始，表示1ms*1000即1S循环一次</span><br><span class="line"> &#123;</span><br><span class="line">  i=0;</span><br><span class="line">  led=~led;</span><br><span class="line"> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>对于定时器 1 的使用方法是一样的，只是将上述的0变为1即可。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/51%E5%8D%95%E7%89%87%E6%9C%BA-interrupt-%E4%B8%AD%E6%96%AD-%E5%AE%9A%E6%97%B6%E5%99%A8-%E8%AE%A1%E6%95%B0%E5%99%A8/" rel="tag"># 51单片机 interrupt 中断 定时器 计数器</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/04/01/%E5%8D%95%E7%89%87%E6%9C%BAIO%E5%8F%A3%E6%89%A9%E5%B1%95/" rel="prev" title="51单片机IO口扩展">
+      <i class="fa fa-chevron-left"></i> 51单片机IO口扩展
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/04/05/usage/" rel="next" title="usage">
+      usage <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC81NzY4OC8zNDE1MQ=="></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#51%E5%8D%95%E7%89%87%E6%9C%BA%E4%B8%AD%E6%96%AD%E6%80%BB%E7%BB%93"><span class="nav-number">1.</span> <span class="nav-text">51单片机中断总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%AD%E6%96%AD%E7%AE%80%E4%BB%8B"><span class="nav-number">1.1.</span> <span class="nav-text">中断简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%AD%E6%96%AD%E5%8A%9F%E8%83%BD%E7%9A%84%E4%BD%BF%E7%94%A8-%E5%A4%96%E9%83%A8%E4%B8%AD%E6%96%AD%E3%80%81%E5%AE%9A%E6%97%B6%E5%99%A8%E4%B8%AD%E6%96%AD%E3%80%81%E4%B8%B2%E5%8F%A3%E4%B8%AD%E6%96%AD%E7%AD%89"><span class="nav-number">1.2.</span> <span class="nav-text">中断功能的使用(外部中断、定时器中断、串口中断等)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%96%E9%83%A8%E4%B8%AD%E6%96%AD"><span class="nav-number">1.2.1.</span> <span class="nav-text">外部中断</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9A%E6%97%B6%E5%99%A8%E4%B8%AD%E6%96%AD"><span class="nav-number">1.2.2.</span> <span class="nav-text">定时器中断</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%AD%E6%96%AD%E5%8A%9F%E8%83%BD%E7%A8%8B%E5%BA%8F%E5%AE%9E%E4%BE%8B"><span class="nav-number">1.3.</span> <span class="nav-text">中断功能程序实例</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%96%E9%83%A8%E4%B8%AD%E6%96%AD%E7%A8%8B%E5%BA%8F%E5%AE%9E%E4%BE%8B"><span class="nav-number">1.3.1.</span> <span class="nav-text">外部中断程序实例</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9A%E6%97%B6%E5%99%A8%E4%B8%AD%E6%96%AD%E7%A8%8B%E5%BA%8F%E5%AE%9E%E4%BE%8B"><span class="nav-number">1.3.2.</span> <span class="nav-text">定时器中断程序实例</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="听竹上清响风敲雪"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">听竹上清响风敲雪</p>
+  <div class="site-description" itemprop="description">心之所向，素履以往</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/94-eric" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;94-eric" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:809594015@qq.com" title="E-Mail → mailto:809594015@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/hear%20the%20wind%20within" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;hear the wind within" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">听竹上清响风敲雪</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">8k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">7 分钟</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <span id="busuanzi_container_site_pv">总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">总访客数<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+<!-- 不蒜子计数初始值纠正 -->
+<script>
+$(document).ready(function() {
+
+    var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+    var countOffset = 20000;  // 初始化首次数据
+
+    function fixCount() {            
+       if (document.getElementById("busuanzi_container_site_pv").style.display != "none")
+        {
+            $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + countOffset); 
+            clearInterval(int);
+        }                  
+        if ($("#busuanzi_container_site_pv").css("display") != "none")
+        {
+            $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + countOffset); // 加上初始数据 
+            clearInterval(int); // 停止检测
+        }  
+    }
+       	
+});
+</script> 
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共5.6k字</span>
+</div>
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='255,0,0' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
+
+</body>
+</html>
+
+<!-- ҳ����С���� -->
+<script type="text/javascript" src="/js/src/love.js"></script>
