@@ -20,30 +20,33 @@
     var CONFIG = {"hostname":"94-eric.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="心之所向，素履以往">
-<meta property="og:type" content="website">
-<meta property="og:title" content="明珠的个人博客">
-<meta property="og:url" content="https://94-eric.github.io/index.html">
+  <meta name="description" content="51单片机串口通信通信简介通信方式通信的方式可以分为多种，按照数据传送方式可分为串行通信和并行通信。按照通信的数据同步方式，可分为异同通信和同步通信。按照数据的传输方向又可分为单工、半双工和全双工通信。 串行通信串行通信是指使用一条数据线，将数据一位一位地依次传输，每一位数据占据一个固定的时间长度。其只需要少数几条线就可以在系统间交换信息，特别适用于计算机与计算机、计算机与外设之间的远距离通信。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="串口通信">
+<meta property="og:url" content="https://94-eric.github.io/2023/04/08/%E4%B8%B2%E5%8F%A3%E9%80%9A%E4%BF%A1/index.html">
 <meta property="og:site_name" content="明珠的个人博客">
-<meta property="og:description" content="心之所向，素履以往">
+<meta property="og:description" content="51单片机串口通信通信简介通信方式通信的方式可以分为多种，按照数据传送方式可分为串行通信和并行通信。按照通信的数据同步方式，可分为异同通信和同步通信。按照数据的传输方向又可分为单工、半双工和全双工通信。 串行通信串行通信是指使用一条数据线，将数据一位一位地依次传输，每一位数据占据一个固定的时间长度。其只需要少数几条线就可以在系统间交换信息，特别适用于计算机与计算机、计算机与外设之间的远距离通信。">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-04-08T02:19:15.000Z">
+<meta property="article:modified_time" content="2023-04-08T03:02:41.861Z">
 <meta property="article:author" content="听竹上清响风敲雪">
+<meta property="article:tag" content="51单片机 interrupt 中断 串口通信">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://94-eric.github.io/">
+<link rel="canonical" href="https://94-eric.github.io/2023/04/08/%E4%B8%B2%E5%8F%A3%E9%80%9A%E4%BF%A1/">
 
 
 <script id="page-configurations">
   // https://hexo.io/docs/variables.html
   CONFIG.page = {
     sidebar: "",
-    isHome : true,
-    isPost : false,
+    isHome : false,
+    isPost : true,
     lang   : 'zh-CN'
   };
 </script>
 
-  <title>明珠的个人博客</title>
+  <title>串口通信 | 明珠的个人博客</title>
   
 
 
@@ -162,9 +165,10 @@
         <div class="content-wrap">
           
 
-          <div class="content index posts-expand">
+          <div class="content post posts-expand">
             
-      
+
+    
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
@@ -180,10 +184,9 @@
       <meta itemprop="name" content="明珠的个人博客">
     </span>
       <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/04/08/%E4%B8%B2%E5%8F%A3%E9%80%9A%E4%BF%A1/" class="post-title-link" itemprop="url">串口通信</a>
-        </h2>
+        <h1 class="post-title" itemprop="name headline">
+          串口通信
+        </h1>
 
         <div class="post-meta">
             <span class="post-meta-item">
@@ -196,7 +199,14 @@
               <time title="创建时间：2023-04-08 10:19:15 / 修改时间：11:02:41" itemprop="dateCreated datePublished" datetime="2023-04-08T10:19:15+08:00">2023-04-08</time>
             </span>
 
-          <br>
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
             <span class="post-meta-item" title="本文字数">
               <span class="post-meta-item-icon">
                 <i class="far fa-file-word"></i>
@@ -221,7 +231,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="51单片机串口通信"><a href="#51单片机串口通信" class="headerlink" title="51单片机串口通信"></a>51单片机串口通信</h2><h3 id="通信简介"><a href="#通信简介" class="headerlink" title="通信简介"></a>通信简介</h3><h4 id="通信方式"><a href="#通信方式" class="headerlink" title="通信方式"></a>通信方式</h4><p>通信的方式可以分为多种，按照数据传送方式可分为串行通信和并行通信。按照通信的数据同步方式，可分为异同通信和同步通信。按照数据的传输方向又可分为单工、半双工和全双工通信。</p>
+        <h2 id="51单片机串口通信"><a href="#51单片机串口通信" class="headerlink" title="51单片机串口通信"></a>51单片机串口通信</h2><h3 id="通信简介"><a href="#通信简介" class="headerlink" title="通信简介"></a>通信简介</h3><h4 id="通信方式"><a href="#通信方式" class="headerlink" title="通信方式"></a>通信方式</h4><p>通信的方式可以分为多种，按照数据传送方式可分为串行通信和并行通信。按照通信的数据同步方式，可分为异同通信和同步通信。按照数据的传输方向又可分为单工、半双工和全双工通信。</p>
 <h5 id="串行通信"><a href="#串行通信" class="headerlink" title="串行通信"></a>串行通信</h5><p>串行通信是指使用一条数据线，将数据一位一位地依次传输，每一位数据占据一个固定的时间长度。其只需要少数几条线就可以在系统间交换信息，特别适用于计算机与计算机、计算机与外设之间的远距离通信。</p>
 <h5 id="并行通信"><a href="#并行通信" class="headerlink" title="并行通信"></a>并行通信</h5><p>并行通信通常是将数据字节的各位用多条数据线同时进行传送，通常是8位、16 位、32 位等数据一起传输。</p>
 <h5 id="异步通信"><a href="#异步通信" class="headerlink" title="异步通信"></a>异步通信</h5><p>异步通信是指通信的发送与接收设备使用各自的时钟控制数据的发送和接收过程。为使双方的收发协调，要求发送和接收设备的时钟尽可能一致。<br>异步通信是以字符（构成的帧）为单位进行传输，字符与字符之间的间隙（时间间隔）是任意的，但每个字符中的各位是以固定的时间传送的，即字符之间不一定有“位间隔”的整数倍的关系，但同一字符内的各位之间的距离均为“位间隔”的整数倍。</p>
@@ -243,527 +253,44 @@
 <p>和外部中断、定时器中断一样，中断时我们可以让单片机为我们服务：给引脚赋值控制、和其它设备通信(通信内容又可以达到控制目的)<br>注：一定要软件清除中断标志位！！！</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">void Usart() interrupt 4</span><br><span class="line">&#123;</span><br><span class="line">u8 receiveData;</span><br><span class="line">receiveData=SBUF;//出去接收到的数据</span><br><span class="line">RI = 0;//清除接收中断标志位</span><br><span class="line">执行所需功能</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h5 id="代码实例"><a href="#代码实例" class="headerlink" title="代码实例"></a>代码实例</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#include &quot;reg52.h&quot; //此文件中定义了单片机的一些特殊功能寄存器</span></span><br><span class="line">typedef unsigned int u16; //对数据类型进行声明定义typedef unsigned char u8;</span><br><span class="line">/*******************************************************************************</span><br><span class="line">* 函数名 :UsartInit()</span><br><span class="line">* 函数功能 :设置串口</span><br><span class="line">* 输入 : 无</span><br><span class="line">* 输出 : 无</span><br><span class="line">*******************************************************************************/</span><br><span class="line">void <span class="function"><span class="title">UsartInit</span></span>()</span><br><span class="line">&#123;</span><br><span class="line">SCON=0X50; //设置为工作方式 1</span><br><span class="line">TMOD=0X20; //设置计数器工作方式 2</span><br><span class="line">PCON=0X80; //波特率加倍</span><br><span class="line">TH1=0XF3; //计数器初始值设置，注意波特率是4800 的TL1=0XF3;</span><br><span class="line">ES=1; //打开接收中断</span><br><span class="line">EA=1; //打开总中断</span><br><span class="line">TR1=1; //打开计数器</span><br><span class="line">&#125;</span><br><span class="line">/*******************************************************************************</span><br><span class="line">* 函 数 名 : main</span><br><span class="line">* 函数功能 : 主函数</span><br><span class="line">* 输 入 : 无</span><br><span class="line">* 输 出 : 无</span><br><span class="line">*******************************************************************************/</span><br><span class="line">void <span class="function"><span class="title">main</span></span>()</span><br><span class="line">&#123;</span><br><span class="line">UsartInit(); // 串口初始化</span><br><span class="line"><span class="keyword">while</span>(1);</span><br><span class="line">&#125;</span><br><span class="line">/*******************************************************************************</span><br><span class="line">* 函数名 : Usart() interrupt 4</span><br><span class="line">* 函数功能 : 串口通信中断函数</span><br><span class="line">* 输入 : 无</span><br><span class="line">* 输出 : 无</span><br><span class="line">*******************************************************************************/</span><br><span class="line">void Usart() interrupt 4</span><br><span class="line">&#123;</span><br><span class="line">u8 receiveData;</span><br><span class="line">receiveData=SBUF;//出去接收到的数据</span><br><span class="line">RI = 0;//清除接收中断标志位</span><br><span class="line">SBUF=receiveData;//将接收到的数据放入到发送寄存器</span><br><span class="line"><span class="keyword">while</span>(!TI); //等待发送数据完成</span><br><span class="line">TI=0; //清除发送完成标志位</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-      
     </div>
 
     
     
     
+
       <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
+          <div class="post-tags">
+              <a href="/tags/51%E5%8D%95%E7%89%87%E6%9C%BA-interrupt-%E4%B8%AD%E6%96%AD-%E4%B8%B2%E5%8F%A3%E9%80%9A%E4%BF%A1/" rel="tag"># 51单片机 interrupt 中断 串口通信</a>
+          </div>
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/04/04/51%E5%8D%95%E7%89%87%E6%9C%BAinterrupt/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="听竹上清响风敲雪">
-      <meta itemprop="description" content="心之所向，素履以往">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="明珠的个人博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/04/04/51%E5%8D%95%E7%89%87%E6%9C%BAinterrupt/" class="post-title-link" itemprop="url">51单片机interrupt</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-04-04 21:14:12" itemprop="dateCreated datePublished" datetime="2023-04-04T21:14:12+08:00">2023-04-04</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-04-05 20:31:15" itemprop="dateModified" datetime="2023-04-05T20:31:15+08:00">2023-04-05</time>
-              </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>4.4k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>4 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="51单片机中断总结"><a href="#51单片机中断总结" class="headerlink" title="51单片机中断总结"></a>51单片机中断总结</h2><h3 id="中断简介"><a href="#中断简介" class="headerlink" title="中断简介"></a>中断简介</h3><p>中断简介<br>中断，顾名思义，中途断开。通俗点说就是停下当前的执行程序转而执行新的程序，意思就是指计算机运行过程中，出现某些意外情况需主机干预时，机器能自动停止正在运行的程序并转入处理新情况的程序，处理完毕后又返回原被暂停的程序继续运行。对于单片机来讲，中断是指 CPU 在处理某一事件 A 时，发生了另一事件B，请求 CPU 迅速去处理(中断发生)；CPU 暂时停止当前的工作(中断响应)，转去处理事件 B(中断服务)；待 CPU 将事件 I 处理完毕后，再回到原来事件A被中断的地方继续处理事件 A(中断返回)，这一过程称为中断。单片机在执行程序时，中断也随时有可能发生，但无论何时发生，只要一旦发生，单片机将立即暂停当前程序，赶去处理中断程序，处理完中断程序后再返回刚才暂停处接着执行原来的程序。<br>引起 CPU 中断的根源称为中断源。中断源向 CPU 提出中断请求，CPU 暂时中断原来的事务 A，转去处理事件 B，对事件 B 处理完毕后，再回到原来被中断的地方(即断点)，称为中断返回。实现上述中断功能的部件称为中断系统(中断机构)。当中央处理机 CPU 正在处理某件事的时候外界发生了紧急事件请求，要求CPU 暂停当前的工作，转而去处理这个紧急事件，处理完以后，再回到原来被中断的地方，继续原来的工作，这样的过程称为中断。实现这种功能的部件称为中断系统，请示 CPU 中断的请求源称为中断源。微型机的中断系统一般允许多个中断源，当几个中断源同时向 CPU 请求中断，要求为它服务的时候，这就存在CPU 优先响应哪一个中断源请求的问题。通常根据中断源的轻重缓急排队，优先处理最紧急事件的中断请求源，即规定每一个中断源有一个优先级别。CPU 总是先响应优先级别最高的中断请求。<br>举个栗子，单片机流水灯程序，是个死循环，程序运行后8个灯一直闪，如果我们加入了中断程序：当单片机检测到有中断功能的引脚触发了中断时(比如通过按键方式，将他的引脚电平拉低，单片机检测到这个动作的下降沿，自动运行中断)，我们让蜂鸣器响4秒。那么程序运行将是这样的：首先上电，8个灯循环亮；假设我们在第4个灯亮起的时候，我们主动按下按键触发中断，此时流水灯不动了，第4个灯将保持亮的状态(系统开始执行中断)，蜂鸣器响4秒，然后中断服务结束，此时程序再回到第4个灯，按照原定的循环继续下去，直至再次触发中断。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/04/04/51%E5%8D%95%E7%89%87%E6%9C%BAinterrupt/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
-      
-    </div>
 
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/04/01/%E5%8D%95%E7%89%87%E6%9C%BAIO%E5%8F%A3%E6%89%A9%E5%B1%95/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="听竹上清响风敲雪">
-      <meta itemprop="description" content="心之所向，素履以往">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="明珠的个人博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/04/01/%E5%8D%95%E7%89%87%E6%9C%BAIO%E5%8F%A3%E6%89%A9%E5%B1%95/" class="post-title-link" itemprop="url">51单片机IO口扩展</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2023-04-01 12:22:43 / 修改时间：12:30:58" itemprop="dateCreated datePublished" datetime="2023-04-01T12:22:43+08:00">2023-04-01</time>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>242</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="少量芯片IO口控制多个输出管脚"><a href="#少量芯片IO口控制多个输出管脚" class="headerlink" title="少量芯片IO口控制多个输出管脚"></a>少量芯片IO口控制多个输出管脚</h2><h3 id="74HC165"><a href="#74HC165" class="headerlink" title="74HC165"></a>74HC165</h3><p>74hc165特性：8位同步并行输入，异步串行输出，兼容JEDEC标准no.7A，ESD保护</p>
-<h3 id="74HC595"><a href="#74HC595" class="headerlink" title="74HC595"></a>74HC595</h3><p>可以实现三个IO口控制八个输出管脚，而且可以通过SER2（串型数据输出）来控制另一个74HC595芯片从而来控制更多的IO口输出。<br>SER（14）：串行数据输入端。<br>比方说串行数据是0x01（0000 0001），那么这个端口就是接收这个数据的，当然，一次只能接收一个，要分八次接收。（因为他就一个引脚，只能分辨高低）<br>原理图和代码见此处<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_47433315/article/details/113531103">链接</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/04/01/%E4%B8%BB%E9%A2%98%E4%BD%BF%E7%94%A8%E6%80%BB%E7%BB%93/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="听竹上清响风敲雪">
-      <meta itemprop="description" content="心之所向，素履以往">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="明珠的个人博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/04/01/%E4%B8%BB%E9%A2%98%E4%BD%BF%E7%94%A8%E6%80%BB%E7%BB%93/" class="post-title-link" itemprop="url">主题使用总结</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-04-01 10:40:43" itemprop="dateCreated datePublished" datetime="2023-04-01T10:40:43+08:00">2023-04-01</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-04-04 21:33:36" itemprop="dateModified" datetime="2023-04-04T21:33:36+08:00">2023-04-04</time>
-              </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>952</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="hexo网站主题使用总结"><a href="#hexo网站主题使用总结" class="headerlink" title="hexo网站主题使用总结"></a>hexo网站主题使用总结</h2><h3 id="前提条件"><a href="#前提条件" class="headerlink" title="前提条件"></a>前提条件</h3><h3 id="GitHub注册账号，安装Git，安装nodejs"><a href="#GitHub注册账号，安装Git，安装nodejs" class="headerlink" title="GitHub注册账号，安装Git，安装nodejs"></a>GitHub注册账号，安装Git，安装nodejs</h3><p>以上前提条件准备好后，就可以开始我们的网页搭建啦！第一步，通过Git命令安装hexo主题，这一步就是给网页搭建主体框架<br>首先，D盘建立文件夹Blog，这个文件夹是放所有含我们网页内容的文件的。点开Blog文件夹，鼠标右键打开Git Bush Here，输入npm命令安装Hexo：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm install <span class="string">&quot;-g hexo-cli&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/">start hexo</a></p>
-<p>我已经安装过了，之前没截图，所以请大家参考这位大神的操作，按步骤操作就行：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/105715224">这里</a></p>
-<p>输入hexo init命令初始化网页：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo init</span><br></pre></td></tr></table></figure>
-<p>命令栏的最后行会提示INFO Istall dependencies，这就代表这步完成了<br>然后输入hexo g静态部署，g是generate，命令栏会看到一列generated，，稍等1分钟喝杯茶；<br>此时喝茶回来，网页部署已经完成，输入hexo s命令可以在浏览器上查看本地主机的网页。<br>只有一个通用的框架肯定不好看，配置主题参考这个：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/105584373">这里</a><br>目前的个人网页是Github免费送你的一条小通道，名字是通用的XXXXX.github.IO，想要酷炫的给人印象深刻的网址比如WWW.1.COM，就想要把这个域名给买下来，想深入了解就去看看价格，按年收费，此处不赘述，自行学习，也不推荐，防止广告嫌疑<br>网页出来了需要更新，怎么办呢，首先，在上文中说的D盘Blog文件夹中右键，点击Git Bash Here，在弹出的窗口中输入如下代码(new post是随便起的名字，按照自己的喜好命名即可)：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="string">&quot;hexo new &quot;</span>new post<span class="string">&quot;&quot;</span></span><br></pre></td></tr></table></figure>
-<p>此时就会在D&#x2F;Blog&#x2F;source&#x2F;_posts文件夹中创建了一个文件，命名为：new post.md，而这个文件就是将要发布到网站上的原始文件，记录文章内容，以下我们将要在这个文件中写下我们的第一篇博客.</p>
-<h2 id="文章内容的编写"><a href="#文章内容的编写" class="headerlink" title="文章内容的编写"></a>文章内容的编写</h2><p>像这种博客类的网页，一般用Markdown 语法，Markdown是一种可以使用普通文本编辑器编写的标记语言，通过简单的标记语法，它可以使普通文本内容具有一定的格式，Markdown常用语法点击此处了解，<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_36457584/article/details/87878558">Markdown</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2022/11/24/My-New-Post/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="听竹上清响风敲雪">
-      <meta itemprop="description" content="心之所向，素履以往">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="明珠的个人博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/11/24/My-New-Post/" class="post-title-link" itemprop="url">Test222</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-11-24 13:19:11" itemprop="dateCreated datePublished" datetime="2022-11-24T13:19:11+08:00">2022-11-24</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-04-05 19:28:58" itemprop="dateModified" datetime="2023-04-05T19:28:58+08:00">2023-04-05</time>
-              </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>792</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="TBC—写从零建立个人网站的总结"><a href="#TBC—写从零建立个人网站的总结" class="headerlink" title="TBC—写从零建立个人网站的总结"></a>TBC—写从零建立个人网站的总结</h2><h3 id="test"><a href="#test" class="headerlink" title="test"></a>test</h3><h3 id="1、时人莫小池中水，浅处不妨有卧龙。"><a href="#1、时人莫小池中水，浅处不妨有卧龙。" class="headerlink" title="1、时人莫小池中水，浅处不妨有卧龙。"></a>1、时人莫小池中水，浅处不妨有卧龙。</h3><p>2、不登高山，不知天之高也;不临深溪，不知地之厚也。(《荀子》)</p>
-<p>3、操千曲而后晓声，观千剑而后识器。——刘勰</p>
-<p>4、共道幽香闻十里，绝知芳誉亘千乡</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/11/24/My-New-Post/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
-      
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/04/04/51%E5%8D%95%E7%89%87%E6%9C%BAinterrupt/" rel="prev" title="51单片机interrupt">
+      <i class="fa fa-chevron-left"></i> 51单片机interrupt
+    </a></div>
+      <div class="post-nav-item"></div>
     </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
       </footer>
+    
   </article>
   
   
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2022/11/24/picture/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="听竹上清响风敲雪">
-      <meta itemprop="description" content="心之所向，素履以往">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="明珠的个人博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/11/24/picture/" class="post-title-link" itemprop="url">Test1111</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-11-24 13:19:11" itemprop="dateCreated datePublished" datetime="2022-11-24T13:19:11+08:00">2022-11-24</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-04-05 19:28:46" itemprop="dateModified" datetime="2023-04-05T19:28:46+08:00">2023-04-05</time>
-              </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>27</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="Test1"><a href="#Test1" class="headerlink" title="Test1"></a>Test1</h2><h3 id="test1"><a href="#test1" class="headerlink" title="test1"></a>test1</h3><h3 id="1、1111"><a href="#1、1111" class="headerlink" title="1、1111"></a>1、1111</h3><p>2、222222222<br><img src="/.io//Picture1.png"></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2022/11/22/hello-world/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="听竹上清响风敲雪">
-      <meta itemprop="description" content="心之所向，素履以往">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="明珠的个人博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/11/22/hello-world/" class="post-title-link" itemprop="url">Hello World</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-11-22 10:13:44" itemprop="dateCreated datePublished" datetime="2022-11-22T10:13:44+08:00">2022-11-22</time>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>367</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-
   
 
 
 
           </div>
           
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC81NzY4OC8zNDE1MQ=="></div>
+  </div>
+  
 
 <script>
   window.addEventListener('tabs:register', () => {
@@ -810,6 +337,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#51%E5%8D%95%E7%89%87%E6%9C%BA%E4%B8%B2%E5%8F%A3%E9%80%9A%E4%BF%A1"><span class="nav-number">1.</span> <span class="nav-text">51单片机串口通信</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E4%BF%A1%E7%AE%80%E4%BB%8B"><span class="nav-number">1.1.</span> <span class="nav-text">通信简介</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%9A%E4%BF%A1%E6%96%B9%E5%BC%8F"><span class="nav-number">1.1.1.</span> <span class="nav-text">通信方式</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%B2%E8%A1%8C%E9%80%9A%E4%BF%A1"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">串行通信</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%B9%B6%E8%A1%8C%E9%80%9A%E4%BF%A1"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">并行通信</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%BC%82%E6%AD%A5%E9%80%9A%E4%BF%A1"><span class="nav-number">1.1.1.3.</span> <span class="nav-text">异步通信</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%90%8C%E6%AD%A5%E9%80%9A%E4%BF%A1"><span class="nav-number">1.1.1.4.</span> <span class="nav-text">同步通信</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8D%95%E5%B7%A5%E9%80%9A%E4%BF%A1"><span class="nav-number">1.1.1.5.</span> <span class="nav-text">单工通信</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8D%8A%E5%8F%8C%E5%B7%A5%E9%80%9A%E4%BF%A1"><span class="nav-number">1.1.1.6.</span> <span class="nav-text">半双工通信</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%85%A8%E5%8F%8C%E5%B7%A5%E9%80%9A%E4%BF%A1"><span class="nav-number">1.1.1.7.</span> <span class="nav-text">全双工通信</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8D%8A%E5%8F%8C%E5%B7%A5%E9%80%9A%E4%BF%A1-1"><span class="nav-number">1.1.1.8.</span> <span class="nav-text">半双工通信</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%9A%E4%BF%A1%E9%80%9F%E7%8E%87"><span class="nav-number">1.1.2.</span> <span class="nav-text">通信速率</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%AF%94%E7%89%B9%E7%8E%87"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">比特率</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%B3%A2%E7%89%B9%E7%8E%87"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">波特率</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%B2%E5%8F%A3%E9%80%9A%E4%BF%A1%E7%AE%80%E4%BB%8B"><span class="nav-number">1.2.</span> <span class="nav-text">串口通信简介</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8E%A5%E5%8F%A3%E6%A0%87%E5%87%86"><span class="nav-number">1.2.1.</span> <span class="nav-text">接口标准</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%9A%E4%BF%A1%E5%8D%8F%E8%AE%AE"><span class="nav-number">1.2.2.</span> <span class="nav-text">通信协议</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%B2%E5%8F%A3%E5%B7%A5%E4%BD%9C%E6%96%B9%E5%BC%8F1-51%E5%8D%95%E7%89%87%E6%9C%BA%E9%80%9A%E5%B8%B8%E4%BD%BF%E7%94%A8"><span class="nav-number">1.2.3.</span> <span class="nav-text">串口工作方式1(51单片机通常使用)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#51%E5%8D%95%E7%89%87%E6%9C%BA%E4%B8%B2%E5%8F%A3%E7%9A%84%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95"><span class="nav-number">1.2.4.</span> <span class="nav-text">51单片机串口的使用方法</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%B3%A2%E7%89%B9%E7%8E%87%E8%AE%A1%E7%AE%97"><span class="nav-number">1.2.4.1.</span> <span class="nav-text">波特率计算</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%B2%E5%8F%A3%E5%88%9D%E5%A7%8B%E5%8C%96%E6%AD%A5%E9%AA%A4"><span class="nav-number">1.2.4.2.</span> <span class="nav-text">串口初始化步骤</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%9E%E4%BE%8B"><span class="nav-number">1.2.4.3.</span> <span class="nav-text">代码实例</span></a></li></ol></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -996,6 +524,21 @@ $(document).ready(function() {
 
   
 
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
 
 </body>
 </html>
