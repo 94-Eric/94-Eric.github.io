@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"94-eric.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="51单片机I2C总线总结EEPROM简介在实际的应用中，保存在单片机RAM中的数据，掉电后就丢失了，保存在单片机的FLASH中的数据，又不能随意改变，也就是不能用它来记录变化的数值。但是在某些场合，我们又确实需要记录下某些数据，而它们还时常需要改变或更新，掉电之后数据还不能丢失。比如，我们的家用电表度数，电视机里边的频道记忆，一般都是使用EEPROM来保存数据，特点就是掉电后存储的数据不丢失。一般">
+<meta property="og:type" content="article">
+<meta property="og:title" content="I2C总线">
+<meta property="og:url" content="https://94-eric.github.io/2023/04/09/I2C%E6%80%BB%E7%BA%BF/index.html">
+<meta property="og:site_name" content="明珠的个人博客">
+<meta property="og:description" content="51单片机I2C总线总结EEPROM简介在实际的应用中，保存在单片机RAM中的数据，掉电后就丢失了，保存在单片机的FLASH中的数据，又不能随意改变，也就是不能用它来记录变化的数值。但是在某些场合，我们又确实需要记录下某些数据，而它们还时常需要改变或更新，掉电之后数据还不能丢失。比如，我们的家用电表度数，电视机里边的频道记忆，一般都是使用EEPROM来保存数据，特点就是掉电后存储的数据不丢失。一般">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-04-09T02:01:57.000Z">
+<meta property="article:modified_time" content="2023-04-09T02:40:14.150Z">
+<meta property="article:author" content="听竹上清响风敲雪">
+<meta property="article:tag" content="51单片机 EEPROM I2C总线">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://94-eric.github.io/2023/04/09/I2C%E6%80%BB%E7%BA%BF/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>I2C总线 | 明珠的个人博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">明珠的个人博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">听竹上清响风敲雪</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-resources">
+
+    <a href="/resources/" rel="section"><i class="fa fa-download fa-fw"></i>资源</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/04/09/I2C%E6%80%BB%E7%BA%BF/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="听竹上清响风敲雪">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="明珠的个人博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          I2C总线
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-04-09 10:01:57 / 修改时间：10:40:14" itemprop="dateCreated datePublished" datetime="2023-04-09T10:01:57+08:00">2023-04-09</time>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="51单片机I2C总线总结"><a href="#51单片机I2C总线总结" class="headerlink" title="51单片机I2C总线总结"></a>51单片机I2C总线总结</h2><h3 id="EEPROM简介"><a href="#EEPROM简介" class="headerlink" title="EEPROM简介"></a>EEPROM简介</h3><p>在实际的应用中，保存在单片机RAM中的数据，掉电后就丢失了，保存在单片机的FLASH中的数据，又不能随意改变，也就是不能用它来记录变化的数值。但是在某些场合，我们又确实需要记录下某些数据，而它们还时常需要改变或更新，掉电之后数据还不能丢失。比如，我们的家用电表度数，电视机里边的频道记忆，一般都是使用EEPROM来保存数据，特点就是掉电后存储的数据不丢失。<br>一般情况下，EEPROM拥有30万到100万次的寿命，也就是它可以反复写入30-100万次，而读取次数是无限的。<br>24C02是一个常用的基于IIC通信协议的EEPROM元件，例如ATMEL公司的AT24C02、CATALYST公司的CAT24C02和ST公司的ST24C02等芯片。<br>所谓单片机读EEPROM的数据出来，其实就是EEPROM在SDA线上不停地拉高拉低变化，而单片机就是不断地判断第一位是0或者1，第二位是0或者1······<br>而单片机在接收完EEPROM发送回来的数据（这个数据就是当初写进去的数据）之后，不产生拉低应答（是单片机不产生应答，不是说EEPROM不产生应答），这样EEPROM就不会再发送数据回来了，达到了只读一个字节的功能。</p>
+<h3 id="I2C简介"><a href="#I2C简介" class="headerlink" title="I2C简介"></a>I2C简介</h3><p>I2C（Inter－Integrated Circuit）总线是由 PHILIPS 公司开发的两线式串行总线，用于连接微控制器及其外围设备。I2C 总线只有两根双向信号线。一根是数据线 SDA，另一根是时钟线 SCL。由于其管脚少，硬件实现简单，可扩展性强等特点，因此被广泛的使用在各大集成芯片内。<br>IIC是一个通信协议，它拥有严密的通信时序逻辑要求，而EEPROM是一个元件，只是这个元件采样了IIC协议的接口与单片机相连而已，二者并没有必然的联系，EEPROM可以用其它接口，I2C也可以用在其它很多器件上。</p>
+<h4 id="I2C-总线常用术语："><a href="#I2C-总线常用术语：" class="headerlink" title="I2C 总线常用术语："></a>I2C 总线常用术语：</h4><p>主机：启动数据传送并产生时钟信号的设备；<br>从机：被主机寻址的器件；<br>多主机：同时有多于一个主机尝试控制总线但不破坏传输；<br>主模式：用 I2CNDAT 支持自动字节计数的模式，位I2CRM,<span id="more"></span>I2CSTT,I2CSTP控制数据的接收和发送；<br>从模式：发送和接收操作都是由 I2C 模块自动控制的；<br>仲裁：是一个在有多个主机同时尝试控制总线但只允许其中一个控制总线并使传输不被破坏的过程；<br>同步：两个或多个器件同步时钟信号的过程；<br>发送器：发送数据到总线的器件；<br>接收器：从总线接收数据的器件。</p>
+<h4 id="I2C协议层"><a href="#I2C协议层" class="headerlink" title="I2C协议层"></a>I2C协议层</h4><p>I2C 的协议定义了通信的起始和停止信号、数据有效性、响应、仲裁、时钟同步和地址广播等环节。</p>
+<h5 id="（1）数据有效性规定"><a href="#（1）数据有效性规定" class="headerlink" title="（1）数据有效性规定"></a>（1）数据有效性规定</h5><p>I2C 总线进行数据传送时，时钟信号为高电平期间，数据线上的数据必须保持稳定，只有在时钟线上的信号为低电平期间，数据线上的高电平或低电平状态才允许变化。<br>每次数据传输都以字节为单位，每次传输的字节数不受限制。</p>
+<h5 id="（2）起始和停止信号"><a href="#（2）起始和停止信号" class="headerlink" title="（2）起始和停止信号"></a>（2）起始和停止信号</h5><p>SCL 线为高电平期间，SDA 线由高电平向低电平的变化表示起始信号；SCL线为高电平期间，SDA 线由低电平向高电平的变化表示终止信号。<br>起始和终止信号都是由主机发出的，在起始信号产生后，总线就处于被占用的状态；在终止信号产生后，总线就处于空闲状态</p>
+<h5 id="（3）应答响应"><a href="#（3）应答响应" class="headerlink" title="（3）应答响应"></a>（3）应答响应</h5><p>每当发送器件传输完一个字节的数据后，后面必须紧跟一个校验位，这个校验位是接收端通过控制 SDA（数据线）来实现的，以提醒发送端数据我这边已经接收完成，数据传送可以继续进行。这个校验位其实就是数据或地址传输过程中的响应。响应包括“应答(ACK)”和“非应答(NACK)”两种信号。作为数据接收端时，当设备(无论主从机)接收到 I2C 传输的一个字节数据或地址后，若希望对方继续发送数据，则需要向对方发送“应答(ACK)”信号即特定的低电平脉冲，发送方会继续发送下一个数据；若接收端希望结束数据传输，则向对方发送“非应答(NACK)”信号即特定的高电平脉冲，发送方接收到该信号后会产生一个停止信号，结束信号传输。<br>每一个字节必须保证是 8 位长度。数据传送时，先传送最高位（MSB），每一个被传送的字节后面都必须跟随一位应答位（即一帧共有9 位）。<br>由于某种原因从机不对主机寻址信号应答时（如从机正在进行实时性的处理工作而无法接收总线上的数据），它必须将数据线置于高电平，而由主机产生一个终止信号以结束总线的数据传送。<br>如果从机对主机进行了应答，但在数据传送一段时间后无法继续接收更多的数据时，从机可以通过对无法接收的第一个数据字节的“非应答”通知主机，主机则应发出终止信号以结束数据的继续传送。<br>当主机接收数据时，它收到最后一个数据字节后，必须向从机发出一个结束传送的信号。这个信号是由对从机的“非应答”来实现的。然后，从机释放SDA线，以允许主机产生终止信号。<br>这些信号中，起始信号是必需的，结束信号和应答信号都可以不要。</p>
+<h5 id="（4）总线的寻址方式"><a href="#（4）总线的寻址方式" class="headerlink" title="（4）总线的寻址方式"></a>（4）总线的寻址方式</h5><p>I2C 总线寻址按照从机地址位数可分为两种，一种是7 位，另一种是10位。采用 7 位的寻址字节（寻址字节是起始信号后的第一个字节）的位定义如下：<br>D7～D1 位组成从机的地址。D0 位是数据传送方向位，为“0”时表示主机向从机写数据，为“1”时表示主机由从机读数据。<br>10 位寻址和 7 位寻址兼容，而且可以结合使用。10 位寻址不会影响已有的 7 位寻址，有 7 位和 10 位地址的器件可以连接到相同的I2C 总线。我们就以 7 位寻址为例进行介绍。<br>当主机发送了一个地址后，总线上的每个器件都将头7 位与它自己的地址比较，如果一样，器件会判定它被主机寻址，其他地址不同的器件将被忽略后面的数据信号。至于是从机接收器还是从机发送器，都由R&#x2F;W 位决定的。<br>从机的地址由固定部分和可编程部分组成。在一个系统中可能希望接入多个相同的从机，从机地址中可编程部分决定了可接入总线该类器件的最大数目。如一个从机的 7 位寻址位有 4 位是固定位，3 位是可编程位，这时仅能寻址8 个同样的器件，即可以有 8 个同样的器件接入到该 I2C 总线系统中。</p>
+<h5 id="（5）数据传输"><a href="#（5）数据传输" class="headerlink" title="（5）数据传输"></a>（5）数据传输</h5><p>I2C 总线上传送的数据信号是广义的，既包括地址信号，又包括真正的数据信号。在起始信号后必须传送一个从机的地址（7 位），第8 位是数据的传送方向位（R&#x2F;W），用“ 0”表示主机发送（写）数据（W），“1”表示主机接收数据（R）。<br>每次数据传送总是由主机产生的终止信号结束。但是，若主机希望继续占用总线进行新的数据传送，则可以不产生终止信号，马上再次发出起始信号对另一从机进行寻址。<br>用软件模拟IIC，好处就是移植方便，同一个代码兼容所有单片机，任何一个单片机只要有IO 口（不需要特定 IO），都可以很快的移植过去。</p>
+<h3 id="AT24C02-芯片介绍"><a href="#AT24C02-芯片介绍" class="headerlink" title="AT24C02 芯片介绍"></a>AT24C02 芯片介绍</h3><p>该器件通过I2C 总线接口进行操作，它有一个专门的写保护功能。此芯片具有 I2C 通信接口，芯片内保存的数据在掉电情况下都不丢失，所以通常用于存放一些比较重要的数据等。<br>AT24C02 器件地址为 7 位，高 4 位固定为 1010，低3 位由A0&#x2F;A1&#x2F;A2信号线的电平决定。 因为传输地址或数据是以字节为单位传送的，当传送地址时，器件地址占 7 位，还有最后一位（最低位 R&#x2F;W）用来选择读写方向，它与地址无关。(下文中默认芯片的 A0&#x2F;A1&#x2F;A2 连接到 GND，所以器件地址为1010000，即 0x50（未计算最低位）；WP 引脚直接接在 GND 上，此时芯片允许数据正常读写。如果要对芯片进行写操作时，R&#x2F;W 即为0，写器件地址即为 0XA0；如果要对芯片进行读操作时，R&#x2F;W 即为1，此时读器件地址为 0XA1。)<br>硬件电路：AT24C02电路是独立的，芯片的 SCL 和SDA 管脚接至任意单片机的IO口上。为了让 IIC 总线默认为高电平，通常会在IIC 总线上接上拉电阻，也就是单片机IO口外接 10K 上拉电阻。硬件就是这么简单~</p>
+<h3 id="软件示例"><a href="#软件示例" class="headerlink" title="软件示例"></a>软件示例</h3><p>直接从示例中移植即可。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/51%E5%8D%95%E7%89%87%E6%9C%BA-EEPROM-I2C%E6%80%BB%E7%BA%BF/" rel="tag"># 51单片机 EEPROM I2C总线</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/04/08/%E4%B8%B2%E5%8F%A3%E9%80%9A%E4%BF%A1/" rel="prev" title="串口通信">
+      <i class="fa fa-chevron-left"></i> 串口通信
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC81NzY4OC8zNDE1MQ=="></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#51%E5%8D%95%E7%89%87%E6%9C%BAI2C%E6%80%BB%E7%BA%BF%E6%80%BB%E7%BB%93"><span class="nav-number">1.</span> <span class="nav-text">51单片机I2C总线总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#EEPROM%E7%AE%80%E4%BB%8B"><span class="nav-number">1.1.</span> <span class="nav-text">EEPROM简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#I2C%E7%AE%80%E4%BB%8B"><span class="nav-number">1.2.</span> <span class="nav-text">I2C简介</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#I2C-%E6%80%BB%E7%BA%BF%E5%B8%B8%E7%94%A8%E6%9C%AF%E8%AF%AD%EF%BC%9A"><span class="nav-number">1.2.1.</span> <span class="nav-text">I2C 总线常用术语：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#I2C%E5%8D%8F%E8%AE%AE%E5%B1%82"><span class="nav-number">1.2.2.</span> <span class="nav-text">I2C协议层</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E6%95%B0%E6%8D%AE%E6%9C%89%E6%95%88%E6%80%A7%E8%A7%84%E5%AE%9A"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">（1）数据有效性规定</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%EF%BC%882%EF%BC%89%E8%B5%B7%E5%A7%8B%E5%92%8C%E5%81%9C%E6%AD%A2%E4%BF%A1%E5%8F%B7"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">（2）起始和停止信号</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%EF%BC%883%EF%BC%89%E5%BA%94%E7%AD%94%E5%93%8D%E5%BA%94"><span class="nav-number">1.2.2.3.</span> <span class="nav-text">（3）应答响应</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%EF%BC%884%EF%BC%89%E6%80%BB%E7%BA%BF%E7%9A%84%E5%AF%BB%E5%9D%80%E6%96%B9%E5%BC%8F"><span class="nav-number">1.2.2.4.</span> <span class="nav-text">（4）总线的寻址方式</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%EF%BC%885%EF%BC%89%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93"><span class="nav-number">1.2.2.5.</span> <span class="nav-text">（5）数据传输</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#AT24C02-%E8%8A%AF%E7%89%87%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.3.</span> <span class="nav-text">AT24C02 芯片介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BD%AF%E4%BB%B6%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.4.</span> <span class="nav-text">软件示例</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="听竹上清响风敲雪"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">听竹上清响风敲雪</p>
+  <div class="site-description" itemprop="description">心之所向，素履以往</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/94-eric" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;94-eric" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:809594015@qq.com" title="E-Mail → mailto:809594015@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/hear%20the%20wind%20within" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;hear the wind within" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">听竹上清响风敲雪</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">14k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">13 分钟</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <span id="busuanzi_container_site_pv">总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">总访客数<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+<!-- 不蒜子计数初始值纠正 -->
+<script>
+$(document).ready(function() {
+
+    var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+    var countOffset = 20000;  // 初始化首次数据
+
+    function fixCount() {            
+       if (document.getElementById("busuanzi_container_site_pv").style.display != "none")
+        {
+            $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + countOffset); 
+            clearInterval(int);
+        }                  
+        if ($("#busuanzi_container_site_pv").css("display") != "none")
+        {
+            $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + countOffset); // 加上初始数据 
+            clearInterval(int); // 停止检测
+        }  
+    }
+       	
+});
+</script> 
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共10k字</span>
+</div>
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='255,0,0' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
+
+</body>
+</html>
+
+<!-- ҳ����С���� -->
+<script type="text/javascript" src="/js/src/love.js"></script>
