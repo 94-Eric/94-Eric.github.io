@@ -20,21 +20,20 @@
     var CONFIG = {"hostname":"94-eric.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="hexo网站主题使用总结前提条件GitHub注册账号，安装Git，安装nodejs以上前提条件准备好后，就可以开始我们的网页搭建啦！第一步，通过Git命令安装hexo主题，这一步就是给网页搭建主体框架首先，D盘建立文件夹Blog，这个文件夹是放所有含我们网页内容的文件的。点开Blog文件夹，鼠标右键打开Git Bush Here，输入npm命令安装Hexo： 1$ npm install &amp;quo">
+  <meta name="description" content="ADC总结ADC简介51 单片机系统内部运算时用的全部是数字量，即0 和1，因此对单片机系统而言，我们无法直接操作模拟量，必须将模拟量转换成数字量。所谓数字量，就是用一系列 0 和 1 组成的二进制代码表示某个信号大小的量。用数字量表示同一个模拟量时，数字位数可以多也可以少，位数越多则表示的精度越高，位数越少表示的精度就越低。ADC（analog to digital converter）也称为模">
 <meta property="og:type" content="article">
-<meta property="og:title" content="主题使用总结">
-<meta property="og:url" content="https://94-eric.github.io/2023/04/01/%E4%B8%BB%E9%A2%98%E4%BD%BF%E7%94%A8%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:title" content="ADC模数转换">
+<meta property="og:url" content="https://94-eric.github.io/2023/04/12/ADC%E6%A8%A1%E6%95%B0%E8%BD%AC%E6%8D%A2/index.html">
 <meta property="og:site_name" content="明珠的个人博客">
-<meta property="og:description" content="hexo网站主题使用总结前提条件GitHub注册账号，安装Git，安装nodejs以上前提条件准备好后，就可以开始我们的网页搭建啦！第一步，通过Git命令安装hexo主题，这一步就是给网页搭建主体框架首先，D盘建立文件夹Blog，这个文件夹是放所有含我们网页内容的文件的。点开Blog文件夹，鼠标右键打开Git Bush Here，输入npm命令安装Hexo： 1$ npm install &amp;quo">
+<meta property="og:description" content="ADC总结ADC简介51 单片机系统内部运算时用的全部是数字量，即0 和1，因此对单片机系统而言，我们无法直接操作模拟量，必须将模拟量转换成数字量。所谓数字量，就是用一系列 0 和 1 组成的二进制代码表示某个信号大小的量。用数字量表示同一个模拟量时，数字位数可以多也可以少，位数越多则表示的精度越高，位数越少表示的精度就越低。ADC（analog to digital converter）也称为模">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2023-04-01T02:40:43.000Z">
-<meta property="article:modified_time" content="2023-04-04T13:33:36.025Z">
+<meta property="article:published_time" content="2023-04-12T15:04:41.000Z">
+<meta property="article:modified_time" content="2023-04-12T15:04:53.803Z">
 <meta property="article:author" content="云中锡">
-<meta property="article:tag" content="hexo命令 网站搭建">
-<meta property="article:tag" content="hexo撰写文章">
+<meta property="article:tag" content="ADC 模数转换	英雄联盟？">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://94-eric.github.io/2023/04/01/%E4%B8%BB%E9%A2%98%E4%BD%BF%E7%94%A8%E6%80%BB%E7%BB%93/">
+<link rel="canonical" href="https://94-eric.github.io/2023/04/12/ADC%E6%A8%A1%E6%95%B0%E8%BD%AC%E6%8D%A2/">
 
 
 <script id="page-configurations">
@@ -47,7 +46,7 @@
   };
 </script>
 
-  <title>主题使用总结 | 明珠的个人博客</title>
+  <title>ADC模数转换 | 明珠的个人博客</title>
   
 
 
@@ -173,7 +172,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/04/01/%E4%B8%BB%E9%A2%98%E4%BD%BF%E7%94%A8%E6%80%BB%E7%BB%93/">
+    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/04/12/ADC%E6%A8%A1%E6%95%B0%E8%BD%AC%E6%8D%A2/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -186,7 +185,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          主题使用总结
+          ADC模数转换
         </h1>
 
         <div class="post-meta">
@@ -195,16 +194,10 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2023-04-01 10:40:43" itemprop="dateCreated datePublished" datetime="2023-04-01T10:40:43+08:00">2023-04-01</time>
+              <time title="创建时间：2023-04-12 23:04:41 / 修改时间：23:04:53" itemprop="dateCreated datePublished" datetime="2023-04-12T23:04:41+08:00">2023-04-12</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-04-04 21:33:36" itemprop="dateModified" datetime="2023-04-04T21:33:36+08:00">2023-04-04</time>
-              </span>
 
           
             <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
@@ -219,14 +212,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>952</span>
+              <span>3.1k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
+              <span>8 分钟</span>
             </span>
 
         </div>
@@ -238,17 +231,12 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="hexo网站主题使用总结"><a href="#hexo网站主题使用总结" class="headerlink" title="hexo网站主题使用总结"></a>hexo网站主题使用总结</h2><h3 id="前提条件"><a href="#前提条件" class="headerlink" title="前提条件"></a>前提条件</h3><h3 id="GitHub注册账号，安装Git，安装nodejs"><a href="#GitHub注册账号，安装Git，安装nodejs" class="headerlink" title="GitHub注册账号，安装Git，安装nodejs"></a>GitHub注册账号，安装Git，安装nodejs</h3><p>以上前提条件准备好后，就可以开始我们的网页搭建啦！第一步，通过Git命令安装hexo主题，这一步就是给网页搭建主体框架<br>首先，D盘建立文件夹Blog，这个文件夹是放所有含我们网页内容的文件的。点开Blog文件夹，鼠标右键打开Git Bush Here，输入npm命令安装Hexo：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm install <span class="string">&quot;-g hexo-cli&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/">start hexo</a></p>
-<p>我已经安装过了，之前没截图，所以请大家参考这位大神的操作，按步骤操作就行：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/105715224">这里</a></p>
-<p>输入hexo init命令初始化网页：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo init</span><br></pre></td></tr></table></figure>
-<p>命令栏的最后行会提示INFO Istall dependencies，这就代表这步完成了<br>然后输入hexo g静态部署，g是generate，命令栏会看到一列generated，，稍等1分钟喝杯茶；<br>此时喝茶回来，网页部署已经完成，输入hexo s命令可以在浏览器上查看本地主机的网页。<br>只有一个通用的框架肯定不好看，配置主题参考这个：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/105584373">这里</a><br>目前的个人网页是Github免费送你的一条小通道，名字是通用的XXXXX.github.IO，想要酷炫的给人印象深刻的网址比如WWW.1.COM，就想要把这个域名给买下来，想深入了解就去看看价格，按年收费，此处不赘述，自行学习，也不推荐，防止广告嫌疑<br>网页出来了需要更新，怎么办呢，首先，在上文中说的D盘Blog文件夹中右键，点击Git Bash Here，在弹出的窗口中输入如下代码(new post是随便起的名字，按照自己的喜好命名即可)：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="string">&quot;hexo new &quot;</span>new post<span class="string">&quot;&quot;</span></span><br></pre></td></tr></table></figure>
-<p>此时就会在D&#x2F;Blog&#x2F;source&#x2F;_posts文件夹中创建了一个文件，命名为：new post.md，而这个文件就是将要发布到网站上的原始文件，记录文章内容，以下我们将要在这个文件中写下我们的第一篇博客.</p>
-<h2 id="文章内容的编写"><a href="#文章内容的编写" class="headerlink" title="文章内容的编写"></a>文章内容的编写</h2><p>像这种博客类的网页，一般用Markdown 语法，Markdown是一种可以使用普通文本编辑器编写的标记语言，通过简单的标记语法，它可以使普通文本内容具有一定的格式，Markdown常用语法点击此处了解，<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_36457584/article/details/87878558">Markdown</a></p>
+        <h2 id="ADC总结"><a href="#ADC总结" class="headerlink" title="ADC总结"></a>ADC总结</h2><h3 id="ADC简介"><a href="#ADC简介" class="headerlink" title="ADC简介"></a>ADC简介</h3><p>51 单片机系统内部运算时用的全部是数字量，即0 和1，因此对单片机系统而言，我们无法直接操作模拟量，必须将模拟量转换成数字量。所谓数字量，就是用一系列 0 和 1 组成的二进制代码表示某个信号大小的量。用数字量表示同一个模拟量时，数字位数可以多也可以少，位数越多则表示的精度越高，位数越少表示的精度就越低。<br>ADC（analog to digital converter）也称为模数转换器，是指一个将模拟信号转变为数字信号。单片机在采集模拟信号时，通常都需要在前端加上A&#x2F;D芯片。</p>
+<h4 id="ADC的主要技术指标："><a href="#ADC的主要技术指标：" class="headerlink" title="ADC的主要技术指标："></a>ADC的主要技术指标：</h4><p>（1）分辨率<br>ADC 的分辨率是指对于允许范围内的模拟信号，它能输出离散数字信号值的个数。这些信号值通常用二进制数来存储，因此分辨率经常用比特作为单位，且这些离散值的个数是 2 的幂指数。<br>例如：12 位 ADC 的分辨率就是 2^12(4096)，或者说分辨率为满刻度的1&#x2F;(2^12)。一个 10V 满刻度的 12 位 ADC 能分辨输入电压变化最小值是：<br>10V×1&#x2F;(2^12 )&#x3D;2.4mV。<br>（2）转换误差<br>转换误差通常是以输出误差的最大值形式给出。它表示A&#x2F;D 转换器实际输出的数字量和理论上的输出数字量之间的差别。常用最低有效位的倍数表示。例如给出相对误差≤±LSB&#x2F;2，这就表明实际输出的数字量和理论上应得到的输出数字量之间的误差小于最低位的半个字。<br>（3）转换速率<br>ADC 的转换速率是能够重复进行数据转换的速度，即每秒转换的次数。而完成一次 A&#x2F;D 转换所需的时间（包括稳定时间），则是转换速率的倒数。</p>
+<h4 id="ADC转换原理"><a href="#ADC转换原理" class="headerlink" title="ADC转换原理"></a>ADC转换原理</h4><p>在 A&#x2F;D 转换器中，因为输入的模拟信号在时间上是连续的，而输出的数字信号代码是离散的，所以 A&#x2F;D 转换器在进行转换时，必须在一系列选定的瞬间(时间坐标轴上的一些规定点上)对输入的模拟信号采样，然后再把这些采样值转换为数字量。因此，一般的 A&#x2F;D 转换过程是通过采样保持、量化和编码这三个步骤完成的，即首先对输入的模拟电压信号采样，采样结束后进入保持时间，在这段时间内将采样的电压量转化为数字量，并按一定的编码形式给出转换结果，然后开始下一次采样。<br>量化：数字信号不仅在时间上是离散的，而且数值上的变化也不是连续的。这就是说，任何一个数字量的大小，都是以某个最小数量单位的整倍数来表示的。因此，在用数字量表示采样电压时，也必须把它化成这个最小数量单位的整倍数，这个转化过程就叫做量化。<br>编码：所规定的最小数量单位叫做量化单位，用△表示。显然，数字信号最低有效位中的<span id="more"></span> 1 表示的数量大小，就等于△。把量化的数值用二进制代码表示，称为编码。这个二进制代码就是 A&#x2F;D 转换的输出信号。<br>既然模拟电压是连续的，那么它就不一定能被△整除，因而不可避免地会引入误差，我们把这种误差称为量化误差。在把模拟信号划分为不同的量化等级时，用不同的划分方法可以得到不同的量化误差。<br>假定需要把 0至1V 之间的模拟电压信号转换成三位二进制代码，这时便可以取△&#x3D;(1&#x2F;8)V,并规定凡数值在 0至(1&#x2F;8)V 之间的模拟电压都当做OX△看待，用二进制的 000 表示:凡数值在((1&#x2F;8)至(2&#x2F;8) V 之间的模拟电压都当做1X△看待，用二进制的 001 表示，……，不难得出，最大的量化误差可达△，即(1&#x2F;8)V。<br>好困，艹<br>为了减少量化误差，通常取量化单位△&#x3D;(2&#x2F;15)V,并将 000 代码所对应模拟电压规定为 0<del>(1&#x2F;15) V，即0</del>△&#x2F;2。这时，最大量化误差将减少为△&#x2F;2&#x3D; (1&#x2F;15) V。这个道理不难理解，因为现在把每个二进制代码所代表的模拟电压值规定为它所对应的模拟电压范围的中点，所以最大的量化误差自然就缩小为△&#x2F;2 了。<br>ADC 内转换方式主要有 2 种：逐次逼近式 ADC 和双积分式ADC。<br>逐次逼近式ADC有点像数学的2分法，逐次逼近式AD转换器中有一个逐次逼近寄存器SAR，其数字量是由它产生的。SAR使用对分搜索法产生数字量，以8位数字量为例，SAR首先产生8位数字量的一半，即8’b1000000，试探模拟量Vi的大小。若Vo&gt;Vi，清楚最高位；反之，则保留最高位。在最高位确认后，SAR又以对分搜索法确定次高位，即以7位数字量的一半8’by1000000（y由前面的过程已确认）试探模拟量Vi的大小。依此类推，直到确定了bit0为止，转换结束。<br>栗：输入模拟量是4.48V，量程为5V的转换器怎么知道它是4.48V呢？按照逐次逼近法：<br>1、第一次，DA转换器输出电压是2.5V，因为4.48&gt;2.5V，所以判定数值在2.5至5之间；<br>2、第二次，取其中间值3.75V，因为4.48&gt;3.75V，所以判定数值在3.75至5之间；<br>2、第三次，取其中间值4.375V，因为4.48&gt;4.375V，所以判定数值在4.375至5之间；<br>……依此类推，确定到第8次时就很接近这个数值了。ADC有多少位就可以判定多少次，8位的ADC精度为1&#x2F;(2^8)&#x3D;1&#x2F;256，约为0.004，精度已经足够日常使用了</p>
+<h4 id="XPT2046-芯片介绍"><a href="#XPT2046-芯片介绍" class="headerlink" title="XPT2046 芯片介绍"></a>XPT2046 芯片介绍</h4><p>XPT2046 是一款 4 线制电阻式触摸屏控制器，内含12 位分辨率125KHz转换速率逐步逼近型 A&#x2F;D 转换器。XPT2046 支持从 1.5V 到5.25V 的低电压I&#x2F;O 接口。<br>内部自带 2.5V 参考电压，可以作为辅助输入、温度测量和电池监测之用，电池监测的电压范围可以从0V 到6V。<br>工作温度范围为-40℃～+85℃。与 ADS7846、TSC2046、AK4182A 完全兼容。</p>
+<h5 id="主要特性"><a href="#主要特性" class="headerlink" title="主要特性"></a>主要特性</h5><p>①工作电压范围为 1.5V～5.25V<br>②支持 1.5V～5.25V 的数字 I&#x2F;O 口<br>③内建 2.5V 参考电压源<br>④电源电压测量（ 0V~6V）<br>⑤内建结温测量功能<br>⑥触摸压力测量<br>⑦采用 3 线制 SPI 通信接口<br>⑧具有自动省电功能<br>参考电压值直接决定 ADC 的输入范围，参考电压可以使用内部参考电压，也可以从外部直接输入 1V～VCC 范围内的参考电压（要求外部参考电压源输出阻抗低）。<br>X、Y、Z、VBAT、Temp 和AUX 模拟信号经过片内的控制寄存器选择后进入 ADC，ADC 可以配置为单端或差分模式。选择VBAT、Temp和 AUX 时应该配置为单端模式；作为触摸屏应用时，应该配置为差分模式，这可有效消除由于驱动开关的寄生电阻及外部的干扰带来的测量误差，提高转换精度。<br>PT2046 数据接口是串行接口，处理器和转换器之间的的通信需要 8 个时钟周期，可采用 SPI、SSI 和 Microwire 等同步串行接口。一次完整的转换需要 24 个串行同步时钟（DCLK）来完成。<br>前 8 个时钟用来通过 DIN 引脚输入控制字节。当转换器获取有关下一次转换的足够信息后，接着根据获得的信息设置输入多路选择器和参考源输入，并进入采样模式，如果需要，将启动触摸面板驱动器。3 个多时钟周期后，控制字节设置完成，转换器进入转换状态。这时，输入采样－保持器进入保持状态，触摸面板驱动器停止工作（单端工作模式）。接着的 12 个时钟周期将完成真正的模数转换。如果是度量比率转换方式（SER&#x2F;DFR＝0），驱动器在转换过程中将一直工作，第 13 个时钟将输出转换结果的最后一位。剩下的3 个多时钟周期将用来完成被转换器忽略的最后字节（DOUT 置低）。</p>
+<h5 id="硬件电路"><a href="#硬件电路" class="headerlink" title="硬件电路"></a>硬件电路</h5><p>该模块电路是独立的，所以XPT2046芯片的控制管脚接可以使用任意单片机管脚连接。<br>栗：使用单片机的任意3个管脚与芯片的 DIN 管脚、CS 管脚和CLK管脚连接，困死，艹，TBC</p>
 
     </div>
 
@@ -258,8 +246,7 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/hexo%E5%91%BD%E4%BB%A4-%E7%BD%91%E7%AB%99%E6%90%AD%E5%BB%BA/" rel="tag"># hexo命令 网站搭建</a>
-              <a href="/tags/hexo%E6%92%B0%E5%86%99%E6%96%87%E7%AB%A0/" rel="tag"># hexo撰写文章</a>
+              <a href="/tags/ADC-%E6%A8%A1%E6%95%B0%E8%BD%AC%E6%8D%A2%E8%8B%B1%E9%9B%84%E8%81%94%E7%9B%9F%EF%BC%9F/" rel="tag"># ADC 模数转换	英雄联盟？</a>
           </div>
 
         
@@ -268,13 +255,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2022/11/24/My-New-Post/" rel="prev" title="Test222">
-      <i class="fa fa-chevron-left"></i> Test222
+    <a href="/2023/04/12/%E6%8F%92%E9%98%9F-%E6%95%B0%E6%8D%AE%E9%80%8F%E8%A7%86%E8%A1%A8/" rel="prev" title="插队-数据透视表">
+      <i class="fa fa-chevron-left"></i> 插队-数据透视表
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2023/04/01/%E5%8D%95%E7%89%87%E6%9C%BAIO%E5%8F%A3%E6%89%A9%E5%B1%95/" rel="next" title="51单片机IO口扩展">
-      51单片机IO口扩展 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -338,7 +322,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#hexo%E7%BD%91%E7%AB%99%E4%B8%BB%E9%A2%98%E4%BD%BF%E7%94%A8%E6%80%BB%E7%BB%93"><span class="nav-number">1.</span> <span class="nav-text">hexo网站主题使用总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E6%8F%90%E6%9D%A1%E4%BB%B6"><span class="nav-number">1.1.</span> <span class="nav-text">前提条件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GitHub%E6%B3%A8%E5%86%8C%E8%B4%A6%E5%8F%B7%EF%BC%8C%E5%AE%89%E8%A3%85Git%EF%BC%8C%E5%AE%89%E8%A3%85nodejs"><span class="nav-number">1.2.</span> <span class="nav-text">GitHub注册账号，安装Git，安装nodejs</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E7%AB%A0%E5%86%85%E5%AE%B9%E7%9A%84%E7%BC%96%E5%86%99"><span class="nav-number">2.</span> <span class="nav-text">文章内容的编写</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#ADC%E6%80%BB%E7%BB%93"><span class="nav-number">1.</span> <span class="nav-text">ADC总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ADC%E7%AE%80%E4%BB%8B"><span class="nav-number">1.1.</span> <span class="nav-text">ADC简介</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ADC%E7%9A%84%E4%B8%BB%E8%A6%81%E6%8A%80%E6%9C%AF%E6%8C%87%E6%A0%87%EF%BC%9A"><span class="nav-number">1.1.1.</span> <span class="nav-text">ADC的主要技术指标：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ADC%E8%BD%AC%E6%8D%A2%E5%8E%9F%E7%90%86"><span class="nav-number">1.1.2.</span> <span class="nav-text">ADC转换原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#XPT2046-%E8%8A%AF%E7%89%87%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.1.3.</span> <span class="nav-text">XPT2046 芯片介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%BB%E8%A6%81%E7%89%B9%E6%80%A7"><span class="nav-number">1.1.3.1.</span> <span class="nav-text">主要特性</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%A1%AC%E4%BB%B6%E7%94%B5%E8%B7%AF"><span class="nav-number">1.1.3.2.</span> <span class="nav-text">硬件电路</span></a></li></ol></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
