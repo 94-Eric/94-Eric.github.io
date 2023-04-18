@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"94-eric.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="触摸屏利用TFTLCD 模块，51 单片机系统就有了高级信息输出的功能，触摸屏刚好满足作为一个友好的用户输入的设备的需求。现如今大多电子产品是将触摸屏配合液晶显示器组成人机交互系统，比如手机、平板等。 触摸屏简介触摸屏又称触控面板，它是一种把触摸位置转化成坐标数据的输入设备，根据触摸屏的检测原理，主要分为电阻式触摸屏和电容式触摸屏。下面我们就分别来介绍下这两种触摸屏。 电阻式触摸屏电阻式触摸屏是一">
+<meta property="og:type" content="article">
+<meta property="og:title" content="触摸屏">
+<meta property="og:url" content="https://94-eric.github.io/2023/04/16/%E8%A7%A6%E6%91%B8%E5%B1%8F/index.html">
+<meta property="og:site_name" content="明珠的个人博客">
+<meta property="og:description" content="触摸屏利用TFTLCD 模块，51 单片机系统就有了高级信息输出的功能，触摸屏刚好满足作为一个友好的用户输入的设备的需求。现如今大多电子产品是将触摸屏配合液晶显示器组成人机交互系统，比如手机、平板等。 触摸屏简介触摸屏又称触控面板，它是一种把触摸位置转化成坐标数据的输入设备，根据触摸屏的检测原理，主要分为电阻式触摸屏和电容式触摸屏。下面我们就分别来介绍下这两种触摸屏。 电阻式触摸屏电阻式触摸屏是一">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://94-eric.github.io/2023/04/16/%E8%A7%A6%E6%91%B8%E5%B1%8F/%E6%8D%95%E8%8E%B71.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2023/04/16/%E8%A7%A6%E6%91%B8%E5%B1%8F/%E6%8D%95%E8%8E%B72.PNG">
+<meta property="article:published_time" content="2023-04-16T11:56:41.000Z">
+<meta property="article:modified_time" content="2023-04-18T14:46:22.096Z">
+<meta property="article:author" content="云中锡">
+<meta property="article:tag" content="51单片机 触摸屏 TFTLCD">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://94-eric.github.io/2023/04/16/%E8%A7%A6%E6%91%B8%E5%B1%8F/%E6%8D%95%E8%8E%B71.PNG">
+
+<link rel="canonical" href="https://94-eric.github.io/2023/04/16/%E8%A7%A6%E6%91%B8%E5%B1%8F/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>触摸屏 | 明珠的个人博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">明珠的个人博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">是谁告诉你，你是赤裸的？</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-resources">
+
+    <a href="/resources/" rel="section"><i class="fa fa-download fa-fw"></i>资源</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/04/16/%E8%A7%A6%E6%91%B8%E5%B1%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="云中锡">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="明珠的个人博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          触摸屏
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-04-16 19:56:41" itemprop="dateCreated datePublished" datetime="2023-04-16T19:56:41+08:00">2023-04-16</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-04-18 22:46:22" itemprop="dateModified" datetime="2023-04-18T22:46:22+08:00">2023-04-18</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>11 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="触摸屏"><a href="#触摸屏" class="headerlink" title="触摸屏"></a>触摸屏</h2><p>利用TFTLCD 模块，51 单片机系统就有了高级信息输出的功能，触摸屏刚好满足作为一个友好的用户输入的设备的需求。现如今大多电子产品是将触摸屏配合液晶显示器组成人机交互系统，比如手机、平板等。</p>
+<h2 id="触摸屏简介"><a href="#触摸屏简介" class="headerlink" title="触摸屏简介"></a>触摸屏简介</h2><p>触摸屏又称触控面板，它是一种把触摸位置转化成坐标数据的输入设备，根据触摸屏的检测原理，主要分为电阻式触摸屏和电容式触摸屏。下面我们就分别来介绍下这两种触摸屏。</p>
+<h3 id="电阻式触摸屏"><a href="#电阻式触摸屏" class="headerlink" title="电阻式触摸屏"></a>电阻式触摸屏</h3><p>电阻式触摸屏是一种传感器，它将矩形区域中触摸点(X,Y)的物理位置转换为代表 X 坐标和 Y 坐标的电压。很多 LCD 模块都采用了电阻式触摸屏，比如2.0&#x2F;2.2&#x2F;2.4&#x2F;2.6&#x2F;2.8&#x2F;3.0&#x2F;3.2&#x2F;3.5 寸的 TFTLCD 模块都是采用电阻式触摸屏。使用时需要用一定的压力才会能检测到电压，即触摸。<br>电阻式触摸屏基本上是薄膜加上玻璃的结构，薄膜和玻璃相邻的一面上均涂有 ITO(纳米铟锡金属氧化物)涂层，ITO 具有很好的导电性和透明性。当触摸操作时，薄膜下层的 ITO 会接触到玻璃上层的 ITO，经由感应器传出相应的电信号，经过转换电路送到处理器，通过运算转化为屏幕上的X、Y 值，而完成点选的动作，并呈现在屏幕上。电阻式触摸屏结构如下图所示：</p>
+<img src="/2023/04/16/%E8%A7%A6%E6%91%B8%E5%B1%8F/%E6%8D%95%E8%8E%B71.PNG" class title="图片麋鹿无法显示">
+<p>电阻触摸屏的工作原理主要是通过压力感应原理来实现对屏幕内容的操作和<span id="more"></span>控制的，这种触摸屏屏体部分是一块与显示器表面非常配合的多层复合薄膜，其中第一层为玻璃或有机玻璃底层，第二层为隔层，第三层为多元树脂表层，表面还涂有一层透明的导电层，上面再盖有一层外表面经硬化处理、光滑防刮的塑料层。在多元脂表层表面的传导层及玻璃层感应器是被许多微小的隔层所分隔电流通过表层，轻触表层压下时，接触到底层，控制器同时从四个角读出相称的电流及计算手指位置的距离。这种触摸屏利用两层高透明的导电层组成触摸屏，两层之间距离仅为 2.5 微米。当手指触摸屏幕时，平常相互绝缘的两层导电层就在触摸点位置有了一个接触，因其中一面导电层接通Y 轴方向的电源均匀电压场，使得侦测层的电压由零变为非零，控制器侦测到这个接通后，进行A&#x2F;D转换，并将得到的电压值与参考电压相比，即可得触摸点的Y 轴坐标，同理得出 X 轴的坐标，这就是所有电阻技术触摸屏共同的最基本原理。<br>电阻触摸屏的优点：精度高、价格便宜、抗干扰能力强、稳定性好。<br>电阻触摸屏的缺点：容易被划伤、透光性不太好、不支持多点触摸。<br>从上面的简介，我们知道触摸屏都需要一个 AD 转换器，也就是要将电压变化读取出来，供主机求出触摸的位置。作者手中TFTLCD 模块使用的是四线电阻式触摸屏，这种触摸屏的控制芯片有很多，包括：ADS7843、ADS7846、TSC2046、XPT2046 和 AK4182 等。这几款芯片的驱动基本上是一样的，也就是说只要写出了 XPT2046 的驱动，这个驱动对其他几个芯片也是有效的。而且封装也有一样的，而且管脚也完全兼容。所以在替换起来非常方便。其中XPT2046 的特点主要有：</p>
+<ol>
+<li>一款 4 导线制触摸屏控制器，采用 SPI 模式进行通信。</li>
+<li>内含 12 位分辨率 125KHz 转换速率逐步逼近型A&#x2F;D 转换器。</li>
+<li>支持从 1.5V 到 5.25V 的低电压 I&#x2F;O 接口。<br>4）只需执行两次 A&#x2F;D 转换即可查出被按的屏幕位置。<br>5）可以测量加在触摸屏上的压力<br>6）芯片内部自带温度检测、电池电压（0-6V）监测等等</li>
+</ol>
+<h3 id="电容式触摸屏"><a href="#电容式触摸屏" class="headerlink" title="电容式触摸屏"></a>电容式触摸屏</h3><p>现在几乎所有智能手机，包括平板电脑都是采用电容屏作为触摸屏，电容屏是利用人体感应进行触点检测控制，不需要直接接触或只需要轻微接触，通过检测感应电流来定位触摸坐标。</p>
+<h4 id="电容式触摸屏原理"><a href="#电容式触摸屏原理" class="headerlink" title="电容式触摸屏原理"></a>电容式触摸屏原理</h4><h5 id="表面电容式电容触摸屏"><a href="#表面电容式电容触摸屏" class="headerlink" title="表面电容式电容触摸屏"></a>表面电容式电容触摸屏</h5><p>表面电容式触摸屏技术是利用 ITO(铟锡氧化物，是一种透明的导电材料)导电膜，通过电场感应方式感测屏幕表面的触摸行为进行。但是表面电容式触摸屏有一些局限性，它只能识别一个手指或者一次触摸。</p>
+<h5 id="投射式电容触摸屏"><a href="#投射式电容触摸屏" class="headerlink" title="投射式电容触摸屏"></a>投射式电容触摸屏</h5><p>投射式电容触摸屏却具有多指触控的功能。这两种电容式触摸屏都具有透光率高、反应速度快、寿命长等优点，缺点是：随着温度、湿度的变化，电容值会发生变化，导致工作稳定性差，时常会有漂移现象，需要经常校对屏幕，且不可佩戴普通手套进行触摸定位。<br>投射电容式触摸屏是传感器利用触摸屏电极发射出静电场线。一般用于投射电容传感技术的电容类型有两种：自我电容和交互电容。<br>自我电容又称绝对电容，是最广为采用的一种方法，自我电容通常是指扫描电极与地构成的电容。在玻璃表面有用 ITO 制成的横向与纵向的扫描电极，这些电极和地之间就构成一个电容的两极。当用手或触摸笔触摸的时候就会并联一个电容到电路中去，从而使在该条扫描线上的总体的电容量有所改变。在扫描的时候，控制 IC 依次扫描纵向和横向电极，并根据扫描前后的电容变化来确定触摸点坐标位置。笔记本电脑触摸输入板就是采用的这种方式，笔记本电脑的输入板采用 X<em>Y 的传感电极阵列形成一个传感格子，当手指靠近触摸输入板时，在手指和传感电极之间产生一个小量电荷。采用特定的运算法则处理来自行、列传感器的信号来确定手指的位置。<br>交互电容又叫做跨越电容，它是在玻璃表面的横向和纵向的ITO 电极的交叉处形成电容。交互电容的扫描方式就是扫描每个交叉处的电容变化，来判定触摸点的位置。当触摸的时候就会影响到相邻电极的耦合，从而改变交叉处的电容量，交互电容的扫面方法可以侦测到每个交叉点的电容值和触摸后电容变化，因而它需要的扫描时间与自我电容的扫描方式相比要长一些，需要扫描检测X</em>Y根电极。目前智能手机&#x2F;平板电脑等的触摸屏，都是采用交互电容技术。</p>
+<p>下面以投射式电容屏（交互电容类型）介绍<br>投射式电容触摸屏（交互电容类型）内部由驱动电极与接收电极组成，驱动电极发出低电压高频信号投射到接收电极形成稳定的电流，当人体接触到电容屏时，由于人体接地，手指与电容屏就形成一个等效电容，而高频信号可以通过这一等效电容流入地线，这样，接收端所接收的电荷量减小，而当手指越靠近发射端时，电荷减小越明显，最后根据接收端所接收的电流强度来确定所触碰的点。<br>电容触摸屏通常也需要一个驱动 IC 来检测电容触摸，且一般是通过I2C接口输出触摸数据的。</p>
+<img src="/2023/04/16/%E8%A7%A6%E6%91%B8%E5%B1%8F/%E6%8D%95%E8%8E%B72.PNG" class title="图片麋鹿无法显示">
+<p>电阻触摸屏采用的是 SPI 通信（使用 IO 口模拟SPI 时序）</p>
+<h2 id="程序滤波"><a href="#程序滤波" class="headerlink" title="程序滤波"></a>程序滤波</h2><p>比较常用的程序滤波的方法其实就是多次数据的读取，然后把最大最小值除去，算出平均值。这种方法读取的次数越多，得到的数据就越准确。<br>另外一种方式滤波是当读取到两次数据之后，检查两个数据之间的差值，如果超过理想的误差，那么丢弃数据。这种方法是处理飞点现象的常用方法。</p>
+<h2 id="如何将触摸屏物理坐标转换为-LCD-坐标"><a href="#如何将触摸屏物理坐标转换为-LCD-坐标" class="headerlink" title="如何将触摸屏物理坐标转换为 LCD 坐标"></a>如何将触摸屏物理坐标转换为 LCD 坐标</h2><p>我们使用 XPT2046 读取到了触摸屏的触摸位置之后，想要在LCD 屏相对应的位置上进行操作，我们还要将它转换成 LCD 屏的坐标值。比如说，我们在LCD屏（0,0）坐标位置按下，而读取到的物理坐标值(也就是AD 值)为（100，200），那么我们想要在 LCD 屏（0, 0）位置进行处理，将要将物理坐标（100,200）转换成 LCD 屏坐标。<br>那如何转换呢？我们知道，XPT2046 的分辨率为 12 位，也就是说我们读取X 轴的物理坐标值（这里我们假设为：Px）和 Y 轴的物理坐标值（这里我们假设为：Py）的值肯定是在 0~4096 之间。但是我们 LCD 彩屏X 轴和Y 轴的像素坐标确是 240X400。（对应 TFT26_R61509V 彩屏的像素，不管多少，我们明白原理就行，为了更好的表示，在这里我们 LCD 彩屏 X 轴像素坐标我们假设为：Lcdx，LCD 彩屏 Y 轴像素坐标我们假设为：Lcdy）那么我们假设当(Px, Py) &#x3D;(0,0)时，正好 LCD 彩屏像素坐标的起始坐标（0,0），当(Px,Py) &#x3D; (4096,4096)时，正好 LCD 彩屏像素坐标的终止坐标（239, 399）。难么我们不难看出触摸屏的物理坐标跟 LCD 彩屏像素坐标的对应关系为：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;Factorx = Lcdx / Px；&quot;</span></span><br><span class="line"><span class="string">&quot;Factory = Lcdy / Py；&quot;</span></span><br></pre></td></tr></table></figure>
+<p>我们就可以求出 Factorx 和 Factory，然后每次读取到Px 和Py 之后就可以讲它很轻松的转换为 Lcdx 和 Lcdy。这是一个很简单的数学关系。<br>不过呢，事情没有那么理想化，我们在 LCD 像素坐标为（0, 0）读取的触摸屏物理坐标值不一定是（0，0）,在 LCD 像素坐标为最大时，也不一定读取到的是触摸屏的物理坐标最大值。所以我们要进行一些数据校正，这也是为什么电阻屏幕校正的原因。<br>什么意思呢？那我们在来解一个数学问题：<br>我们都知道每个触摸屏物理坐标值都能一一对应一个LCD 彩屏上面的像素坐标值，也就是它们是成比例关系的。现在我们知道 LCD 彩屏的X 轴像素坐标最小值为 Lcdx1，我们能显示的 LCD 彩屏的 X 轴像素坐标最大值为Lcdx2。而我们在 LCD 彩屏像素坐标 X 轴最小值处读取的触摸屏X 轴物理坐标为Px1，在 LCD 彩屏 X 轴像素坐标最大值处读取的触摸屏 X 轴的物理坐标为Px2。那么现在我们知道有一个触摸屏物理坐标值在 Px1 到 Px2 之间的坐标值为Px，那么和它对应的 Lcdx 的值是多少呢？<br>我们可以这么解：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;Factorx = (Lcdx2 – Lcdx1) / (Px2 – Px1)；&quot;</span></span><br><span class="line"><span class="string">&quot;Lcdx = (Px – Px1) * Factorx；&quot;</span></span><br></pre></td></tr></table></figure>
+<p>那么就求得出 Lcdx 是多少了。<br>现在我们把它分解出来</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;Lcdx = Px * Factorx – Px1 * Factorx；&quot;</span></span><br></pre></td></tr></table></figure>
+<p>然后将 Px1*Factorx 替换成一个变量 Offsetx。那么我们现在就可以得到Lcdx 和 Px 之间的对应关系式。 而关于 Y 轴也是同理，所以它们从物理坐标到像素坐标的转换关系式：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;Lcdx = Px * Factorx – Offsetx；&quot;</span></span><br><span class="line"><span class="string">&quot;Lcdy = Py * Factory – Offsety；&quot;</span></span><br></pre></td></tr></table></figure>
+<p>在程序中对应的如下所示：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;xpt_xy.lcdx=xpt_xy.x;&quot;</span></span><br><span class="line"><span class="string">&quot;xpt_xy.lcdx=((xpt_xy.lcdx - 240)*260)/3850;&quot;</span></span><br><span class="line"><span class="string">&quot;xpt_xy.lcdy=xpt_xy.y;&quot;</span></span><br><span class="line"><span class="string">&quot;xpt_xy.lcdy =((xpt_xy.lcdy - 200)*420)/3950;&quot;</span></span><br></pre></td></tr></table></figure>
+<p>xpt_xy.x 和 xpt_xy.y 是读取 XPT2046 的 X 和 Y 方向的AD 值，而xpt_xy.lcdx和 xpt_xy.lcdy 是对应 TFTLCD 触摸屏实际的 XY 轴坐标值。</p>
+<p>还有一个函数是非常重要的，即触摸屏扫描函数。该函数检测是否有触摸，并在该函数中获取触摸屏的物理坐标和 LCD 坐标…套用示例函数即可。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/51%E5%8D%95%E7%89%87%E6%9C%BA-%E8%A7%A6%E6%91%B8%E5%B1%8F-TFTLCD/" rel="tag"># 51单片机 触摸屏 TFTLCD</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/04/14/TFT%E5%BD%A9%E5%B1%8F/" rel="prev" title="TFT彩屏">
+      <i class="fa fa-chevron-left"></i> TFT彩屏
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC81NzY4OC8zNDE1MQ=="></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A6%E6%91%B8%E5%B1%8F"><span class="nav-number">1.</span> <span class="nav-text">触摸屏</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A6%E6%91%B8%E5%B1%8F%E7%AE%80%E4%BB%8B"><span class="nav-number">2.</span> <span class="nav-text">触摸屏简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%B5%E9%98%BB%E5%BC%8F%E8%A7%A6%E6%91%B8%E5%B1%8F"><span class="nav-number">2.1.</span> <span class="nav-text">电阻式触摸屏</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%B5%E5%AE%B9%E5%BC%8F%E8%A7%A6%E6%91%B8%E5%B1%8F"><span class="nav-number">2.2.</span> <span class="nav-text">电容式触摸屏</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%94%B5%E5%AE%B9%E5%BC%8F%E8%A7%A6%E6%91%B8%E5%B1%8F%E5%8E%9F%E7%90%86"><span class="nav-number">2.2.1.</span> <span class="nav-text">电容式触摸屏原理</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A1%A8%E9%9D%A2%E7%94%B5%E5%AE%B9%E5%BC%8F%E7%94%B5%E5%AE%B9%E8%A7%A6%E6%91%B8%E5%B1%8F"><span class="nav-number">2.2.1.1.</span> <span class="nav-text">表面电容式电容触摸屏</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%8A%95%E5%B0%84%E5%BC%8F%E7%94%B5%E5%AE%B9%E8%A7%A6%E6%91%B8%E5%B1%8F"><span class="nav-number">2.2.1.2.</span> <span class="nav-text">投射式电容触摸屏</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F%E6%BB%A4%E6%B3%A2"><span class="nav-number">3.</span> <span class="nav-text">程序滤波</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%B0%86%E8%A7%A6%E6%91%B8%E5%B1%8F%E7%89%A9%E7%90%86%E5%9D%90%E6%A0%87%E8%BD%AC%E6%8D%A2%E4%B8%BA-LCD-%E5%9D%90%E6%A0%87"><span class="nav-number">4.</span> <span class="nav-text">如何将触摸屏物理坐标转换为 LCD 坐标</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="云中锡"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">云中锡</p>
+  <div class="site-description" itemprop="description">心之所向，素履以往</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/94-eric" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;94-eric" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:809594015@qq.com" title="E-Mail → mailto:809594015@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/hear%20the%20wind%20within" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;hear the wind within" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">云中锡</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">29k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">1:13</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <span id="busuanzi_container_site_pv">总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">总访客数<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+<!-- 不蒜子计数初始值纠正 -->
+<script>
+$(document).ready(function() {
+
+    var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+    var countOffset = 20000;  // 初始化首次数据
+
+    function fixCount() {            
+       if (document.getElementById("busuanzi_container_site_pv").style.display != "none")
+        {
+            $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + countOffset); 
+            clearInterval(int);
+        }                  
+        if ($("#busuanzi_container_site_pv").css("display") != "none")
+        {
+            $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + countOffset); // 加上初始数据 
+            clearInterval(int); // 停止检测
+        }  
+    }
+       	
+});
+</script> 
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共21.4k字</span>
+</div>
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='255,0,0' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
+
+</body>
+</html>
+
+<!-- ҳ����С���� -->
+<script type="text/javascript" src="/js/src/love.js"></script>
