@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"94-eric.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="无线终端模式(Wireless Station)连接WiFI插队：仔细想想，用arduino就是调用现成的库函数就可以实现功能，不需要去看底层或者原理。程序内容及命名也简单明了，适合快速上手。 如下图所示，ESP8266可通过WiFi连接无线路由器。这与用手机通过WiFi连接无线路由器的模式相同。   以下示例程序用于演示如何使用NodeMCU以无线终端模式通过WiFi连接无线路由器。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="物联网之无线终端模式">
+<meta property="og:url" content="https://94-eric.github.io/2023/04/23/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E6%97%A0%E7%BA%BF%E7%BB%88%E7%AB%AF%E6%A8%A1%E5%BC%8F/index.html">
+<meta property="og:site_name" content="明珠的个人博客">
+<meta property="og:description" content="无线终端模式(Wireless Station)连接WiFI插队：仔细想想，用arduino就是调用现成的库函数就可以实现功能，不需要去看底层或者原理。程序内容及命名也简单明了，适合快速上手。 如下图所示，ESP8266可通过WiFi连接无线路由器。这与用手机通过WiFi连接无线路由器的模式相同。   以下示例程序用于演示如何使用NodeMCU以无线终端模式通过WiFi连接无线路由器。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://94-eric.github.io/2023/04/23/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E6%97%A0%E7%BA%BF%E7%BB%88%E7%AB%AF%E6%A8%A1%E5%BC%8F/%E6%8D%95%E8%8E%B71.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2023/04/23/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E6%97%A0%E7%BA%BF%E7%BB%88%E7%AB%AF%E6%A8%A1%E5%BC%8F/%E6%8D%95%E8%8E%B72.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2023/04/23/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E6%97%A0%E7%BA%BF%E7%BB%88%E7%AB%AF%E6%A8%A1%E5%BC%8F/%E6%8D%95%E8%8E%B72.PNG">
+<meta property="article:published_time" content="2023-04-23T12:46:42.000Z">
+<meta property="article:modified_time" content="2023-04-25T13:01:20.200Z">
+<meta property="article:author" content="云中锡">
+<meta property="article:tag" content="物联网 esp8266 WIFI 工作模式 线终端模式">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://94-eric.github.io/2023/04/23/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E6%97%A0%E7%BA%BF%E7%BB%88%E7%AB%AF%E6%A8%A1%E5%BC%8F/%E6%8D%95%E8%8E%B71.PNG">
+
+<link rel="canonical" href="https://94-eric.github.io/2023/04/23/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E6%97%A0%E7%BA%BF%E7%BB%88%E7%AB%AF%E6%A8%A1%E5%BC%8F/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>物联网之无线终端模式 | 明珠的个人博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">明珠的个人博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">是谁告诉你，你是赤裸的？</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-resources">
+
+    <a href="/resources/" rel="section"><i class="fa fa-download fa-fw"></i>资源</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/04/23/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E6%97%A0%E7%BA%BF%E7%BB%88%E7%AB%AF%E6%A8%A1%E5%BC%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="云中锡">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="明珠的个人博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          物联网之无线终端模式
+        </h1>
+
+        <div class="post-meta">
+
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-04-23 20:46:42" itemprop="dateCreated datePublished" datetime="2023-04-23T20:46:42+08:00">2023-04-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-04-25 21:01:20" itemprop="dateModified" datetime="2023-04-25T21:01:20+08:00">2023-04-25</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.8k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>10 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="无线终端模式-Wireless-Station"><a href="#无线终端模式-Wireless-Station" class="headerlink" title="无线终端模式(Wireless Station)"></a>无线终端模式(Wireless Station)</h2><h3 id="连接WiFI"><a href="#连接WiFI" class="headerlink" title="连接WiFI"></a>连接WiFI</h3><p>插队：仔细想想，<strong>用arduino就是调用现成的库函数就可以实现功能，不需要去看底层或者原理</strong>。程序内容及命名也简单明了，适合快速上手。</p>
+<p>如下图所示，ESP8266可通过WiFi连接无线路由器。这与用手机通过WiFi连接无线路由器的模式相同。</p>
+<img src="/2023/04/23/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E6%97%A0%E7%BA%BF%E7%BB%88%E7%AB%AF%E6%A8%A1%E5%BC%8F/%E6%8D%95%E8%8E%B71.PNG" class title="图片麋鹿无法显示">
+
+<p>以下示例程序用于演示如何使用NodeMCU以无线终端模式通过WiFi连接无线路由器。<span id="more"></span></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">/*</span><br><span class="line">NodeMCU无线终端模式连接WiFi</span><br><span class="line">By 太极创客（http://www.taichi-maker.com）</span><br><span class="line">2019-03-11</span><br><span class="line"> </span><br><span class="line">本示例程序用于演示如何使用NodeMCU无线终端模式连接WiFi</span><br><span class="line"> </span><br><span class="line">如需获得更多关于如何使用NodeMCU开发物联网的教程和资料信息</span><br><span class="line">请参考太极创客网站（http://www.taichi-maker.com）</span><br><span class="line">并在首页搜索栏中搜索关键字：物联网</span><br><span class="line">*/</span><br><span class="line"> </span><br><span class="line"><span class="string">&quot;#include &lt;ESP8266WiFi.h&gt;        // 本程序使用ESP8266WiFi库</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">const char* ssid     = &quot;</span>taichi-maker<span class="string">&quot;;      // 连接WiFi名（此处使用taichi-maker为示例）</span></span><br><span class="line"><span class="string">                                            // 请将您需要连接的WiFi名填入引号中</span></span><br><span class="line"><span class="string">const char* password = &quot;</span>12345678<span class="string">&quot;;          // 连接WiFi密码（此处使用12345678为示例）</span></span><br><span class="line"><span class="string">                                            // 请将您需要连接的WiFi密码填入引号中</span></span><br><span class="line"><span class="string">                                            </span></span><br><span class="line"><span class="string">void setup() &#123;</span></span><br><span class="line"><span class="string">  Serial.begin(9600);         // 启动串口通讯</span></span><br><span class="line"><span class="string">  </span></span><br><span class="line"><span class="string">  WiFi.begin(ssid, password);                  // 启动网络连接</span></span><br><span class="line"><span class="string">  Serial.print(&quot;</span>Connecting to <span class="string">&quot;);              // 串口监视器输出网络连接信息</span></span><br><span class="line"><span class="string">  Serial.print(ssid); Serial.println(&quot;</span> ...<span class="string">&quot;);  // 告知用户NodeMCU正在尝试WiFi连接</span></span><br><span class="line"><span class="string">  </span></span><br><span class="line"><span class="string">  int i = 0;                                   // 这一段程序语句用于检查WiFi是否连接成功</span></span><br><span class="line"><span class="string">  while (WiFi.status() != WL_CONNECTED) &#123;      // WiFi.status()函数的返回值是由NodeMCU的WiFi连接状态所决定的。 </span></span><br><span class="line"><span class="string">    delay(1000);                               // 如果WiFi连接成功则返回值为WL_CONNECTED                       </span></span><br><span class="line"><span class="string">    Serial.print(i++); Serial.print(&#x27; &#x27;);      // 此处通过While循环让NodeMCU每隔一秒钟检查一次WiFi.status()函数返回值</span></span><br><span class="line"><span class="string">  &#125;                                            // 同时NodeMCU将通过串口监视器输出连接时长读秒。</span></span><br><span class="line"><span class="string">                                               // 这个读秒是通过变量i每隔一秒自加1来实现的。</span></span><br><span class="line"><span class="string">                                               </span></span><br><span class="line"><span class="string">  Serial.println(&quot;</span><span class="string">&quot;);                          // WiFi连接成功后</span></span><br><span class="line"><span class="string">  Serial.println(&quot;</span>Connection established!<span class="string">&quot;);   // NodeMCU将通过串口监视器输出&quot;</span>连接成功<span class="string">&quot;信息。</span></span><br><span class="line"><span class="string">  Serial.print(&quot;</span>IP address:    <span class="string">&quot;);             // 同时还将输出NodeMCU的IP地址。这一功能是通过调用</span></span><br><span class="line"><span class="string">  Serial.println(WiFi.localIP());              // WiFi.localIP()函数来实现的。该函数的返回值即NodeMCU的IP地址。</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">void loop() &#123;                                   </span></span><br><span class="line"><span class="string">&#125;&quot;</span></span><br></pre></td></tr></table></figure>
+<p>在以上程序的控制下，NodeMCU将会连接名称是”taichi-maker”的WiFi网络。当网络连接成功后，可以通过串口监视器看到如下信息。其中最后一行“IP Address”信息就是NodeMCU连接WiFi以后的IP地址了。</p>
+<img src="/2023/04/23/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E6%97%A0%E7%BA%BF%E7%BB%88%E7%AB%AF%E6%A8%A1%E5%BC%8F/%E6%8D%95%E8%8E%B72.PNG" class title="图片麋鹿无法显示">
+
+<p>和上篇文章一样，const定义的WIFI名称和密码用你自己家的即可，连接好WIFI后通过通过调用WiFi.localIP()函数来获取NodeMCU的IP地址。知道了NodeMCU的IP地址，就可以跟连接在这个WIFI的设备进行通信了，从上篇文章我们知道，电脑的ping命令可以进行通信。</p>
+<p>现在咱们整理下整体流程，NodeMCU想要通信，目前只能连接WIFI，此时，所有连接WIFI的设备就分配到了一个IP，按照通信协议，用电脑的ping命令发起通信请求，这时电脑将会向NodeMCU所在的IP地址192.168.149.39发送多个数据包。如果NodeMCU成功接收到了这些数据包，那么它会同样回复几个数据包给电脑。如下：</p>
+<img src="/2023/04/23/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E6%97%A0%E7%BA%BF%E7%BB%88%E7%AB%AF%E6%A8%A1%E5%BC%8F/%E6%8D%95%E8%8E%B72.PNG" class title="图片麋鹿无法显示">
+<p>失败了的话就会提示超时或者找不到主机或者其它非图示信息。</p>
+<h3 id="自动连接最强信号的WiFI"><a href="#自动连接最强信号的WiFI" class="headerlink" title="自动连接最强信号的WiFI"></a>自动连接最强信号的WiFI</h3><p>假如我们的NodeMCU只在一个地方使用，它也就只需要知道一个WiFi网络的连接信息。但是如果NodeMCU需要在多个地方使用，这时候就需要它能存储多个地点的WiFi信息。通过以下示例程序，NodeMCU可以在它所处的网络环境里搜索预先存储好的WiFi。一旦找到预存的WiFi名称，NodeMCU将会使用预存的密码信息尝试连接该WiFi。如果同时找到多个预存WiFi，NodeMCU将会尝试连接信号最强的WiFi。</p>
+<p>示例程序如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">/*</span><br><span class="line">NodeMCU无线终端模式连接WiFi-2</span><br><span class="line">By 太极创客（http://www.taichi-maker.com）</span><br><span class="line">2019-03-11</span><br><span class="line"> </span><br><span class="line">此程序将会控制NodeMCU在当前的网络环境里搜索预先存储好的WiFi。</span><br><span class="line">一旦找到预存的WiFi名称，NodeMCU将会使用预存的密码信息尝试连接该WiFi。</span><br><span class="line">如果同时找到多个预存WiFi，NodeMCU将会尝试连接信号最强的WiFi。</span><br><span class="line"> </span><br><span class="line">如需获得更多关于如何使用NodeMCU开发物联网的教程和资料信息</span><br><span class="line">请参考太极创客网站（http://www.taichi-maker.com）</span><br><span class="line">并在首页搜索栏中搜索关键字：物联网</span><br><span class="line">*/</span><br><span class="line"> </span><br><span class="line"><span class="comment">#include &lt;ESP8266WiFi.h&gt;          // 本程序使用ESP8266WiFi库</span></span><br><span class="line"><span class="comment">#include &lt;ESP8266WiFiMulti.h&gt;   // 本程序使用ESP8266WiFiMulti库</span></span><br><span class="line"> </span><br><span class="line">ESP8266WiFiMulti wifiMulti;     // 建立ESP8266WiFiMulti对象,对象名称是<span class="string">&#x27;wifiMulti&#x27;</span></span><br><span class="line"> </span><br><span class="line">void <span class="function"><span class="title">setup</span></span>() &#123;</span><br><span class="line">  Serial.begin(9600);            // 启动串口通讯</span><br><span class="line"> </span><br><span class="line">//通过addAp函数存储  WiFi名称       WiFi密码</span><br><span class="line">  wifiMulti.addAP(<span class="string">&quot;taichi-maker&quot;</span>, <span class="string">&quot;12345678&quot;</span>);  // 这三条语句通过调用函数addAP来记录3个不同的WiFi网络信息。</span><br><span class="line">  wifiMulti.addAP(<span class="string">&quot;taichi-maker2&quot;</span>, <span class="string">&quot;87654321&quot;</span>); // 这3个WiFi网络名称分别是taichi-maker, taichi-maker2, taichi-maker3。</span><br><span class="line">  wifiMulti.addAP(<span class="string">&quot;taichi-maker3&quot;</span>, <span class="string">&quot;13572468&quot;</span>); // 这3个网络的密码分别是123456789，87654321，13572468。</span><br><span class="line">                                                // 此处WiFi信息只是示例，请在使用时将需要连接的WiFi信息填入相应位置。</span><br><span class="line">                                                // 另外这里只存储了3个WiFi信息，您可以存储更多的WiFi信息在此处。</span><br><span class="line">                                                </span><br><span class="line">  Serial.println(<span class="string">&quot;Connecting ...&quot;</span>);         // 通过串口监视器输出信息告知用户NodeMCU正在尝试连接WiFi</span><br><span class="line">  int i = 0;                                 </span><br><span class="line">  <span class="keyword">while</span> (wifiMulti.run() != WL_CONNECTED) &#123;  // 此处的wifiMulti.run()是重点。通过wifiMulti.run()，NodeMCU将会在当前</span><br><span class="line">    delay(1000);                             // 环境中搜索addAP函数所存储的WiFi。如果搜到多个存储的WiFi那么NodeMCU</span><br><span class="line">    Serial.<span class="built_in">print</span>(<span class="string">&#x27;.&#x27;</span>);                       // 将会连接信号最强的那一个WiFi信号。</span><br><span class="line">  &#125;                                           // 一旦连接WiFI成功，wifiMulti.run()将会返回“WL_CONNECTED”。这也是</span><br><span class="line">                                              // 此处<span class="keyword">while</span>循环判断是否跳出循环的条件。</span><br><span class="line"> </span><br><span class="line">  </span><br><span class="line">  Serial.println(<span class="string">&#x27;\n&#x27;</span>);                     // WiFi连接成功后</span><br><span class="line">  Serial.<span class="built_in">print</span>(<span class="string">&quot;Connected to &quot;</span>);            // NodeMCU将通过串口监视器输出。</span><br><span class="line">  Serial.println(WiFi.SSID());              // 连接的WiFI名称</span><br><span class="line">  Serial.<span class="built_in">print</span>(<span class="string">&quot;IP address:\t&quot;</span>);            // 以及</span><br><span class="line">  Serial.println(WiFi.localIP());           // NodeMCU的IP地址</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">void <span class="function"><span class="title">loop</span></span>() &#123; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%89%A9%E8%81%94%E7%BD%91-esp8266-WIFI-%E5%B7%A5%E4%BD%9C%E6%A8%A1%E5%BC%8F-%E7%BA%BF%E7%BB%88%E7%AB%AF%E6%A8%A1%E5%BC%8F/" rel="tag"># 物联网 esp8266 WIFI 工作模式 线终端模式</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/04/23/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E6%8E%A5%E5%85%A5%E7%82%B9%E6%A8%A1%E5%BC%8F/" rel="prev" title="物联网之接入点模式">
+      <i class="fa fa-chevron-left"></i> 物联网之接入点模式
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/04/25/ESP8266-NodeMCU%E6%9D%A5%E5%AE%9E%E7%8E%B0%E7%BD%91%E9%A1%B5%E6%9C%8D%E5%8A%A1/" rel="next" title="ESP8266-NodeMCU来实现网页服务">
+      ESP8266-NodeMCU来实现网页服务 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC81NzY4OC8zNDE1MQ=="></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%97%A0%E7%BA%BF%E7%BB%88%E7%AB%AF%E6%A8%A1%E5%BC%8F-Wireless-Station"><span class="nav-number">1.</span> <span class="nav-text">无线终端模式(Wireless Station)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5WiFI"><span class="nav-number">1.1.</span> <span class="nav-text">连接WiFI</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E5%8A%A8%E8%BF%9E%E6%8E%A5%E6%9C%80%E5%BC%BA%E4%BF%A1%E5%8F%B7%E7%9A%84WiFI"><span class="nav-number">1.2.</span> <span class="nav-text">自动连接最强信号的WiFI</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="云中锡"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">云中锡</p>
+  <div class="site-description" itemprop="description">心之所向，素履以往</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">27</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/94-eric" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;94-eric" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:809594015@qq.com" title="E-Mail → mailto:809594015@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/hear%20the%20wind%20within" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;hear the wind within" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">云中锡</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">52k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">2:10</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <span id="busuanzi_container_site_pv">总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">总访客数<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+<!-- 不蒜子计数初始值纠正 -->
+<script>
+$(document).ready(function() {
+
+    var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+    var countOffset = 20000;  // 初始化首次数据
+
+    function fixCount() {            
+       if (document.getElementById("busuanzi_container_site_pv").style.display != "none")
+        {
+            $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + countOffset); 
+            clearInterval(int);
+        }                  
+        if ($("#busuanzi_container_site_pv").css("display") != "none")
+        {
+            $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + countOffset); // 加上初始数据 
+            clearInterval(int); // 停止检测
+        }  
+    }
+       	
+});
+</script> 
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共34.8k字</span>
+</div>
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='255,0,0' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
+
+</body>
+</html>
+
+<!-- ҳ����С���� -->
+<script type="text/javascript" src="/js/src/love.js"></script>

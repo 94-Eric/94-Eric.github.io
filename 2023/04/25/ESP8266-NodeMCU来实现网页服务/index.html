@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"94-eric.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="ESP8266生成网页-来自ESP8266的hello网络服务器有很多种类型，它们的功能也十分丰富。通常承担网络服务器工作的设备都是运算能力比较强大的电脑。ESP866-NodeMCU虽然也能实现网络服务器的一些功能，但是毕竟它的运算能力是无法与那些昂贵的服务器电脑相媲美的，因此ESP8266-NodeMCU只能实现一些基本的网络服务功能。不过这些基本的网络服务功能已经足够我们开发物联网项目了。接">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ESP8266-NodeMCU来实现网页服务">
+<meta property="og:url" content="https://94-eric.github.io/2023/04/25/ESP8266-NodeMCU%E6%9D%A5%E5%AE%9E%E7%8E%B0%E7%BD%91%E9%A1%B5%E6%9C%8D%E5%8A%A1/index.html">
+<meta property="og:site_name" content="明珠的个人博客">
+<meta property="og:description" content="ESP8266生成网页-来自ESP8266的hello网络服务器有很多种类型，它们的功能也十分丰富。通常承担网络服务器工作的设备都是运算能力比较强大的电脑。ESP866-NodeMCU虽然也能实现网络服务器的一些功能，但是毕竟它的运算能力是无法与那些昂贵的服务器电脑相媲美的，因此ESP8266-NodeMCU只能实现一些基本的网络服务功能。不过这些基本的网络服务功能已经足够我们开发物联网项目了。接">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://94-eric.github.io/2023/04/25/ESP8266-NodeMCU%E6%9D%A5%E5%AE%9E%E7%8E%B0%E7%BD%91%E9%A1%B5%E6%9C%8D%E5%8A%A1/%E6%8D%95%E8%8E%B71.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2023/04/25/ESP8266-NodeMCU%E6%9D%A5%E5%AE%9E%E7%8E%B0%E7%BD%91%E9%A1%B5%E6%9C%8D%E5%8A%A1/%E6%8D%95%E8%8E%B72.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2023/04/25/ESP8266-NodeMCU%E6%9D%A5%E5%AE%9E%E7%8E%B0%E7%BD%91%E9%A1%B5%E6%9C%8D%E5%8A%A1/%E6%8D%95%E8%8E%B73.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2023/04/25/ESP8266-NodeMCU%E6%9D%A5%E5%AE%9E%E7%8E%B0%E7%BD%91%E9%A1%B5%E6%9C%8D%E5%8A%A1/%E6%8D%95%E8%8E%B74.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2023/04/25/ESP8266-NodeMCU%E6%9D%A5%E5%AE%9E%E7%8E%B0%E7%BD%91%E9%A1%B5%E6%9C%8D%E5%8A%A1/%E6%8D%95%E8%8E%B75.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2023/04/25/ESP8266-NodeMCU%E6%9D%A5%E5%AE%9E%E7%8E%B0%E7%BD%91%E9%A1%B5%E6%9C%8D%E5%8A%A1/%E6%8D%95%E8%8E%B75.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2023/04/25/ESP8266-NodeMCU%E6%9D%A5%E5%AE%9E%E7%8E%B0%E7%BD%91%E9%A1%B5%E6%9C%8D%E5%8A%A1/%E6%8C%96%E6%9C%BA.jpg">
+<meta property="article:published_time" content="2023-04-25T12:58:51.000Z">
+<meta property="article:modified_time" content="2023-04-25T14:43:57.950Z">
+<meta property="article:author" content="云中锡">
+<meta property="article:tag" content="物联网 esp8266 网页">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://94-eric.github.io/2023/04/25/ESP8266-NodeMCU%E6%9D%A5%E5%AE%9E%E7%8E%B0%E7%BD%91%E9%A1%B5%E6%9C%8D%E5%8A%A1/%E6%8D%95%E8%8E%B71.PNG">
+
+<link rel="canonical" href="https://94-eric.github.io/2023/04/25/ESP8266-NodeMCU%E6%9D%A5%E5%AE%9E%E7%8E%B0%E7%BD%91%E9%A1%B5%E6%9C%8D%E5%8A%A1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>ESP8266-NodeMCU来实现网页服务 | 明珠的个人博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">明珠的个人博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">是谁告诉你，你是赤裸的？</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-resources">
+
+    <a href="/resources/" rel="section"><i class="fa fa-download fa-fw"></i>资源</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/04/25/ESP8266-NodeMCU%E6%9D%A5%E5%AE%9E%E7%8E%B0%E7%BD%91%E9%A1%B5%E6%9C%8D%E5%8A%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="云中锡">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="明珠的个人博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ESP8266-NodeMCU来实现网页服务
+        </h1>
+
+        <div class="post-meta">
+
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-04-25 20:58:51 / 修改时间：22:43:57" itemprop="dateCreated datePublished" datetime="2023-04-25T20:58:51+08:00">2023-04-25</time>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>7.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>18 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="ESP8266生成网页-来自ESP8266的hello"><a href="#ESP8266生成网页-来自ESP8266的hello" class="headerlink" title="ESP8266生成网页-来自ESP8266的hello"></a>ESP8266生成网页-来自ESP8266的hello</h2><p>网络服务器有很多种类型，它们的功能也十分丰富。通常承担网络服务器工作的设备都是运算能力比较强大的电脑。ESP866-NodeMCU虽然也能实现网络服务器的一些功能，但是毕竟它的运算能力是无法与那些昂贵的服务器电脑相媲美的，因此ESP8266-NodeMCU只能实现一些基本的网络服务功能。不过这些基本的网络服务功能已经足够我们开发物联网项目了。接下来我们看下如何让ESP8266-NodeMCU来实现网络服务功能(网络服务中的网页服务功能)。</p>
+<p>所谓网页服务就是专门用于网页浏览的服务。这个操作我相信所有看到本文的朋友们都使用过，因为您现在正阅读的这篇文章就是通过网页服务传输到您面前的。</p>
+<p>为了便于理解，我们一起回忆一下在打开这篇文章时曾经历了什么过程。首先，要想访问网站就要在浏览器地址栏输入对应的网站地址如: <a target="_blank" rel="noopener" href="http://www.bilibili.com.当输入完地址并按下回车以后,浏览器会通过dns服务查到b站网站服务器的ip地址.假设b站服务器地址为12.34.56.78.接下来浏览器就会向ip地址12.34.56.78的服务器发送http请求.当网站服务器收到了请求后,会把被请求的网页信息传输给浏览器,然后浏览器就会把收到的网页信息转换成网页显示在浏览器中./">www.bilibili.com。当输入完地址并按下回车以后，浏览器会通过DNS服务查到B站网站服务器的IP地址。假设B站服务器地址为12.34.56.78。接下来浏览器就会向IP地址12.34.56.78的服务器发送http请求。当网站服务器收到了请求后，会把被请求的网页信息传输给浏览器，然后浏览器就会把收到的网页信息转换成网页显示在浏览器中。</a></p>
+<p>为了能够应付来自全世界的粉丝朋友们大量访问，B站网站服务器是一台运算能力很强的计算机。假如<span id="more"></span>这个网站只有自己一个人访问，那么ESP8266-NodeMCU就足够了。下面这个示例程序可以让ESP8266-NodeMCU实现最基本的网页服务功能。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line">/**********************************************************************</span><br><span class="line">项目名称/Project          : 零基础入门学用物联网</span><br><span class="line">程序名称/Program name     : 3_2_1_First_Web_Server</span><br><span class="line">团队/Team                : 太极创客团队 / Taichi-Maker (www.taichi-maker.com)</span><br><span class="line">作者/Author              : CYNO朔</span><br><span class="line">日期/Date（YYYYMMDD）     : 20191107</span><br><span class="line">程序目的/Purpose          : 使用NodeMCU建立基本服务器。用户可通过浏览器使用8266的IP地址</span><br><span class="line">                           访问8266所建立的基本网页（Hello from ESP8266）</span><br><span class="line">-----------------------------------------------------------------------</span><br><span class="line">修订历史/Revision History  </span><br><span class="line">日期/Date    作者/Author      参考号/Ref    修订说明/Revision Description</span><br><span class="line"> </span><br><span class="line">***********************************************************************/</span><br><span class="line"><span class="string">&quot;#include &lt;ESP8266WiFi.h&gt;        // 本程序使用 ESP8266WiFi库</span></span><br><span class="line"><span class="string">#include &lt;ESP8266WiFiMulti.h&gt;   //  ESP8266WiFiMulti库</span></span><br><span class="line"><span class="string">#include &lt;ESP8266WebServer.h&gt;   //  ESP8266WebServer库</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">ESP8266WiFiMulti wifiMulti;     // 建立ESP8266WiFiMulti对象,对象名称是&#x27;wifiMulti&#x27;</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">ESP8266WebServer esp8266_server(80);// 建立ESP8266WebServer对象，对象名称为esp8266_server</span></span><br><span class="line"><span class="string">                                    // 括号中的数字是网路服务器响应http请求的端口号</span></span><br><span class="line"><span class="string">                                    // 网络服务器标准http端口号为80，因此这里使用80为端口号</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">void setup(void)&#123;</span></span><br><span class="line"><span class="string">  Serial.begin(9600);          // 启动串口通讯</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">  //通过addAp函数存储  WiFi名称       WiFi密码</span></span><br><span class="line"><span class="string">  wifiMulti.addAP(&quot;</span>taichi-maker<span class="string">&quot;, &quot;</span>12345678<span class="string">&quot;);  // 这三条语句通过调用函数addAP来记录3个不同的WiFi网络信息。</span></span><br><span class="line"><span class="string">  wifiMulti.addAP(&quot;</span>taichi-maker2<span class="string">&quot;, &quot;</span>87654321<span class="string">&quot;); // 这3个WiFi网络名称分别是taichi-maker, taichi-maker2, taichi-maker3。</span></span><br><span class="line"><span class="string">  wifiMulti.addAP(&quot;</span>taichi-maker3<span class="string">&quot;, &quot;</span>13572468<span class="string">&quot;); // 这3个网络的密码分别是123456789，87654321，13572468。</span></span><br><span class="line"><span class="string">                                                // 此处WiFi信息只是示例，请在使用时将需要连接的WiFi信息填入相应位置。</span></span><br><span class="line"><span class="string">                                                // 另外这里只存储了3个WiFi信息，您可以存储更多的WiFi信息在此处。</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">  int i = 0;                                 </span></span><br><span class="line"><span class="string">  while (wifiMulti.run() != WL_CONNECTED) &#123;  // 此处的wifiMulti.run()是重点。通过wifiMulti.run()，NodeMCU将会在当前</span></span><br><span class="line"><span class="string">    delay(1000);                             // 环境中搜索addAP函数所存储的WiFi。如果搜到多个存储的WiFi那么NodeMCU</span></span><br><span class="line"><span class="string">    Serial.print(i++); Serial.print(&#x27; &#x27;);    // 将会连接信号最强的那一个WiFi信号。</span></span><br><span class="line"><span class="string">  &#125;                                          // 一旦连接WiFI成功，wifiMulti.run()将会返回“WL_CONNECTED”。这也是</span></span><br><span class="line"><span class="string">                                             // 此处while循环判断是否跳出循环的条件。</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">  // WiFi连接成功后将通过串口监视器输出连接成功信息 </span></span><br><span class="line"><span class="string">  Serial.println(&#x27;\n&#x27;);                     // WiFi连接成功后</span></span><br><span class="line"><span class="string">  Serial.print(&quot;</span>Connected to <span class="string">&quot;);            // NodeMCU将通过串口监视器输出。</span></span><br><span class="line"><span class="string">  Serial.println(WiFi.SSID());              // 连接的WiFI名称</span></span><br><span class="line"><span class="string">  Serial.print(&quot;</span>IP address:\t<span class="string">&quot;);            // 以及</span></span><br><span class="line"><span class="string">  Serial.println(WiFi.localIP());           // NodeMCU的IP地址</span></span><br><span class="line"><span class="string">  </span></span><br><span class="line"><span class="string">//--------&quot;</span>启动网络服务功能<span class="string">&quot;程序部分开始-------- //  此部分为程序为本示例程序重点1</span></span><br><span class="line"><span class="string">  esp8266_server.begin();                   //  详细讲解请参见太极创客网站《零基础入门学用物联网》</span></span><br><span class="line"><span class="string">  esp8266_server.on(&quot;</span>/<span class="string">&quot;, handleRoot);       //  第3章-第2节 ESP8266-NodeMCU网络服务器-1</span></span><br><span class="line"><span class="string">  esp8266_server.onNotFound(handleNotFound);        </span></span><br><span class="line"><span class="string">//--------&quot;</span>启动网络服务功能<span class="string">&quot;程序部分结束--------</span></span><br><span class="line"><span class="string">  Serial.println(&quot;</span>HTTP esp8266_server started<span class="string">&quot;);//  告知用户ESP8266网络服务功能已经启动</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">/* 以下函数语句为本示例程序重点3</span></span><br><span class="line"><span class="string">详细讲解请参见太极创客网站《零基础入门学用物联网》</span></span><br><span class="line"><span class="string">第3章-第2节 3_2_1_First_Web_Server 的说明讲解*/  </span></span><br><span class="line"><span class="string">void loop(void)&#123;</span></span><br><span class="line"><span class="string">  esp8266_server.handleClient();     // 处理http服务器访问</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">/* 以下两个函数为本示例程序重点2</span></span><br><span class="line"><span class="string">详细讲解请参见太极创客网站《零基础入门学用物联网》</span></span><br><span class="line"><span class="string">第3章-第2节 3_2_1_First_Web_Server 的说明讲解*/                                                                            </span></span><br><span class="line"><span class="string">void handleRoot() &#123;   //处理网站根目录“/”的访问请求 </span></span><br><span class="line"><span class="string">  esp8266_server.send(200, &quot;</span>text/plain<span class="string">&quot;, &quot;</span>Hello from ESP8266<span class="string">&quot;);   // NodeMCU将调用此函数。</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">// 设置处理404情况的函数&#x27;handleNotFound&#x27;</span></span><br><span class="line"><span class="string">void handleNotFound()&#123;                                        // 当浏览器请求的网络资源无法在服务器找到时，</span></span><br><span class="line"><span class="string">  esp8266_server.send(404, &quot;</span>text/plain<span class="string">&quot;, &quot;</span>404: Not found<span class="string">&quot;);   // NodeMCU将调用此函数。</span></span><br><span class="line"><span class="string">&#125;&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>示例程序上传给NodeMCU以后，启动NodeMCU并且确保它已经成功连接WiFi。接下来打开浏览器，并且在地址栏中输入NodeMCU的IP地址并按下回车。此时在浏览器中将看到“Hello from ESP8266”(如下所示），这就让NodeMCU实现了网络服务功能，因为您这条文字信息正是来自于NodeMCU。换句话说，NodeMCU建立了一个超级迷你的小网站。这个网站只有一个网页。这个网页只有一行文字“Hello from ESP8266”。</p>
+<img src="/2023/04/25/ESP8266-NodeMCU%E6%9D%A5%E5%AE%9E%E7%8E%B0%E7%BD%91%E9%A1%B5%E6%9C%8D%E5%8A%A1/%E6%8D%95%E8%8E%B71.PNG" class title="图片麋鹿无法显示">
+
+<h3 id="启动网络服务功能-部分程序详细讲解"><a href="#启动网络服务功能-部分程序详细讲解" class="headerlink" title="启动网络服务功能-部分程序详细讲解"></a>启动网络服务功能-部分程序详细讲解</h3><img src="/2023/04/25/ESP8266-NodeMCU%E6%9D%A5%E5%AE%9E%E7%8E%B0%E7%BD%91%E9%A1%B5%E6%9C%8D%E5%8A%A1/%E6%8D%95%E8%8E%B72.PNG" class title="图片麋鹿无法显示">
+
+<p>程序第一句esp8266_server.begin()使用了ESP8266WebServer库中的begin函数。这个函数的作用是让ESP8266-NodeMCU来启动网络服务功能。该函数无需任何参数。</p>
+<p>接下来的的语句esp8266_server.on(“&#x2F;“, handleRoot)相对复杂一些。这条语句调用了ESP8266WebServer库中的on函数，该函数的作用是指挥NodeMCU来如何处理浏览器的http请求。我们看到on函数一共有两个参数，第一个参数是字符串”&#x2F;”，第二个参数是一个函数的名称handleRoot。这个handleRoot函数的具体内容，后面会做详细讲解。现在请留意on函数有两个参数，一个是字符串”&#x2F;”，另一个是函数名handleRoot。</p>
+<p>下面来看一下参数”&#x2F;”的作用。我们知道一个网站有很多页面。为了加以区分，这些页面都有各自的名称。对于刚刚在浏览器看到的“Hello from ESP8266”这个页面是NodeMCU服务器中的网站首页。这个网站首页的名称正是”&#x2F;”。目前的ESP8266-NodeMCU服务器中只有一页，因此我们还无法了解如果想要调用其他页面该如何操作。不过请别担心，这个操作后续文章会有的。</p>
+<p>好了，现在请将思绪拉回到我们的NodeMCU程序中来。接下来我们来看on函数的第二个参数。这个参数是handleRoot函数的名字。handlRoot函数的主要作用是告诉NodeMCU该如何生成和发送网站首页给浏览器。不过关于这个handleRoot函数的具体内容，后续的文章中才会做详细讲解。现在我们需要把关注点集中在on函数上。</p>
+<p>最后我们再来完整的看一下这条语句esp8266_server.on(“&#x2F;“, handleRoot)。它的作用就是告诉NodeMCU，当有浏览器请求网站首页时，请执行handlRoot函数来生成网站首页内容然后发送给浏览器。</p>
+<p>讲到这里不知道有没有人感到好奇。我们只是在浏览器地址栏输入了NodeMCU的IP地址，然后就按下了回车。浏览器怎么会知道我们需要的是网站的首页呢。这是浏览器约定俗成的一种操作方法。当我们在地址栏只输入IP地址而没有任何附加地址信息，浏览器就会知道我们是要获取一个网站的首页信息。</p>
+<p>结束了on函数的讲解，我们来继续往下看。下面一条语句esp8266_server.onNotFound(handleNotFound)使用了onNotFound函数。它的作用是指挥NodeMCU在收到无法满足的http请求时应该如何处理。目前Hello from ESP8266网站只有一个页面。假如有人想要浏览网站的其它页面，NodeMCU是无法满足这一请求的。这时候我们可以让NodeMCU答复一个“错误提示”页面给提出请求的浏览器。onNotFound函数就是用来告诉NodeMCU如果出现无法满足的http请求时该如何进行处理。onNotFound函数有一个参数，这个参数的内容是函数handleNotFound的名字。</p>
+<p>OK，到此梳理一下。</p>
+<p>假设现在我们通过浏览器向NodeMCU服务器请求一个名叫“LED”的页面。由于NodeMCU的程序里没有“LED”页面信息，因此需要给浏览器答复一个“错误提示”页面。onNotFound的作用就是告诉NodeMCU在遇到这种无法满足的http请求时，应该执行handleNotFound函数来生成并发送“错误提示”页面给浏览器。</p>
+<p>为了验证这一功能，我们来做一个实验。在浏览器中输入NodMCU的IP地址然后加一个“&#x2F;LED”再回车。比如下图所示，我的NodeMCU的IP地址是192.168.149.39，那么当我在浏览器栏中输入192.168.149.39&#x2F;LED然后回车，就会看到浏览器显示出文字404: Not found。</p>
+<img src="/2023/04/25/ESP8266-NodeMCU%E6%9D%A5%E5%AE%9E%E7%8E%B0%E7%BD%91%E9%A1%B5%E6%9C%8D%E5%8A%A1/%E6%8D%95%E8%8E%B73.PNG" class title="图片麋鹿无法显示">
+
+<p>这可不是找不到网址的正常提示</p>
+<img src="/2023/04/25/ESP8266-NodeMCU%E6%9D%A5%E5%AE%9E%E7%8E%B0%E7%BD%91%E9%A1%B5%E6%9C%8D%E5%8A%A1/%E6%8D%95%E8%8E%B74.PNG" class title="图片麋鹿无法显示">
+
+<p>这里我们所看到的这行文字“404: Not found”正是因为NodeMCU没有名叫“LED”的页面，因此它会使用handleNotFound函数生成并发送给浏览器这个“错误提示”页面。既然讲到这里了，那么我们就来仔细看一看handleNotFound函数的具体内容。</p>
+<img src="/2023/04/25/ESP8266-NodeMCU%E6%9D%A5%E5%AE%9E%E7%8E%B0%E7%BD%91%E9%A1%B5%E6%9C%8D%E5%8A%A1/%E6%8D%95%E8%8E%B75.PNG" class title="图片麋鹿无法显示">
+
+<p>handleNotFound函数只有一条语句： esp8266_server.send(404, “text&#x2F;plain”, “404: Not found”)。这条语句调用了ESP8266WebServer库中的send函数。该函数的作用是生成并且发送http响应信息。也就是说，电脑浏览器所收到的网页信息都是通过send函数生成并且发送的。那么具体这个网页信息是如何生成的呢？这就要仔细看看send函数的几个参数内容了。</p>
+<p>首先我们来看第一个参数404。这个数字在应用层的http响应部分对它做过介绍。404是一个服务器状态码。它的含义是“客户端的请求有错误”。也就是说，浏览器在收到了状态码404后就知道，它所请求的页面在服务器上是不存在的。请留意，这个服务器状态码是专门给浏览器用的。我们是看不到它的。为了让我们也看到页面不存在的出错信息，send函数的最后一个参数使用了一个字符串”404: Not found”。这个字符串的内容才是真正显示在浏览器中供我们阅读的内容。你可以任意的改变这个字符串的内容。</p>
+<p>小结一下：浏览器能够看懂的信息是send函数的第一个参数,它的类型是整数型，它的内容是数字404。而显示在浏览器中的出错信息是一个字符串型的参数。它是send函数的最后一个参数。在我们的示例程序里，它的内容是“404: Not found”。</p>
+<p>send函数还有一个字符串参数“text&#x2F;plain”。它的作用是说明http响应体的信息类型。在这段示例中，我们用“text&#x2F;plain”的原因是要告诉浏览器后面的”404: Not found”为一段纯文本信息。这里当然也可以使用其它类型的信息，后续再讲，先整这个。</p>
+<p>为了更好的理解，对这句esp8266_server.send(404, “text&#x2F;plain”, “404: Not found”)我们再总结一下。</p>
+<p>send函数一共有3个参数。第一个参数404是服务器状态码。第二个参数“text&#x2F;plain”是说明http响应体信息类型。第三个参数“404: Not found”则是响应体的具体信息了。</p>
+<p>细心的读者可能已经发现了。我在上面这段总结文字中指明了响应体这一概念。http响应是分为两部分的。第一部分是响应头，在我们这个示例中，响应头的内容就是404 text&#x2F;plain。而响应体的内容则是404: Not found。</p>
+<p>结束了handleNotFound的讲解我们再来看看示例程序中另一个用于生成和发送首页信息的函数：handleRoot。</p>
+<img src="/2023/04/25/ESP8266-NodeMCU%E6%9D%A5%E5%AE%9E%E7%8E%B0%E7%BD%91%E9%A1%B5%E6%9C%8D%E5%8A%A1/%E6%8D%95%E8%8E%B75.PNG" class title="图片麋鹿无法显示">
+
+<p>这段示例程序与刚刚我们见到的handleNotFound函数非常相似。都是使用send函数生成并且发送http响应信息。</p>
+<p>send函数的第一个参数200，它同样是一个服务器状态码，含义是“成功接收请求，并已完成整个处理过程”。 第二个参数text&#x2F;plain(http响应体信息类型)。最后一个参数”Hello from ESP8266″正是我们在浏览器中看到的首页文字内容。</p>
+<p>最后我们来看一下这段示例程序的第3个重点内容，也就是loop函数中唯一的一条语句esp8266_server.handleClient()。这句程序调用了handleClient函数。它的主要作用之一是检查有没有设备通过网络向NodeMCU发送请求。函数handleClient每次被调用时，NodeMCU都会检查一下是否有人发送http请求。因此需要把它放在loop函数中，从而确保它能经常被调用。假如loop函数里有类似delay一类的函数延迟程序运行，那么这时候就一定要注意了。如果handleClient函数长时间得不到调用，NodeMCU的网络服务会变得很不稳定。因此在使用NodeMCU执行网络服务功能的时候，一定要确保handleClient函数经常得以调用。在这里反复强调这一点是因为这一点非常关键，请务必注意！</p>
+<p>今天就到这了，网页有了内容，就可以添加动作，不同的动作就可以用通信协议识别出来反馈给NodeMCU，就可以实现远程开挖机了…先遥想一下，明天实现网页控制开发板，呵呵，无情点灯大师。</p>
+<img src="/2023/04/25/ESP8266-NodeMCU%E6%9D%A5%E5%AE%9E%E7%8E%B0%E7%BD%91%E9%A1%B5%E6%9C%8D%E5%8A%A1/%E6%8C%96%E6%9C%BA.jpg" class title="图片麋鹿无法显示">
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%89%A9%E8%81%94%E7%BD%91-esp8266-%E7%BD%91%E9%A1%B5/" rel="tag"># 物联网 esp8266 网页</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/04/23/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E6%97%A0%E7%BA%BF%E7%BB%88%E7%AB%AF%E6%A8%A1%E5%BC%8F/" rel="prev" title="物联网之无线终端模式">
+      <i class="fa fa-chevron-left"></i> 物联网之无线终端模式
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC81NzY4OC8zNDE1MQ=="></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#ESP8266%E7%94%9F%E6%88%90%E7%BD%91%E9%A1%B5-%E6%9D%A5%E8%87%AAESP8266%E7%9A%84hello"><span class="nav-number">1.</span> <span class="nav-text">ESP8266生成网页-来自ESP8266的hello</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8%E7%BD%91%E7%BB%9C%E6%9C%8D%E5%8A%A1%E5%8A%9F%E8%83%BD-%E9%83%A8%E5%88%86%E7%A8%8B%E5%BA%8F%E8%AF%A6%E7%BB%86%E8%AE%B2%E8%A7%A3"><span class="nav-number">1.1.</span> <span class="nav-text">启动网络服务功能-部分程序详细讲解</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="云中锡"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">云中锡</p>
+  <div class="site-description" itemprop="description">心之所向，素履以往</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">27</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/94-eric" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;94-eric" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:809594015@qq.com" title="E-Mail → mailto:809594015@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/hear%20the%20wind%20within" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;hear the wind within" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">云中锡</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">52k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">2:10</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <span id="busuanzi_container_site_pv">总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">总访客数<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+<!-- 不蒜子计数初始值纠正 -->
+<script>
+$(document).ready(function() {
+
+    var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+    var countOffset = 20000;  // 初始化首次数据
+
+    function fixCount() {            
+       if (document.getElementById("busuanzi_container_site_pv").style.display != "none")
+        {
+            $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + countOffset); 
+            clearInterval(int);
+        }                  
+        if ($("#busuanzi_container_site_pv").css("display") != "none")
+        {
+            $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + countOffset); // 加上初始数据 
+            clearInterval(int); // 停止检测
+        }  
+    }
+       	
+});
+</script> 
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共34.8k字</span>
+</div>
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='255,0,0' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
+
+</body>
+</html>
+
+<!-- ҳ����С���� -->
+<script type="text/javascript" src="/js/src/love.js"></script>

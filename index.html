@@ -260,6 +260,181 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/04/25/ESP8266-NodeMCU%E6%9D%A5%E5%AE%9E%E7%8E%B0%E7%BD%91%E9%A1%B5%E6%9C%8D%E5%8A%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="云中锡">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="明珠的个人博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/04/25/ESP8266-NodeMCU%E6%9D%A5%E5%AE%9E%E7%8E%B0%E7%BD%91%E9%A1%B5%E6%9C%8D%E5%8A%A1/" class="post-title-link" itemprop="url">ESP8266-NodeMCU来实现网页服务</a>
+        </h2>
+
+        <div class="post-meta">
+
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-04-25 20:58:51 / 修改时间：22:43:57" itemprop="dateCreated datePublished" datetime="2023-04-25T20:58:51+08:00">2023-04-25</time>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>7.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>18 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="ESP8266生成网页-来自ESP8266的hello"><a href="#ESP8266生成网页-来自ESP8266的hello" class="headerlink" title="ESP8266生成网页-来自ESP8266的hello"></a>ESP8266生成网页-来自ESP8266的hello</h2><p>网络服务器有很多种类型，它们的功能也十分丰富。通常承担网络服务器工作的设备都是运算能力比较强大的电脑。ESP866-NodeMCU虽然也能实现网络服务器的一些功能，但是毕竟它的运算能力是无法与那些昂贵的服务器电脑相媲美的，因此ESP8266-NodeMCU只能实现一些基本的网络服务功能。不过这些基本的网络服务功能已经足够我们开发物联网项目了。接下来我们看下如何让ESP8266-NodeMCU来实现网络服务功能(网络服务中的网页服务功能)。</p>
+<p>所谓网页服务就是专门用于网页浏览的服务。这个操作我相信所有看到本文的朋友们都使用过，因为您现在正阅读的这篇文章就是通过网页服务传输到您面前的。</p>
+<p>为了便于理解，我们一起回忆一下在打开这篇文章时曾经历了什么过程。首先，要想访问网站就要在浏览器地址栏输入对应的网站地址如: <a target="_blank" rel="noopener" href="http://www.bilibili.com.当输入完地址并按下回车以后,浏览器会通过dns服务查到b站网站服务器的ip地址.假设b站服务器地址为12.34.56.78.接下来浏览器就会向ip地址12.34.56.78的服务器发送http请求.当网站服务器收到了请求后,会把被请求的网页信息传输给浏览器,然后浏览器就会把收到的网页信息转换成网页显示在浏览器中./">www.bilibili.com。当输入完地址并按下回车以后，浏览器会通过DNS服务查到B站网站服务器的IP地址。假设B站服务器地址为12.34.56.78。接下来浏览器就会向IP地址12.34.56.78的服务器发送http请求。当网站服务器收到了请求后，会把被请求的网页信息传输给浏览器，然后浏览器就会把收到的网页信息转换成网页显示在浏览器中。</a></p>
+<p>为了能够应付来自全世界的粉丝朋友们大量访问，B站网站服务器是一台运算能力很强的计算机。假如</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2023/04/25/ESP8266-NodeMCU%E6%9D%A5%E5%AE%9E%E7%8E%B0%E7%BD%91%E9%A1%B5%E6%9C%8D%E5%8A%A1/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/04/23/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E6%97%A0%E7%BA%BF%E7%BB%88%E7%AB%AF%E6%A8%A1%E5%BC%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="云中锡">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="明珠的个人博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/04/23/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E6%97%A0%E7%BA%BF%E7%BB%88%E7%AB%AF%E6%A8%A1%E5%BC%8F/" class="post-title-link" itemprop="url">物联网之无线终端模式</a>
+        </h2>
+
+        <div class="post-meta">
+
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-04-23 20:46:42" itemprop="dateCreated datePublished" datetime="2023-04-23T20:46:42+08:00">2023-04-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-04-25 21:01:20" itemprop="dateModified" datetime="2023-04-25T21:01:20+08:00">2023-04-25</time>
+              </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.8k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>10 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="无线终端模式-Wireless-Station"><a href="#无线终端模式-Wireless-Station" class="headerlink" title="无线终端模式(Wireless Station)"></a>无线终端模式(Wireless Station)</h2><h3 id="连接WiFI"><a href="#连接WiFI" class="headerlink" title="连接WiFI"></a>连接WiFI</h3><p>插队：仔细想想，<strong>用arduino就是调用现成的库函数就可以实现功能，不需要去看底层或者原理</strong>。程序内容及命名也简单明了，适合快速上手。</p>
+<p>如下图所示，ESP8266可通过WiFi连接无线路由器。这与用手机通过WiFi连接无线路由器的模式相同。</p>
+<img src="/2023/04/23/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E6%97%A0%E7%BA%BF%E7%BB%88%E7%AB%AF%E6%A8%A1%E5%BC%8F/%E6%8D%95%E8%8E%B71.PNG" class title="图片麋鹿无法显示">
+
+<p>以下示例程序用于演示如何使用NodeMCU以无线终端模式通过WiFi连接无线路由器。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2023/04/23/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E6%97%A0%E7%BA%BF%E7%BB%88%E7%AB%AF%E6%A8%A1%E5%BC%8F/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/04/23/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E6%8E%A5%E5%85%A5%E7%82%B9%E6%A8%A1%E5%BC%8F/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -286,7 +461,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2023-04-23 10:34:34 / 修改时间：11:15:36" itemprop="dateCreated datePublished" datetime="2023-04-23T10:34:34+08:00">2023-04-23</time>
+              <time title="创建时间：2023-04-23 10:34:34 / 修改时间：11:23:06" itemprop="dateCreated datePublished" datetime="2023-04-23T10:34:34+08:00">2023-04-23</time>
             </span>
 
           <br>
@@ -295,7 +470,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.9k</span>
+              <span>2k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -1004,188 +1179,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/04/13/DAC%E6%95%B0%E5%AD%97%E8%BD%AC%E6%A8%A1%E6%8B%9F%E4%BF%A1%E5%8F%B7/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="云中锡">
-      <meta itemprop="description" content="心之所向，素履以往">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="明珠的个人博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/04/13/DAC%E6%95%B0%E5%AD%97%E8%BD%AC%E6%A8%A1%E6%8B%9F%E4%BF%A1%E5%8F%B7/" class="post-title-link" itemprop="url">DAC数字转模拟信号</a>
-        </h2>
-
-        <div class="post-meta">
-
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2023-04-13 21:41:37 / 修改时间：22:35:55" itemprop="dateCreated datePublished" datetime="2023-04-13T21:41:37+08:00">2023-04-13</time>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.2k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="DAC简介"><a href="#DAC简介" class="headerlink" title="DAC简介"></a>DAC简介</h2><p>DAC（Digital to analog converter）即数字模拟转换器，它可以将数字信号转换为模拟信号。它的功能与 ADC 相反。在常见的数字信号系统中，大部分传感器信号被转化成电压信号，而 ADC 把电压模拟信号转换成易于计算机存储、处理的数字编码，由计算机处理完成后，再由 DAC 输出电压模拟信号，该电压模拟信号常常用来驱动某些执行器件，使人类易于感知。如音频信号的采集及还原就是这样一个过程。</p>
-<h3 id="DAC工作原理"><a href="#DAC工作原理" class="headerlink" title="DAC工作原理"></a>DAC工作原理</h3><p>Ｔ型电阻网络DAC，如图：</p>
-<img src="/2023/04/13/DAC%E6%95%B0%E5%AD%97%E8%BD%AC%E6%A8%A1%E6%8B%9F%E4%BF%A1%E5%8F%B7/%E6%8D%95%E8%8E%B71.PNG" class title="麋鹿的涂片">
-<p> DAC 输出电压计算公式：V0&#x3D;Vref*z&#x2F;256<br>公式中的 z 表示单片机给的数字量，vref 为参考电压，通常我们是接在系统电源上，即 5V，数值 256 表示 DAC 精度为 8 位。</p>
-<p>DAC 主要由数字寄存器、模拟电子开关、位权网络、求和运算放大器和基准电压源（或恒流源）组成。用存于数字寄存器的数字量的各位数码，分别控制对应位的模拟电子开关，使数码为 1 的位<strong>在位权网络上产生与其位权成正比的电流值</strong>，再由运算放大器对各电流值求和，并转换成电压值。上述的模拟电子开关都分别接着一个分压的器件，比如说电阻。模拟开关的个数取决于 DAC 的精度。那么 N 个电子开关就把基准电压分为N 份（<strong>并不是平均分哦</strong>），而这些开关根据输入的二进制每一位数据对应开启或者关闭，把分压的器件上的电压引入输出电路中。<br><strong>然而</strong>**……….**看下面</p>
-<h2 id="PWM简介"><a href="#PWM简介" class="headerlink" title="PWM简介"></a>PWM简介</h2><p>出于成本考虑，在实际开发应用中，使用最多的还是通过PWM 来模拟DAC输出。<br>PWM 是 Pulse Width Modulation 的缩写，中文意思就是脉冲宽度调制，简称脉宽调制。<br>其应用领域包括测量，通信，功率控制与变换，电动机控制、伺服控制、调光、开关电源，甚至某些音频放大器。<br>好了，PWM能不能形象点描述下，嗯…….<br>首先，<br>一个不知名的老头儿说了…</p>
-<p>只要这个正弦波与t坐标轴围起来的阴影面积相同…</p>
-<p>不管给你什么样形状的电压波形…</p>
-<p>对你产生的效果都是大概一样的…</p>
-<p>打个比方说…</p>
-<p>老板让你三天每天工作8小时…</p>
-<p>或者让你一天工作24小时再休息两天…</p>
-<p>对你产生的苦逼感是一样的…</p>
-<img src="/2023/04/13/DAC%E6%95%B0%E5%AD%97%E8%BD%AC%E6%A8%A1%E6%8B%9F%E4%BF%A1%E5%8F%B7/%E6%8D%95%E8%8E%B72.PNG" class title="麋鹿的涂片">
-
-<p>这样…</p>
-<p>我们就可以把一个正弦波转变成…</p>
-<p>一个个幅值相同…</p>
-<p>宽度不同的小矩形波了…</p>
-<p>这些就是…</p>
-<p>传说中的PWM…</p>
-<img src="/2023/04/13/DAC%E6%95%B0%E5%AD%97%E8%BD%AC%E6%A8%A1%E6%8B%9F%E4%BF%A1%E5%8F%B7/%E6%8D%95%E8%8E%B73.PNG" class title="麋鹿的涂片">
-<img src="/2023/04/13/DAC%E6%95%B0%E5%AD%97%E8%BD%AC%E6%A8%A1%E6%8B%9F%E4%BF%A1%E5%8F%B7/%E6%8D%95%E8%8E%B74.PNG" class title="麋鹿的涂片">
-<h2 id="PWM怎么用"><a href="#PWM怎么用" class="headerlink" title="PWM怎么用"></a>PWM怎么用</h2><p>PWM 的输出其实就是对外输出脉宽可调（即占空比调节）的方波信号，改变PWM 输出信号的占空比即可实现PWM的改变，而占空比其实就是一个周期内高电平时间与周期的比值。频率的话可以使用 51 单片机的定时器确定。</p>
-<h2 id="硬件电路"><a href="#硬件电路" class="headerlink" title="硬件电路"></a>硬件电路</h2><img src="/2023/04/13/DAC%E6%95%B0%E5%AD%97%E8%BD%AC%E6%A8%A1%E6%8B%9F%E4%BF%A1%E5%8F%B7/%E6%8D%95%E8%8E%B75.PNG" class title="麋鹿的涂片">
-<p>又见独立电路…<br>输入信号：PWM 输出控制管脚(任意单片机引脚)接至J50 端子上；输出：DAC1 为 PWM 输出信号，将其连接一个 LED，这样可以通过指示灯的状态直观的反映出 PWM 输出电压值变化。LM358 芯片与这些电容电阻构成了一个<strong>跟随电路，即输入是多少，输出即为多大电压</strong>，输出电压范围是 0-5V。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/04/12/%E5%9B%BE%E7%89%87%E6%B5%8B%E8%AF%95/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="云中锡">
-      <meta itemprop="description" content="心之所向，素履以往">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="明珠的个人博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/04/12/%E5%9B%BE%E7%89%87%E6%B5%8B%E8%AF%95/" class="post-title-link" itemprop="url">图片测试</a>
-        </h2>
-
-        <div class="post-meta">
-
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-04-12 23:32:41" itemprop="dateCreated datePublished" datetime="2023-04-12T23:32:41+08:00">2023-04-12</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-04-13 00:28:17" itemprop="dateModified" datetime="2023-04-13T00:28:17+08:00">2023-04-13</time>
-              </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>47</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>我文章文件为<br>–tupian.md<br>图片目录为<br>–tupian&#x2F;logo.png<br>插入语句为</p>
-
-<p><img src="/Picture1.png" alt="这是代替图片的文字，随便写"><br><img src="/%E9%A3%8E%E6%99%AF.jpg" alt="这是代替图片的文字，随便写"></p>
-
-<img src="/2023/04/12/%E5%9B%BE%E7%89%87%E6%B5%8B%E8%AF%95/%E9%A3%8E%E6%99%AF.jpg" class title="玖涯">
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1257,14 +1250,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-count">27</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-count">24</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1311,12 +1304,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">41k</span>
+    <span title="站点总字数">52k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">1:42</span>
+    <span title="站点阅读时长">2:10</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
@@ -1353,7 +1346,7 @@ $(document).ready(function() {
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共29.3k字</span>
+  <span class="post-count">博客全站共34.8k字</span>
 </div>
         
 <div class="busuanzi-count">
