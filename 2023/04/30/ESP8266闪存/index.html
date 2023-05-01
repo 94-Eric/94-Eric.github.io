@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"94-eric.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="ESP8266闪存文件系统基本操作写完程序后用arduino上传就可以实现控制了，不过，程序传到哪里了？ 每一个ESP8266都配有一个闪存，这个闪存很像是一个小硬盘，我们上传的文件就被存放在这个闪存里。这个闪存的全称是Serial Peripheral Interface Flash File System（SPIFFS）。 除了可以存放上传的程序以外，我们还可以将网页文件或者系统配置文件存放在">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ESP8266闪存">
+<meta property="og:url" content="https://94-eric.github.io/2023/04/30/ESP8266%E9%97%AA%E5%AD%98/index.html">
+<meta property="og:site_name" content="明珠的个人博客">
+<meta property="og:description" content="ESP8266闪存文件系统基本操作写完程序后用arduino上传就可以实现控制了，不过，程序传到哪里了？ 每一个ESP8266都配有一个闪存，这个闪存很像是一个小硬盘，我们上传的文件就被存放在这个闪存里。这个闪存的全称是Serial Peripheral Interface Flash File System（SPIFFS）。 除了可以存放上传的程序以外，我们还可以将网页文件或者系统配置文件存放在">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://94-eric.github.io/2023/04/30/ESP8266%E9%97%AA%E5%AD%98/%E6%8D%95%E8%8E%B71.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2023/04/30/ESP8266%E9%97%AA%E5%AD%98/%E6%8D%95%E8%8E%B72.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2023/04/30/ESP8266%E9%97%AA%E5%AD%98/%E6%8D%95%E8%8E%B73.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2023/04/30/ESP8266%E9%97%AA%E5%AD%98/%E6%8D%95%E8%8E%B74.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2023/04/30/ESP8266%E9%97%AA%E5%AD%98/%E6%8D%95%E8%8E%B75.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2023/04/30/ESP8266%E9%97%AA%E5%AD%98/%E6%8D%95%E8%8E%B76.PNG">
+<meta property="article:published_time" content="2023-04-30T02:59:01.000Z">
+<meta property="article:modified_time" content="2023-05-01T02:48:08.143Z">
+<meta property="article:author" content="云中锡">
+<meta property="article:tag" content="物联网 esp8266 ESP8266闪存">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://94-eric.github.io/2023/04/30/ESP8266%E9%97%AA%E5%AD%98/%E6%8D%95%E8%8E%B71.PNG">
+
+<link rel="canonical" href="https://94-eric.github.io/2023/04/30/ESP8266%E9%97%AA%E5%AD%98/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>ESP8266闪存 | 明珠的个人博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">明珠的个人博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">是谁告诉你，你是赤裸的？</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-resources">
+
+    <a href="/resources/" rel="section"><i class="fa fa-download fa-fw"></i>资源</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/04/30/ESP8266%E9%97%AA%E5%AD%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="云中锡">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="明珠的个人博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ESP8266闪存
+        </h1>
+
+        <div class="post-meta">
+
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-04-30 10:59:01" itemprop="dateCreated datePublished" datetime="2023-04-30T10:59:01+08:00">2023-04-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-05-01 10:48:08" itemprop="dateModified" datetime="2023-05-01T10:48:08+08:00">2023-05-01</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>11k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>28 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="ESP8266闪存文件系统基本操作"><a href="#ESP8266闪存文件系统基本操作" class="headerlink" title="ESP8266闪存文件系统基本操作"></a>ESP8266闪存文件系统基本操作</h2><p>写完程序后用arduino上传就可以实现控制了，不过，程序传到哪里了？</p>
+<p>每一个ESP8266都配有一个闪存，这个闪存很像是一个小硬盘，我们上传的文件就被存放在这个闪存里。这个闪存的全称是Serial Peripheral Interface Flash File System（SPIFFS）。</p>
+<p>除了可以存放上传的程序以外，我们还可以将网页文件或者系统配置文件存放在ESP8266的闪存中。本次我们将利用程序对闪存文件系统（SPIFFS）进行文件读取和修改。</p>
+<p>先上例子</p>
+<h3 id="通过程序向闪存文件系统写入信息"><a href="#通过程序向闪存文件系统写入信息" class="headerlink" title="通过程序向闪存文件系统写入信息"></a>通过程序向闪存文件系统写入信息<span id="more"></span></h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">/**********************************************************************</span><br><span class="line">项目名称/Project           : 零基础入门学用物联网</span><br><span class="line">程序名称/Program name      : esp8266-flash-write</span><br><span class="line">团队/Team                 : 太极创客团队 / Taichi-Maker (www.taichi-maker.com)</span><br><span class="line">作者/Author               : CYNO 朔 </span><br><span class="line">日期/Date（YYYYMMDD）      : 20191109</span><br><span class="line">程序目的/Purpose           : 此程序用于演示如何向NodeMCU的SPIFFS中建立名为</span><br><span class="line">                            notes.txt的文件，程序还将向该文件写入信息。</span><br><span class="line">-----------------------------------------------------------------------</span><br><span class="line">函数说明：</span><br><span class="line">SPIFFS.open(file_name, <span class="string">&quot;w&quot;</span>); </span><br><span class="line">以上函数有两个参数：</span><br><span class="line">第一个参数是被操作的文件名称，本示例中该文件为/notes.txt</span><br><span class="line">第二个参数<span class="string">&quot;w&quot;</span> 代表写入文件信息。（如需了解如何读取信息，请参阅示例程序esp8266-flash-read）</span><br><span class="line">***********************************************************************/</span><br><span class="line"> </span><br><span class="line"><span class="string">&quot;</span></span><br><span class="line"><span class="string">#include &lt;FS.h&gt;  </span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">String file_name = &quot;</span>/taichi-maker/notes.txt<span class="string">&quot;; //被读取的文件位置和名称</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">void setup() &#123;</span></span><br><span class="line"><span class="string">  Serial.begin(9600);</span></span><br><span class="line"><span class="string">  Serial.println(&quot;</span><span class="string">&quot;);</span></span><br><span class="line"><span class="string">  </span></span><br><span class="line"><span class="string">  Serial.println(&quot;</span>SPIFFS format start<span class="string">&quot;);</span></span><br><span class="line"><span class="string">  SPIFFS.format();    // 格式化SPIFFS</span></span><br><span class="line"><span class="string">  Serial.println(&quot;</span>SPIFFS format finish<span class="string">&quot;);</span></span><br><span class="line"><span class="string">  </span></span><br><span class="line"><span class="string">  if(SPIFFS.begin())&#123; // 启动SPIFFS</span></span><br><span class="line"><span class="string">    Serial.println(&quot;</span>SPIFFS Started.<span class="string">&quot;);</span></span><br><span class="line"><span class="string">  &#125; else &#123;</span></span><br><span class="line"><span class="string">    Serial.println(&quot;</span>SPIFFS Failed to Start.<span class="string">&quot;);</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">  </span></span><br><span class="line"><span class="string">  File dataFile = SPIFFS.open(file_name, &quot;</span>w<span class="string">&quot;);// 建立File对象用于向SPIFFS中的file对象（即/notes.txt）写入信息</span></span><br><span class="line"><span class="string">  dataFile.println(&quot;</span>Hello IOT World.<span class="string">&quot;);       // 向dataFile写入字符串信息</span></span><br><span class="line"><span class="string">  dataFile.close();                           // 完成文件写入后关闭文件</span></span><br><span class="line"><span class="string">  Serial.println(&quot;</span>Finished Writing data to SPIFFS<span class="string">&quot;);</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">void loop() &#123;</span></span><br><span class="line"><span class="string">&#125;&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>在使用SPIFFS存储文件以前，我们必须使用#include “FS.h”,如以上程序第18行所示。</p>
+<p>程序第20行，我们建立了一个字符串变量。该变量用于存储文件位置和文件名。其中&#x2F;代表根目录。&#x2F;taichi-maker&#x2F;代表根目录下的taichi-maker目录。notes.txt代表着文件名称。</p>
+<p>程序第27行SPIFFS.format();是对闪存文件系统进行格式化。这很像是我们对u盘进行格式化的操作。无需每次使用闪存文件系统都对它进行格式化操作。这里仅仅是为了演示如何使用SPIFFS.format();。</p>
+<p>程序第30行，SPIFFS.begin()用于启动闪存文件系统。在每次使用闪存文件系统以前都需要执行这一操作。如果闪存文件系统成功启动，该函数的返回值为布尔型，如果成功启动闪存文件形同，则返回真。否则将返回假。</p>
+<p>程序第36行，File dataFile &#x3D; SPIFFS.open(file_name, “w”);这条语句中，open函数可用于对SPIFFS进行操作。该函数共有两个参数。第一个参数file_name是被操作的文件名称，本示例中该文件为&#x2F;taichi-maker&#x2F;notes.txt<br>第二个参数”w”代表此操作为向SPIFFS写入文件信息。请注意：如果文件系统没有&#x2F;taichi-maker&#x2F;notes.txt文件，此操作将会在文件系统中建立该文件。如果文件系统有该文件，则程序将会重新建立该文件，即原有文件信息将会被覆盖。</p>
+<p>程序第37行dataFile.println(“Hello IOT World.”);用于向dataFile文件写入信息。信息内容为“Hello IOT World.”。</p>
+<p>程序第38行dataFile.close();用于关闭dataFile文件。结束文件操作后，应执行此操作。</p>
+<img src="/2023/04/30/ESP8266%E9%97%AA%E5%AD%98/%E6%8D%95%E8%8E%B71.PNG" class title="图片麋鹿无法显示">
+
+
+<h3 id="通过程序从闪存文件系统读取信息"><a href="#通过程序从闪存文件系统读取信息" class="headerlink" title="通过程序从闪存文件系统读取信息"></a>通过程序从闪存文件系统读取信息</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line">/**********************************************************************</span><br><span class="line">项目名称/Project           : 零基础入门学用物联网</span><br><span class="line">程序名称/Program name      : esp8266-flash-read</span><br><span class="line">团队/Team                 : 太极创客团队 / Taichi-Maker (www.taichi-maker.com)</span><br><span class="line">作者/Author               : CYNO 朔</span><br><span class="line">日期/Date（YYYYMMDD）      : 20191109</span><br><span class="line">程序目的/Purpose           : 此程序用于演示如何从NodeMCU的内置SPIFFS中存储的文件notes.txt读取数据。</span><br><span class="line">                           notes.txt 文件内容将会通过串口监视器显示出来供用户确认。</span><br><span class="line">                           注意在使用本程序以前需要先将notes.txt 文件上传到NodeMCU开发板的SPIFFS中</span><br><span class="line">-----------------------------------------------------------------------</span><br><span class="line">修订历史/Revision History</span><br><span class="line">日期/Date    作者/Author      参考号/Ref    修订说明/Revision Description</span><br><span class="line">-----------------------------------------------------------------------</span><br><span class="line">函数说明：</span><br><span class="line">SPIFFS.open(file_name, <span class="string">&quot;r&quot;</span>); </span><br><span class="line">以上SPIFFS函数有两个参数：</span><br><span class="line">第一个参数是被操作的文件名称，本示例中该文件为/notes.txt</span><br><span class="line">第二个参数<span class="string">&quot;r&quot;</span> 代表读取文件信息。（如需了解如何写入信息，请参阅示例程序esp8266-flash-write）</span><br><span class="line">***********************************************************************/</span><br><span class="line"><span class="string">&quot;</span></span><br><span class="line"><span class="string">#include &lt;FS.h&gt;</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">String file_name = &quot;</span>/taichi-maker/notes.txt<span class="string">&quot;;              //被读取的文件位置和名称</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">void setup() &#123;</span></span><br><span class="line"><span class="string">  Serial.begin(9600);</span></span><br><span class="line"><span class="string">  Serial.println(&quot;</span><span class="string">&quot;);</span></span><br><span class="line"><span class="string">  </span></span><br><span class="line"><span class="string">  if(SPIFFS.begin())&#123; // 启动闪存文件系统</span></span><br><span class="line"><span class="string">    Serial.println(&quot;</span>SPIFFS Started.<span class="string">&quot;);</span></span><br><span class="line"><span class="string">  &#125; else &#123;</span></span><br><span class="line"><span class="string">    Serial.println(&quot;</span>SPIFFS Failed to Start.<span class="string">&quot;);</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">  //确认闪存中是否有file_name文件</span></span><br><span class="line"><span class="string">  if (SPIFFS.exists(file_name))&#123;</span></span><br><span class="line"><span class="string">    Serial.print(file_name);</span></span><br><span class="line"><span class="string">    Serial.println(&quot;</span> FOUND.<span class="string">&quot;);</span></span><br><span class="line"><span class="string">  &#125; else &#123;</span></span><br><span class="line"><span class="string">    Serial.print(file_name);</span></span><br><span class="line"><span class="string">    Serial.print(&quot;</span> NOT FOUND.<span class="string">&quot;);</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">  //建立File对象用于从SPIFFS中读取文件</span></span><br><span class="line"><span class="string">  File dataFile = SPIFFS.open(file_name, &quot;</span>r<span class="string">&quot;); </span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">  //读取文件内容并且通过串口监视器输出文件信息</span></span><br><span class="line"><span class="string">  for(int i=0; i&lt;dataFile.size(); i++)&#123;</span></span><br><span class="line"><span class="string">    Serial.print((char)dataFile.read());       </span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">  //完成文件读取后关闭文件</span></span><br><span class="line"><span class="string">  dataFile.close();                           </span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">void loop() &#123;</span></span><br><span class="line"><span class="string">&#125;&quot;</span></span><br></pre></td></tr></table></figure>
+<p>以上程序第36行，SPIFFS.exists(file_name)用于检查闪存文件系统中是否存在file_name文件（注：file_name变量具体信息在本程序第23行）。该函数返回值为布尔型。如果文件存在则返回真，否则将返回假。</p>
+<p>以上程序第45行，File dataFile &#x3D; SPIFFS.open(file_name, “r”);这条语句中，open函数用于对SPIFFS进行操作。该函数共有两个参数。第一个参数file_name是被操作的文件名称，本示例中该文件为&#x2F;taichi-maker&#x2F;notes.txt<br>第二个参数”r”代表此操作为读取文件信息。</p>
+<p>以上程序第48行的for循环语句中，循环条件使用了函数dataFile.size()。该函数将会返回dataFile的大小。循环语句体中，dataFile.read()将会读取dataFile文件内容。每调用一次该函数都会返回dataFile文件中一个字符。再次调用，将会返回下一个字符。以此类推，直到dataFile结尾。通过for循环语句，程序将会依次读取dataFile文件内容，并且将文件内容逐字符输出于串口监视器中。</p>
+<img src="/2023/04/30/ESP8266%E9%97%AA%E5%AD%98/%E6%8D%95%E8%8E%B72.PNG" class title="图片麋鹿无法显示">
+
+
+<h3 id="通过程序向闪存文件系统添加信息"><a href="#通过程序向闪存文件系统添加信息" class="headerlink" title="通过程序向闪存文件系统添加信息"></a>通过程序向闪存文件系统添加信息</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">/**********************************************************************</span><br><span class="line">项目名称/Project           : 零基础入门学用物联网</span><br><span class="line">程序名称/Program name      : esp8266-flash-append</span><br><span class="line">团队/Team                 : 太极创客团队 / Taichi-Maker (www.taichi-maker.com)</span><br><span class="line">作者/Author               : CYNO 朔 </span><br><span class="line">日期/Date（YYYYMMDD）      : 20191109</span><br><span class="line">程序目的/Purpose           : 此程序用于演示如何向NodeMCU的内置SPIFFS中存储的文件</span><br><span class="line">                            notes.txt添加数据。                      </span><br><span class="line">-----------------------------------------------------------------------  </span><br><span class="line">函数说明：</span><br><span class="line">SPIFFS.open(file_name, <span class="string">&quot;a&quot;</span>); </span><br><span class="line">以上SPIFFS函数有两个参数：</span><br><span class="line">第一个参数是被操作的文件名称，本示例中该文件为/notes.txt</span><br><span class="line">第二个参数<span class="string">&quot;a&quot;</span> 代表添加文件信息。（如需了解如何读取信息，请参阅示例程序esp8266-flash-read）</span><br><span class="line">此示例程序所演示的是向SPIFFS中的文件里添加信息。这一操作写入信息有所区别。</span><br><span class="line">添加信息是不会删除文件内原有信息，而是在原有信息后面添加新的信息。</span><br><span class="line">但写入操作（示例 esp8266-flash-write.ino）是将文件内容完全清除，重新写入新信息。    </span><br><span class="line">***********************************************************************/</span><br><span class="line"><span class="string">&quot; </span></span><br><span class="line"><span class="string">#include &lt;FS.h&gt;</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">String file_name = &quot;</span>/taichi-maker/notes.txt<span class="string">&quot;;              //被读取的文件位置和名称</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">void setup() &#123;</span></span><br><span class="line"><span class="string">  Serial.begin(9600);</span></span><br><span class="line"><span class="string">  Serial.println(&quot;</span><span class="string">&quot;);</span></span><br><span class="line"><span class="string">  </span></span><br><span class="line"><span class="string">  if(SPIFFS.begin())&#123; // 启动闪存文件系统</span></span><br><span class="line"><span class="string">    Serial.println(&quot;</span>SPIFFS Started.<span class="string">&quot;);</span></span><br><span class="line"><span class="string">  &#125; else &#123;</span></span><br><span class="line"><span class="string">    Serial.println(&quot;</span>SPIFFS Failed to Start.<span class="string">&quot;);</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">  //确认闪存中是否有file_name文件</span></span><br><span class="line"><span class="string">  if (SPIFFS.exists(file_name))&#123;</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    Serial.print(file_name);</span></span><br><span class="line"><span class="string">    Serial.println(&quot;</span> FOUND.<span class="string">&quot;);</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">    File dataFile = SPIFFS.open(file_name, &quot;</span>a<span class="string">&quot;);// 建立File对象用于向SPIFFS中的file对象（即/notes.txt）写入信息</span></span><br><span class="line"><span class="string">    dataFile.println(&quot;</span>This is Appended Info.<span class="string">&quot;); // 向dataFile添加字符串信息</span></span><br><span class="line"><span class="string">    dataFile.close();                           // 完成文件操作后关闭文件   </span></span><br><span class="line"><span class="string">    Serial.println(&quot;</span>Finished Appending data to SPIFFS<span class="string">&quot;);</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">  &#125; else &#123;</span></span><br><span class="line"><span class="string">    Serial.print(file_name);</span></span><br><span class="line"><span class="string">    Serial.print(&quot;</span> NOT FOUND.<span class="string">&quot;);</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">                        </span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">void loop() &#123;</span></span><br><span class="line"><span class="string">&#125;&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>在以上程序的第40行里，File dataFile &#x3D; SPIFFS.open(file_name, “a”);这条语句中，open函数用于对SPIFFS进行操作。该函数共有两个参数。第一个参数file_name是被操作的文件名称,第二个参数”a”代表向该文件添加信息。请留意，此处的添加信息是不会删除文件内原有信息，而是在原有信息后面添加新的信息。这与单写入操作是有所区别的。写入操作是将文件内容完全清除，重新写入新信息。</p>
+<p>程序的第41行，dataFile.println(“This is Appended Info.”)，此语句作用为向dataFile文件尾部添加双引号中的信息内容，也就是在文件尾部添加“This is Appended Info.”。</p>
+<img src="/2023/04/30/ESP8266%E9%97%AA%E5%AD%98/%E6%8D%95%E8%8E%B73.PNG" class title="图片麋鹿无法显示">
+
+<h3 id="通过程序读取目录内容"><a href="#通过程序读取目录内容" class="headerlink" title="通过程序读取目录内容"></a>通过程序读取目录内容</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">/**********************************************************************</span><br><span class="line">项目名称/Project           : 零基础入门学用物联网</span><br><span class="line">程序名称/Program name      : esp8266-flash-folder-read</span><br><span class="line">团队/Team                 : 太极创客团队 / Taichi-Maker (www.taichi-maker.com)</span><br><span class="line">作者/Author               : CYNO 朔</span><br><span class="line">日期/Date（YYYYMMDD）      : 20191109</span><br><span class="line">程序目的/Purpose           : 此程序用于演示如何从NodeMCU的内置SPIFFS中文件夹里读取文件信息</span><br><span class="line">                           文件夹内容将会通过串口监视器显示出来。</span><br><span class="line">                           </span><br><span class="line">-----------------------------------------------------------------------</span><br><span class="line">修订历史/Revision History</span><br><span class="line">日期/Date    作者/Author      参考号/Ref    修订说明/Revision Description</span><br><span class="line">-----------------------------------------------------------------------</span><br><span class="line">函数说明：</span><br><span class="line">SPIFFS.openDir(folder_name);</span><br><span class="line">以上函数打开指定目录并返回一个目录对象实例。</span><br><span class="line">***********************************************************************/</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line"><span class="comment">#include &lt;FS.h&gt;</span></span><br><span class="line"> </span><br><span class="line">String file_name = <span class="string">&quot;/taichi-maker/myFile.txt&quot;</span>; //被读取的文件位置和名称</span><br><span class="line">String folder_name = <span class="string">&quot;/taichi-maker&quot;</span>;         //被读取的文件夹</span><br><span class="line"> </span><br><span class="line">void <span class="function"><span class="title">setup</span></span>() &#123;</span><br><span class="line">  Serial.begin(9600);</span><br><span class="line">  Serial.println(<span class="string">&quot;&quot;</span>);</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">if</span>(SPIFFS.begin())&#123; // 启动闪存文件系统</span><br><span class="line">    Serial.println(<span class="string">&quot;SPIFFS Started.&quot;</span>);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    Serial.println(<span class="string">&quot;SPIFFS Failed to Start.&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line"> </span><br><span class="line">  File dataFile = SPIFFS.open(file_name, <span class="string">&quot;w&quot;</span>);// 建立File对象用于向SPIFFS中的file对象（即myFile.txt）写入信息</span><br><span class="line">  dataFile.println(<span class="string">&quot;Hello Taichi-Maker.&quot;</span>);    // 向dataFile写入字符串信息</span><br><span class="line">  dataFile.close();                           // 完成文件写入后关闭文件</span><br><span class="line">  Serial.println(F(<span class="string">&quot;Finished Writing data to SPIFFS&quot;</span>));</span><br><span class="line"> </span><br><span class="line">  // 显示目录中文件内容以及文件大小</span><br><span class="line">  Dir <span class="built_in">dir</span> = SPIFFS.openDir(folder_name);  // 建立“目录”对象</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">while</span> (dir.next()) &#123;  // dir.next()用于检查目录中是否还有“下一个文件”</span><br><span class="line">    Serial.println(dir.fileName()); // 输出文件名</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">void <span class="function"><span class="title">loop</span></span>() &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>本程序第23行建立了一个字符串变量。该变量用于存储文件夹名。其中&#x2F;代表根目录。&#x2F;taichi-maker&#x2F;代表根目录下的taichi-maker目录。</p>
+<p>本程序第41行SPIFFS.openDir(folder_name)中的openDir函数函将返回一个“目录”对象并且赋值给dir。此”目录”对象正是folder_name所存储的&#x2F;taichi-maker&#x2F;目录。后续程序对dir的所有操作都是针对&#x2F;taichi-maker&#x2F;所执行的。</p>
+<p>本程序第43行while循环语句的循环条件是dir.next()的返回值。dir.next()函数用于检查dir文件夹内的文件。我们可以想象dir文件夹里有一个指针，每一次调用next函数都会让指针向下挪动一格。每一次挪动一格，如果下一个位置有文件，则返回真。否则将会返回假。因此，while (dir.next())循环语句中的内容会依次显示dir文件夹中的每一个文件的文件名。</p>
+<img src="/2023/04/30/ESP8266%E9%97%AA%E5%AD%98/%E6%8D%95%E8%8E%B74.PNG" class title="图片麋鹿无法显示">
+
+<h3 id="从闪存文件系统中删除文件"><a href="#从闪存文件系统中删除文件" class="headerlink" title="从闪存文件系统中删除文件"></a>从闪存文件系统中删除文件</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">/**********************************************************************</span><br><span class="line">项目名称/Project           : 零基础入门学用物联网</span><br><span class="line">程序名称/Program name      : esp8266-flash-remove</span><br><span class="line">团队/Team                 : 太极创客团队 / Taichi-Maker (www.taichi-maker.com)</span><br><span class="line">作者/Author               : CYNO 朔 </span><br><span class="line">日期/Date（YYYYMMDD）      : 20191109</span><br><span class="line">程序目的/Purpose           : 此程序用于演示如何删除SPIFFS中存储的文件                        </span><br><span class="line">***********************************************************************/</span><br><span class="line"> </span><br><span class="line"><span class="comment">#include &lt;FS.h&gt;</span></span><br><span class="line"> </span><br><span class="line">String file_name = <span class="string">&quot;/taichi-maker/notes.txt&quot;</span>;              //被读取的文件位置和名称</span><br><span class="line"> </span><br><span class="line">void <span class="function"><span class="title">setup</span></span>() &#123;</span><br><span class="line">  Serial.begin(9600);</span><br><span class="line">  Serial.println(<span class="string">&quot;&quot;</span>);</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">if</span>(SPIFFS.begin())&#123; // 启动闪存文件系统</span><br><span class="line">    Serial.println(<span class="string">&quot;SPIFFS Started.&quot;</span>);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    Serial.println(<span class="string">&quot;SPIFFS Failed to Start.&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  //从闪存中删除file_name文件</span><br><span class="line">  <span class="keyword">if</span> (SPIFFS.remove(file_name))&#123;</span><br><span class="line">    </span><br><span class="line">    Serial.<span class="built_in">print</span>(file_name);</span><br><span class="line">    Serial.println(<span class="string">&quot; remove sucess&quot;</span>);</span><br><span class="line">    </span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    Serial.<span class="built_in">print</span>(file_name);</span><br><span class="line">    Serial.println(<span class="string">&quot; remove fail&quot;</span>);</span><br><span class="line">  &#125;                       </span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">void <span class="function"><span class="title">loop</span></span>() &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>以上程序中第25行，通过使用SPIFFS.remove(file_name)将file_name所指代的文件进行了删除操作。另外，SPIFFS.remove(file_name)的返回值为布尔型。如果文件删除执行成功则返回真，否则返回假。</p>
+<img src="/2023/04/30/ESP8266%E9%97%AA%E5%AD%98/%E6%8D%95%E8%8E%B75.PNG" class title="图片麋鹿无法显示">
+
+<p>由于先执行的程序，作者通过再次复位显示的程序监视器，因此看到文件已经被删除，提示fail。</p>
+<h3 id="显示闪存文件系统信息"><a href="#显示闪存文件系统信息" class="headerlink" title="显示闪存文件系统信息"></a>显示闪存文件系统信息</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line">/**********************************************************************</span><br><span class="line">项目名称/Project           : 零基础入门学用物联网</span><br><span class="line">程序名称/Program name      : esp8266-flash-info</span><br><span class="line">团队/Team                 : 太极创客团队 / Taichi-Maker (www.taichi-maker.com)</span><br><span class="line">作者/Author               : CYNO 朔</span><br><span class="line">日期/Date（YYYYMMDD）      : 20200204</span><br><span class="line">程序目的/Purpose           : 此程序用于演示如何使用FSInfo对象来显示闪存文件系统状态</span><br><span class="line">-----------------------------------------------------------------------</span><br><span class="line">修订历史/Revision History</span><br><span class="line">日期/Date    作者/Author      参考号/Ref    修订说明/Revision Description</span><br><span class="line">***********************************************************************/</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line"><span class="comment">#include &lt;FS.h&gt;</span></span><br><span class="line"> </span><br><span class="line">FSInfo fs_info;</span><br><span class="line"> </span><br><span class="line">void <span class="function"><span class="title">setup</span></span>() &#123;</span><br><span class="line">  Serial.begin(9600);</span><br><span class="line"> </span><br><span class="line">  SPIFFS.begin();       //启动SPIFFS</span><br><span class="line">  Serial.println(<span class="string">&quot;&quot;</span>);</span><br><span class="line">  Serial.println(<span class="string">&quot;SPIFFS Started.&quot;</span>);</span><br><span class="line"> </span><br><span class="line">  // 闪存文件系统信息</span><br><span class="line">  SPIFFS.info(fs_info);</span><br><span class="line"> </span><br><span class="line">  // 可用空间总和（单位：字节）</span><br><span class="line">  Serial.<span class="built_in">print</span>(<span class="string">&quot;totalBytes: &quot;</span>);     </span><br><span class="line">  Serial.<span class="built_in">print</span>(fs_info.totalBytes); </span><br><span class="line">  Serial.println(<span class="string">&quot; Bytes&quot;</span>); </span><br><span class="line"> </span><br><span class="line">  // 已用空间（单位：字节）</span><br><span class="line">  Serial.<span class="built_in">print</span>(<span class="string">&quot;usedBytes: &quot;</span>); </span><br><span class="line">  Serial.<span class="built_in">print</span>(fs_info.usedBytes);</span><br><span class="line">  Serial.println(<span class="string">&quot; Bytes&quot;</span>); </span><br><span class="line"> </span><br><span class="line">  // 最大文件名字符限制（含路径和<span class="string">&#x27;\0&#x27;</span>）</span><br><span class="line">  Serial.<span class="built_in">print</span>(<span class="string">&quot;maxPathLength: &quot;</span>); </span><br><span class="line">  Serial.println(fs_info.maxPathLength);</span><br><span class="line"> </span><br><span class="line">  // 最多允许打开文件数量</span><br><span class="line">  Serial.<span class="built_in">print</span>(<span class="string">&quot;maxOpenFiles: &quot;</span>); </span><br><span class="line">  Serial.println(fs_info.maxOpenFiles);</span><br><span class="line"> </span><br><span class="line">  // 存储块大小</span><br><span class="line">  Serial.<span class="built_in">print</span>(<span class="string">&quot;blockSize: &quot;</span>); </span><br><span class="line">  Serial.println(fs_info.blockSize);</span><br><span class="line"> </span><br><span class="line">  // 存储页大小</span><br><span class="line">  Serial.<span class="built_in">print</span>(<span class="string">&quot;pageSize: &quot;</span>);</span><br><span class="line">  Serial.println(fs_info.pageSize);</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">void <span class="function"><span class="title">loop</span></span>() &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<img src="/2023/04/30/ESP8266%E9%97%AA%E5%AD%98/%E6%8D%95%E8%8E%B76.PNG" class title="图片麋鹿无法显示">
+
+<p>以上程序第16行语句FSInfo fs_info;建立了FSInfo 对象，用于存储闪存状态信息。</p>
+<p>以上程序第26行语句SPIFFS.info(fs_info);。通过info函数将闪存状态信息赋给fs_info。后续的程序中，通过一系列语句将闪存状态信息通过串口监视器输出。具体信息内容可参考程序注释部分。</p>
+<p>以上是关于ESP8266闪存文件系统的常用功能介绍。关于ESP8266闪存文件系统的更多操作介绍，请参考Arduino ESP8266官方页面中的介绍部分。该页面可点击以下链接前往。<br><a target="_blank" rel="noopener" href="https://arduino-esp8266.readthedocs.io/en/latest/filesystem.html">ESP8266 Filesystem</a>.</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%89%A9%E8%81%94%E7%BD%91-esp8266-ESP8266%E9%97%AA%E5%AD%98/" rel="tag"># 物联网 esp8266 ESP8266闪存</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/04/30/%E7%BD%91%E9%A1%B5%E6%98%BE%E7%A4%BA%E5%BC%80%E5%8F%91%E6%9D%BF%E5%BC%95%E8%84%9A%E7%8A%B6%E6%80%81/" rel="prev" title="网页显示开发板引脚状态">
+      <i class="fa fa-chevron-left"></i> 网页显示开发板引脚状态
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC81NzY4OC8zNDE1MQ=="></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#ESP8266%E9%97%AA%E5%AD%98%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C"><span class="nav-number">1.</span> <span class="nav-text">ESP8266闪存文件系统基本操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E8%BF%87%E7%A8%8B%E5%BA%8F%E5%90%91%E9%97%AA%E5%AD%98%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E5%86%99%E5%85%A5%E4%BF%A1%E6%81%AF"><span class="nav-number">1.1.</span> <span class="nav-text">通过程序向闪存文件系统写入信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E8%BF%87%E7%A8%8B%E5%BA%8F%E4%BB%8E%E9%97%AA%E5%AD%98%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E8%AF%BB%E5%8F%96%E4%BF%A1%E6%81%AF"><span class="nav-number">1.2.</span> <span class="nav-text">通过程序从闪存文件系统读取信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E8%BF%87%E7%A8%8B%E5%BA%8F%E5%90%91%E9%97%AA%E5%AD%98%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E6%B7%BB%E5%8A%A0%E4%BF%A1%E6%81%AF"><span class="nav-number">1.3.</span> <span class="nav-text">通过程序向闪存文件系统添加信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E8%BF%87%E7%A8%8B%E5%BA%8F%E8%AF%BB%E5%8F%96%E7%9B%AE%E5%BD%95%E5%86%85%E5%AE%B9"><span class="nav-number">1.4.</span> <span class="nav-text">通过程序读取目录内容</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8E%E9%97%AA%E5%AD%98%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E4%B8%AD%E5%88%A0%E9%99%A4%E6%96%87%E4%BB%B6"><span class="nav-number">1.5.</span> <span class="nav-text">从闪存文件系统中删除文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%98%BE%E7%A4%BA%E9%97%AA%E5%AD%98%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E4%BF%A1%E6%81%AF"><span class="nav-number">1.6.</span> <span class="nav-text">显示闪存文件系统信息</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="云中锡"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">云中锡</p>
+  <div class="site-description" itemprop="description">心之所向，素履以往</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">30</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/94-eric" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;94-eric" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:809594015@qq.com" title="E-Mail → mailto:809594015@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/hear%20the%20wind%20within" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;hear the wind within" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">云中锡</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">76k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">3:09</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <span id="busuanzi_container_site_pv">总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">总访客数<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+<!-- 不蒜子计数初始值纠正 -->
+<script>
+$(document).ready(function() {
+
+    var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+    var countOffset = 20000;  // 初始化首次数据
+
+    function fixCount() {            
+       if (document.getElementById("busuanzi_container_site_pv").style.display != "none")
+        {
+            $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + countOffset); 
+            clearInterval(int);
+        }                  
+        if ($("#busuanzi_container_site_pv").css("display") != "none")
+        {
+            $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + countOffset); // 加上初始数据 
+            clearInterval(int); // 停止检测
+        }  
+    }
+       	
+});
+</script> 
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共42.5k字</span>
+</div>
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='255,0,0' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
+
+</body>
+</html>
+
+<!-- ҳ����С���� -->
+<script type="text/javascript" src="/js/src/love.js"></script>
