@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"94-eric.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="了解JSONJSON（JavaScript Object Notation），即JS对象简谱 , 是一种轻量级的数据交换格式。实现客户端与服务器之间的数据交换，当时通用的数据交换语言是XML，但是Douglas crockford觉得xml的生成和解析都太麻烦，所以他提出了一种简化格式，也就是json。相对而言，JSON 简单的语法格式和清晰的层次结构明显要比 XML 容易阅读，并且在数据交换方面">
+<meta property="og:type" content="article">
+<meta property="og:title" content="物联网之JSON解析">
+<meta property="og:url" content="https://94-eric.github.io/2023/06/05/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BJSON%E8%A7%A3%E6%9E%90/index.html">
+<meta property="og:site_name" content="明珠的个人博客">
+<meta property="og:description" content="了解JSONJSON（JavaScript Object Notation），即JS对象简谱 , 是一种轻量级的数据交换格式。实现客户端与服务器之间的数据交换，当时通用的数据交换语言是XML，但是Douglas crockford觉得xml的生成和解析都太麻烦，所以他提出了一种简化格式，也就是json。相对而言，JSON 简单的语法格式和清晰的层次结构明显要比 XML 容易阅读，并且在数据交换方面">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-06-05T11:48:12.000Z">
+<meta property="article:modified_time" content="2023-06-05T12:33:18.396Z">
+<meta property="article:author" content="云中锡">
+<meta property="article:tag" content="物联网 esp8266 JSON 解析">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://94-eric.github.io/2023/06/05/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BJSON%E8%A7%A3%E6%9E%90/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>物联网之JSON解析 | 明珠的个人博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">明珠的个人博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">是谁告诉你，你是赤裸的？</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-resources">
+
+    <a href="/resources/" rel="section"><i class="fa fa-download fa-fw"></i>资源</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/06/05/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BJSON%E8%A7%A3%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="云中锡">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="明珠的个人博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          物联网之JSON解析
+        </h1>
+
+        <div class="post-meta">
+
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-06-05 19:48:12 / 修改时间：20:33:18" itemprop="dateCreated datePublished" datetime="2023-06-05T19:48:12+08:00">2023-06-05</time>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>10 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="了解JSON"><a href="#了解JSON" class="headerlink" title="了解JSON"></a>了解JSON</h2><p>JSON（JavaScript Object Notation），即JS对象简谱 , 是一种轻量级的数据交换格式。<br>实现客户端与服务器之间的数据交换，当时通用的数据交换语言是XML，但是Douglas crockford觉得xml的生成和解析都太麻烦，所以他提出了一种简化格式，也就是json。<br>相对而言，JSON 简单的语法格式和清晰的层次结构明显要比 XML 容易阅读，并且在数据交换方面，由于 JSON 所使用的字符要比 XML 少得多，可以大大得节约传输数据所占用得带宽。</p>
+<h2 id="JSON对象格式"><a href="#JSON对象格式" class="headerlink" title="JSON对象格式"></a>JSON对象格式</h2><p>举个栗子！试着用不同的语言描述一本书（对象）：书名+内容，能够看出JSON在轻量级这块的优势。</p>
+<ul>
+<li><p>Java</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Public class Test &#123;</span><br><span class="line">	public static void <span class="function"><span class="title">main</span></span>() &#123;</span><br><span class="line">		Book b = new Book();</span><br><span class="line">		b.setName(“金苹果”); </span><br><span class="line">		b.setInfo(“种苹果好辛苦”);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">class Book &#123;</span><br><span class="line">	private String name;</span><br><span class="line">	private String info;</span><br><span class="line">	构造方法;</span><br><span class="line">	get/set方法...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>JavaScript</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">var b = new Object();</span><br><span class="line">b.name = <span class="string">&quot;金苹果&quot;</span>; </span><br><span class="line">b.info = <span class="string">&quot;种苹果好辛苦&quot;</span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>XML</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;book&gt;</span><br><span class="line">	&lt;name&gt;金苹果&lt;/name&gt;</span><br><span class="line">	&lt;info&gt;种苹果好辛苦&lt;/info&gt; </span><br><span class="line">&lt;/book&gt;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>JSON</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123; </span><br><span class="line">	<span class="string">&quot;name&quot;</span>:<span class="string">&quot;金苹果&quot;</span>,</span><br><span class="line"> 	<span class="string">&quot;info&quot;</span>:<span class="string">&quot;种苹果好辛苦&quot;</span> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>————————————————<br>以上示例参考：<br>版权声明：本文为CSDN博主「周里奥」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_45005846/article/details/115383576">https://blog.csdn.net/weixin_45005846/article/details/115383576</a></p>
+</li>
+</ul>
+<h2 id="用JSON做什么"><a href="#用JSON做什么" class="headerlink" title="用JSON做什么"></a>用JSON做什么</h2><p>JSON既然是简化格式，那我们想能不能通过某种办法把JSON字符串变成程序里相应定义的对象、实现对数据方便地操作呢？或者我们想把程序里相应定义的对象的信息变成JSON字符串展示给别人看呢？下面引入JSON解析的概念。</p>
+<p>序列化：将程序中的对象快速的转换为 JSON格式的字符串。<br>反序列化：将JSON格式的字符串, 转换为程序中的对象。</p>
+<p>解析JSON格式信息是一个较为繁琐的工作，因此我们将借助解析Arduino – ESP8266平台中解析JSON格式信息的第三方库——ArduionJson库。该库是目前最受好评的解析JSON信息第三方库。其基本信息如下：</p>
+<p>作者：BENOIT BLANCHON<br>官网：<a target="_blank" rel="noopener" href="https://arduinojson.org/">https://arduinojson.org/</a><br>GitHub: <a target="_blank" rel="noopener" href="https://github.com/bblanchon/ArduinoJson">https://github.com/bblanchon/ArduinoJson</a></p>
+<h2 id="JSON解析示例-1：单一对象JSON解析"><a href="#JSON解析示例-1：单一对象JSON解析" class="headerlink" title="JSON解析示例-1：单一对象JSON解析"></a>JSON解析示例-1：单一对象JSON解析</h2><p>以下示例为如何使用ESP8266配合ArduinoJson库来解析只有一个对象的简单JSON信息，该信息如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;name&quot;</span>: <span class="string">&quot;taichi-maker&quot;</span>,</span><br><span class="line">  <span class="string">&quot;number&quot;</span>: 1</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>示例程序：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">/**********************************************************************</span><br><span class="line">项目名称/Project          : 零基础入门学用物联网</span><br><span class="line">程序名称/Program name     : arduinojosn_1_object</span><br><span class="line">团队/Team                : 太极创客团队 / Taichi-Maker (www.taichi-maker.com)</span><br><span class="line">作者/Author              : CYNO朔</span><br><span class="line">日期/Date（YYYYMMDD）     : 20200424</span><br><span class="line">程序目的/Purpose          : </span><br><span class="line">此程序用于演示如何使用arduinojson库解析以下json信息。该json包含一个对象，</span><br><span class="line">对象中有一个数据。</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;name&quot;</span>: <span class="string">&quot;taichi-maker&quot;</span>,</span><br><span class="line">  <span class="string">&quot;number&quot;</span>: 1</span><br><span class="line">&#125;</span><br><span class="line">-----------------------------------------------------------------------</span><br><span class="line">本示例程序为太极创客团队制作的《零基础入门学用物联网》中示例程序。</span><br><span class="line">该教程为对物联网开发感兴趣的朋友所设计和制作。如需了解更多该教程的信息，请参考以下网页：</span><br><span class="line">http://www.taichi-maker.com/homepage/esp8266-nodemcu-iot/</span><br><span class="line">***********************************************************************/</span><br><span class="line"><span class="comment">#include &lt;ArduinoJson.h&gt;</span></span><br><span class="line"> </span><br><span class="line">void <span class="function"><span class="title">setup</span></span>() &#123;</span><br><span class="line">  Serial.begin(9600);</span><br><span class="line">  Serial.println(<span class="string">&quot;&quot;</span>);</span><br><span class="line"> </span><br><span class="line">  // 重点1：DynamicJsonDocument对象</span><br><span class="line">  const size_t capacity = JSON_OBJECT_SIZE(2) + 30;</span><br><span class="line">  DynamicJsonDocument doc(capacity);</span><br><span class="line"> </span><br><span class="line">  // 重点2：即将解析的json文件</span><br><span class="line">  String json = <span class="string">&quot;&#123;\&quot;name\&quot;:\&quot;taichi-maker\&quot;,\&quot;number\&quot;:1&#125;&quot;</span>;</span><br><span class="line">  </span><br><span class="line">  // 重点3：反序列化数据</span><br><span class="line">  deserializeJson(doc, json);</span><br><span class="line"> </span><br><span class="line">  // 重点4：获取解析后的数据信息</span><br><span class="line">  String nameStr = doc[<span class="string">&quot;name&quot;</span>].as&lt;String&gt;();</span><br><span class="line">  int numberInt = doc[<span class="string">&quot;number&quot;</span>].as&lt;int&gt;();</span><br><span class="line"> </span><br><span class="line">  // 通过串口监视器输出解析后的数据信息</span><br><span class="line">  Serial.<span class="built_in">print</span>(<span class="string">&quot;nameStr = &quot;</span>);Serial.println(nameStr);</span><br><span class="line">  Serial.<span class="built_in">print</span>(<span class="string">&quot;numberInt = &quot;</span>);Serial.println(numberInt);</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">void <span class="function"><span class="title">loop</span></span>() &#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="语句讲解"><a href="#语句讲解" class="headerlink" title="语句讲解"></a>语句讲解</h2><p>重点1：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">const size_t capacity = JSON_OBJECT_SIZE(2) + 30;</span><br><span class="line">DynamicJsonDocument doc(capacity);</span><br></pre></td></tr></table></figure>
+<p>这里我们建立了DynamicJsonDocument对象，该对象名称为doc。在建立该对象时需要提供一个参数，也就是括号中的参数capacity。这个capacity参数的作用是告诉ESP8266我们所建立的DynamicJsonDocument对象将要占用多大的内存空间。这个空间大小是由语句const size_t capacity &#x3D; JSON_OBJECT_SIZE(2) + 30;计算出来的。在这里我们回顾一下需要解析的JSON信息内容如下所示：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;name&quot;</span>: <span class="string">&quot;taichi-maker&quot;</span>,</span><br><span class="line">  <span class="string">&quot;number&quot;</span>: 1</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们可以看到，以上JSON信息中包含一个对象，该对象含有两个数据。因此在计算DynamicJsonDocument对象占用空间大小时，使用了JSON_OBJECT_SIZE(2)这条指令。其中指令括号中的2即代表对象包含有两个数据。</p>
+<p>再看一个例子，假设我们即将解析的JSON如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;name&quot;</span>: <span class="string">&quot;taichi-maker&quot;</span>,</span><br><span class="line">  <span class="string">&quot;url&quot;</span>: <span class="string">&quot;www.taichi-maker.com&quot;</span>,</span><br><span class="line">  <span class="string">&quot;number&quot;</span>: 1</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>以上JSON对象中包含有3个数据。在计算解析它所需要占用的内存大小时，我们将要使用语句:const size_t capacity &#x3D; JSON_OBJECT_SIZE(3) + 60;<br>在以上语句中除了JSON_OBJECT_SIZE指令以外还使用+ 60来额外增加数值。这些额外增加的数值是由于ArduinoJson库在解析信息时，需要额外的空间来复制JSON信息。但是具体这个额外增加的数值是多少呢，先把这个问题留在心里，后面讲解。</p>
+<p>重点2：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">String json = <span class="string">&quot;&#123;\&quot;name\&quot;:\&quot;taichi-maker\&quot;,\&quot;number\&quot;:1&#125;&quot;</span>;</span><br></pre></td></tr></table></figure>
+<p>这条语句的作用是建立字符串变量，改变里用于存储需要解析的JSON信息。</p>
+<p>重点3：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">deserializeJson(doc, json);</span><br></pre></td></tr></table></figure>
+<p>这部分语句的作用是使用deserializeJson来对JSON文件进行解析。其中第一个参数是我们重点1讲解的DynamicJsonDocument对象,第二个参数是重点2讲解的json字符串。</p>
+<p>重点4：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">String nameStr = doc[<span class="string">&quot;name&quot;</span>].as();</span><br><span class="line">int numberInt = doc[<span class="string">&quot;number&quot;</span>].as();</span><br></pre></td></tr></table></figure>
+<p>这两条语句用于获取解析后的JSON信息，其中doc[“name”].as将会返回“name”的值。这条语句中.as将会让“name”的值以字符串的形式返回。</p>
+<p>另一条语句中doc[“number”].as()自然就是以整数形式来返回”number”的数据值。</p>
+<p>TBC</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%89%A9%E8%81%94%E7%BD%91-esp8266-JSON-%E8%A7%A3%E6%9E%90/" rel="tag"># 物联网 esp8266 JSON 解析</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/05/25/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BJSON/" rel="prev" title="物联网之JSON">
+      <i class="fa fa-chevron-left"></i> 物联网之JSON
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC81NzY4OC8zNDE1MQ=="></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%86%E8%A7%A3JSON"><span class="nav-number">1.</span> <span class="nav-text">了解JSON</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JSON%E5%AF%B9%E8%B1%A1%E6%A0%BC%E5%BC%8F"><span class="nav-number">2.</span> <span class="nav-text">JSON对象格式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%A8JSON%E5%81%9A%E4%BB%80%E4%B9%88"><span class="nav-number">3.</span> <span class="nav-text">用JSON做什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JSON%E8%A7%A3%E6%9E%90%E7%A4%BA%E4%BE%8B-1%EF%BC%9A%E5%8D%95%E4%B8%80%E5%AF%B9%E8%B1%A1JSON%E8%A7%A3%E6%9E%90"><span class="nav-number">4.</span> <span class="nav-text">JSON解析示例-1：单一对象JSON解析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%AD%E5%8F%A5%E8%AE%B2%E8%A7%A3"><span class="nav-number">5.</span> <span class="nav-text">语句讲解</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="云中锡"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">云中锡</p>
+  <div class="site-description" itemprop="description">心之所向，素履以往</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">35</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/94-eric" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;94-eric" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:809594015@qq.com" title="E-Mail → mailto:809594015@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/hear%20the%20wind%20within" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;hear the wind within" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">云中锡</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">90k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">3:45</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <span id="busuanzi_container_site_pv">总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">总访客数<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+<!-- 不蒜子计数初始值纠正 -->
+<script>
+$(document).ready(function() {
+
+    var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+    var countOffset = 20000;  // 初始化首次数据
+
+    function fixCount() {            
+       if (document.getElementById("busuanzi_container_site_pv").style.display != "none")
+        {
+            $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + countOffset); 
+            clearInterval(int);
+        }                  
+        if ($("#busuanzi_container_site_pv").css("display") != "none")
+        {
+            $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + countOffset); // 加上初始数据 
+            clearInterval(int); // 停止检测
+        }  
+    }
+       	
+});
+</script> 
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共47.5k字</span>
+</div>
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='255,0,0' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
+
+</body>
+</html>
+
+<!-- ҳ����С���� -->
+<script type="text/javascript" src="/js/src/love.js"></script>
