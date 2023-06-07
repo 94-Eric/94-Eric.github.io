@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"94-eric.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="网络客户端简介在我们上网过程中，经常使用网页浏览器来浏览网站信息。在这一场景中，我们的网站浏览器就是一个网络客户端。网络客户端的主要功能就是向服务器发送网络请求。服务器在接收到客户端请求后会将请求的信息回复给客户端。 接下来我们使用ESP8266-NodeMCU开发板扮演网络客户端的角色，从而向网络服务器发送HTTP请求以获取服务器响应信息。   ESP8266-Arduino库中有两个库用于控制">
+<meta property="og:type" content="article">
+<meta property="og:title" content="物联网之网络客户端基本操作">
+<meta property="og:url" content="https://94-eric.github.io/2023/06/07/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E7%BD%91%E7%BB%9C%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/index.html">
+<meta property="og:site_name" content="明珠的个人博客">
+<meta property="og:description" content="网络客户端简介在我们上网过程中，经常使用网页浏览器来浏览网站信息。在这一场景中，我们的网站浏览器就是一个网络客户端。网络客户端的主要功能就是向服务器发送网络请求。服务器在接收到客户端请求后会将请求的信息回复给客户端。 接下来我们使用ESP8266-NodeMCU开发板扮演网络客户端的角色，从而向网络服务器发送HTTP请求以获取服务器响应信息。   ESP8266-Arduino库中有两个库用于控制">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://94-eric.github.io/2023/06/07/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E7%BD%91%E7%BB%9C%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/%E6%8D%95%E8%8E%B71.PNG">
+<meta property="article:published_time" content="2023-06-07T13:40:53.000Z">
+<meta property="article:modified_time" content="2023-06-07T15:21:33.739Z">
+<meta property="article:author" content="云中锡">
+<meta property="article:tag" content="物联网 esp8266 网络客户端">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://94-eric.github.io/2023/06/07/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E7%BD%91%E7%BB%9C%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/%E6%8D%95%E8%8E%B71.PNG">
+
+<link rel="canonical" href="https://94-eric.github.io/2023/06/07/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E7%BD%91%E7%BB%9C%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>物联网之网络客户端基本操作 | 明珠的个人博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">明珠的个人博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">是谁告诉你，你是赤裸的？</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-resources">
+
+    <a href="/resources/" rel="section"><i class="fa fa-download fa-fw"></i>资源</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/06/07/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E7%BD%91%E7%BB%9C%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="云中锡">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="明珠的个人博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          物联网之网络客户端基本操作
+        </h1>
+
+        <div class="post-meta">
+
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-06-07 21:40:53 / 修改时间：23:21:33" itemprop="dateCreated datePublished" datetime="2023-06-07T21:40:53+08:00">2023-06-07</time>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>8 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="网络客户端简介"><a href="#网络客户端简介" class="headerlink" title="网络客户端简介"></a>网络客户端简介</h2><p>在我们上网过程中，经常使用网页浏览器来浏览网站信息。在这一场景中，我们的网站浏览器就是一个网络客户端。网络客户端的主要功能就是向服务器发送网络请求。服务器在接收到客户端请求后会将请求的信息回复给客户端。</p>
+<p>接下来我们使用ESP8266-NodeMCU开发板扮演网络客户端的角色，从而向网络服务器发送HTTP请求以获取服务器响应信息。</p>
+<img src="/2023/06/07/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E7%BD%91%E7%BB%9C%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/%E6%8D%95%E8%8E%B71.PNG" class title="图片麋鹿无法显示">
+
+<p>ESP8266-Arduino库中有两个库用于控制ESP8266与网络服务器进行通讯。他们是WiFiClient库和ESP8266HTTPClient库。</p>
+<p>这两个库虽然功能相似，但是他们却是截然不同的两个库。ESP8266HTTPClient库相对简单易用。该库的库函数可以自动生成客户端请求信息并解析服务器响应信息。但正是由于该库的库函数为我们做了所有底层工作，这就导致该库不如WiFiclient库灵活。假如我们需要用ESP8266建立自定义客户端请求信息时，就要用WiFiClient库来实现了。另外WiFiClient库在解析服务器响应信息时可以使用丰富的STREAM类函数，这也为我们提供了很多便利。</p>
+<p>因此，在我们使用ESP8266开发项目时，更多的时候是使用WiFiClient库来实现物联网通讯功能。换句话说，我个人认为WiFiClient库的重要性和实用性要高于ESP8266HTTPClient库。</p>
+<p>以上描述有些抽象，接下来我们看两个简单示例。这两个示例的功能是相同的。都是通过ESP8266通过互联网向网络服务器发送请求并且将将网站服务器响应的信息输出在屏幕中。不同的是，示例一使用了ESP8266HTTPClient库来实现这一操作，示例二使用了WiFiClient库实现。<span id="more"></span></p>
+<h2 id="示例1-使用ESP8266HTTPClient库实现网络通讯"><a href="#示例1-使用ESP8266HTTPClient库实现网络通讯" class="headerlink" title="示例1. 使用ESP8266HTTPClient库实现网络通讯"></a>示例1. 使用ESP8266HTTPClient库实现网络通讯</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br></pre></td><td class="code"><pre><span class="line">/**********************************************************************</span><br><span class="line">  项目名称/Project          : 零基础入门学用物联网</span><br><span class="line">  程序名称/Program name     : HTTPClient_request_basic</span><br><span class="line">  团队/Team                : 太极创客团队 / Taichi-Maker (www.taichi-maker.com)</span><br><span class="line">  作者/Author              : Dapenson</span><br><span class="line">  日期/Date（YYYYMMDD）     : 20200325</span><br><span class="line">  程序目的/Purpose          :</span><br><span class="line">  此程序用于演示如何使用ESP8266来向www.example.com网站服务器发送HTTP请求并通过串口</span><br><span class="line">  监视器将网站服务器响应信息通过串口监视器显示出来。</span><br><span class="line">  -----------------------------------------------------------------------</span><br><span class="line">  修订历史/Revision History  </span><br><span class="line">  日期/Date    作者/Author      参考号/Ref    修订说明/Revision Description</span><br><span class="line">  20200411      CYNO朔           001        将请求服务器改为www.example.com</span><br><span class="line">  -----------------------------------------------------------------------</span><br><span class="line">  本示例程序为太极创客团队制作的《零基础入门学用物联网》中示例程序。</span><br><span class="line">  该教程为对物联网开发感兴趣的朋友所设计和制作。如需了解更多该教程的信息，请参考以下网页：</span><br><span class="line">  http://www.taichi-maker.com/homepage/esp8266-nodemcu-iot/iot-c/esp8266-nodemcu-web-client/http-request/</span><br><span class="line">***********************************************************************/</span><br><span class="line"><span class="comment">#include &lt;ESP8266WiFi.h&gt;</span></span><br><span class="line"><span class="comment">#include &lt;ESP8266HTTPClient.h&gt;</span></span><br><span class="line"> </span><br><span class="line">// 测试HTTP请求用的URL。注意网址前面必须添加<span class="string">&quot;http://&quot;</span></span><br><span class="line"><span class="comment">#define URL &quot;http://www.example.com&quot;</span></span><br><span class="line"> </span><br><span class="line">// 设置wifi接入信息(请根据您的WiFi信息进行修改)</span><br><span class="line">const char* ssid = <span class="string">&quot;taichimaker&quot;</span>;</span><br><span class="line">const char* password = <span class="string">&quot;12345678&quot;</span>;</span><br><span class="line"> </span><br><span class="line">void <span class="function"><span class="title">setup</span></span>() &#123;</span><br><span class="line">  //初始化串口设置</span><br><span class="line">  Serial.begin(9600);</span><br><span class="line"> </span><br><span class="line">  //设置ESP8266工作模式为无线终端模式</span><br><span class="line">  WiFi.mode(WIFI_STA);</span><br><span class="line"> </span><br><span class="line">  //开始连接wifi</span><br><span class="line">  WiFi.begin(ssid, password);</span><br><span class="line"> </span><br><span class="line">  //等待WiFi连接,连接成功打印IP</span><br><span class="line">  <span class="keyword">while</span> (WiFi.status() != WL_CONNECTED) &#123;</span><br><span class="line">    delay(1000);</span><br><span class="line">    Serial.<span class="built_in">print</span>(<span class="string">&quot;.&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  Serial.println(<span class="string">&quot;&quot;</span>);</span><br><span class="line">  Serial.<span class="built_in">print</span>(<span class="string">&quot;WiFi Connected!&quot;</span>);</span><br><span class="line">  </span><br><span class="line">  httpClientRequest();  </span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">void <span class="function"><span class="title">loop</span></span>() &#123;&#125;</span><br><span class="line"> </span><br><span class="line">// 发送HTTP请求并且将服务器响应通过串口输出</span><br><span class="line">void <span class="function"><span class="title">httpClientRequest</span></span>()&#123;</span><br><span class="line"> </span><br><span class="line">  //重点1 创建 HTTPClient 对象</span><br><span class="line">  HTTPClient httpClient;</span><br><span class="line"> </span><br><span class="line">  //重点2 通过begin函数配置请求地址。此处也可以不使用端口号和PATH而单纯的</span><br><span class="line">  httpClient.begin(URL); </span><br><span class="line">  Serial.<span class="built_in">print</span>(<span class="string">&quot;URL: &quot;</span>); Serial.println(URL);</span><br><span class="line"> </span><br><span class="line">  //重点3 通过GET函数启动连接并发送HTTP请求</span><br><span class="line">  int httpCode = httpClient.GET();</span><br><span class="line">  Serial.<span class="built_in">print</span>(<span class="string">&quot;Send GET request to URL: &quot;</span>);</span><br><span class="line">  Serial.println(URL);</span><br><span class="line">  </span><br><span class="line">  //重点4. 如果服务器响应HTTP_CODE_OK(200)则从服务器获取响应体信息并通过串口输出</span><br><span class="line">  //如果服务器不响应HTTP_CODE_OK(200)则将服务器响应状态码通过串口输出</span><br><span class="line">  <span class="keyword">if</span> (httpCode == HTTP_CODE_OK) &#123;</span><br><span class="line">    // 使用getString函数获取服务器响应体内容</span><br><span class="line">    String responsePayload = httpClient.getString();</span><br><span class="line">    Serial.println(<span class="string">&quot;Server Response Payload: &quot;</span>);</span><br><span class="line">    Serial.println(responsePayload);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    Serial.println(<span class="string">&quot;Server Respose Code：&quot;</span>);</span><br><span class="line">    Serial.println(httpCode);</span><br><span class="line">  &#125;</span><br><span class="line"> </span><br><span class="line">  //重点5. 关闭ESP8266与服务器连接</span><br><span class="line">  httpClient.end();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="程序重点讲解"><a href="#程序重点讲解" class="headerlink" title="程序重点讲解"></a>程序重点讲解</h2><p>重点1. 声明HTTPClient对象，对象名称httpClient。后续程序中，我们将使用对象httpClient控制ESP8266的网络通讯。</p>
+<p>TBC</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%89%A9%E8%81%94%E7%BD%91-esp8266-%E7%BD%91%E7%BB%9C%E5%AE%A2%E6%88%B7%E7%AB%AF/" rel="tag"># 物联网 esp8266 网络客户端</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/06/06/Markdown%E5%AE%9E%E7%8E%B0%E7%82%B9%E5%87%BB%E9%93%BE%E6%8E%A5%E4%B8%8B%E8%BD%BD%E6%96%87%E4%BB%B6/" rel="prev" title="Markdown实现点击链接下载文件">
+      <i class="fa fa-chevron-left"></i> Markdown实现点击链接下载文件
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC81NzY4OC8zNDE1MQ=="></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E5%AE%A2%E6%88%B7%E7%AB%AF%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">网络客户端简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B1-%E4%BD%BF%E7%94%A8ESP8266HTTPClient%E5%BA%93%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%BB%9C%E9%80%9A%E8%AE%AF"><span class="nav-number">2.</span> <span class="nav-text">示例1. 使用ESP8266HTTPClient库实现网络通讯</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F%E9%87%8D%E7%82%B9%E8%AE%B2%E8%A7%A3"><span class="nav-number">3.</span> <span class="nav-text">程序重点讲解</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="云中锡"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">云中锡</p>
+  <div class="site-description" itemprop="description">心之所向，素履以往</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">37</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/94-eric" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;94-eric" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:809594015@qq.com" title="E-Mail → mailto:809594015@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/hear%20the%20wind%20within" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;hear the wind within" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">云中锡</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">102k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">4:15</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <span id="busuanzi_container_site_pv">总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">总访客数<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+<!-- 不蒜子计数初始值纠正 -->
+<script>
+$(document).ready(function() {
+
+    var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+    var countOffset = 20000;  // 初始化首次数据
+
+    function fixCount() {            
+       if (document.getElementById("busuanzi_container_site_pv").style.display != "none")
+        {
+            $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + countOffset); 
+            clearInterval(int);
+        }                  
+        if ($("#busuanzi_container_site_pv").css("display") != "none")
+        {
+            $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + countOffset); // 加上初始数据 
+            clearInterval(int); // 停止检测
+        }  
+    }
+       	
+});
+</script> 
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共51.4k字</span>
+</div>
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='255,0,0' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
+
+</body>
+</html>
+
+<!-- ҳ����С���� -->
+<script type="text/javascript" src="/js/src/love.js"></script>
