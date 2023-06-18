@@ -260,6 +260,105 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/06/11/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%90%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%8F%91%E9%80%81%E4%BF%A1%E6%81%AF/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="云中锡">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="明珠的个人博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/06/11/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%90%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%8F%91%E9%80%81%E4%BF%A1%E6%81%AF/" class="post-title-link" itemprop="url">物联网之客户端向服务器发送信息</a>
+        </h2>
+
+        <div class="post-meta">
+
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-06-11 13:07:36" itemprop="dateCreated datePublished" datetime="2023-06-11T13:07:36+08:00">2023-06-11</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-06-18 10:26:59" itemprop="dateModified" datetime="2023-06-18T10:26:59+08:00">2023-06-18</time>
+              </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>6.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>17 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="因为买的一个板子硬件有问题无法烧录，例图下周放"><a href="#因为买的一个板子硬件有问题无法烧录，例图下周放" class="headerlink" title="因为买的一个板子硬件有问题无法烧录，例图下周放"></a>因为买的一个板子硬件有问题无法烧录，例图下周放</h2><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>ESP8266开发板以网络客户端的角色向服务器发送HTTP请求，并且获取何处理服务器响应信息。通过这一操作，我们可以实现ESP8266开发板间的物联网数据通信。</p>
+<img src="/2023/06/11/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%90%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%8F%91%E9%80%81%E4%BF%A1%E6%81%AF/%E6%8D%95%E8%8E%B71.PNG" class title="图片麋鹿无法显示">
+<p>如上图所示，接下来我们将需要两块ESP8266-NodeMCU开发板。其中一块作为服务器，另一块作为客户端。</p>
+<h2 id="使用ESP8266客户端向ESP8266服务器发送数据"><a href="#使用ESP8266客户端向ESP8266服务器发送数据" class="headerlink" title="使用ESP8266客户端向ESP8266服务器发送数据"></a>使用ESP8266客户端向ESP8266服务器发送数据</h2><p>先上栗子。在这个示例中，ESP8266客户端将会通过HTTP协议向ESP8266服务器发送信息。在运行过程中，客户端ESP8266将会实时检测板上的按键状态，并且把按键状态发送给服务器。服务器在接收到客户端按键状态后，可以根据客户端按键状态来控制服务器端板上的LED点亮和熄灭。最终实现的效果是，我们可以通过客户端ESP8266开发板上的按键来“遥控”服务器上的LED点亮和熄灭。</p>
+<p><strong>注意，服务器端和客户端ESP8266必须连接同一WiFi网络，方可实现数据通讯。</strong></p>
+<h3 id="服务器端程序："><a href="#服务器端程序：" class="headerlink" title="服务器端程序："></a>服务器端程序：</h3><ul>
+<li>接收客户端发来的http请求并且解析信息中的数据信息</li>
+<li>将解析的数据信息通过串口监视器显示供用户查看</li>
+<li>将解析的客户端按键状态信息用于控制服务器端板上LED的点亮和熄灭</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br></pre></td><td class="code"><pre><span class="line">/**********************************************************************</span><br><span class="line">项目名称/Project          : 零基础入门学用物联网</span><br><span class="line">程序名称/Program name     : csd_server</span><br><span class="line">团队/Team                : 太极创客团队 / Taichi-Maker (www.taichi-maker.com)</span><br><span class="line">作者/Author              : CYNO朔</span><br><span class="line">日期/Date（YYYYMMDD）     : 20200228</span><br><span class="line">程序目的/Purpose          : </span><br><span class="line">演示如何实现两个NodeMCU间通过WiFi进行通讯。两台NodeMCU一个以服务器模式运行，</span><br><span class="line">一个以客户端模式运行。</span><br><span class="line"> </span><br><span class="line">此代码为服务器端代码。此代码主要功能：</span><br><span class="line">    - 接收客户端发来的http请求</span><br><span class="line">    - 解析客户端请求中的数据信息</span><br><span class="line">    - 将解析的数据信息通过串口监视器显示供用户查看</span><br><span class="line">    - 将解析的客户端按键状态信息用于控制板上LED的点亮和熄灭</span><br><span class="line">    </span><br><span class="line">-----------------------------------------------------------------------</span><br><span class="line">修订历史/Revision History  </span><br><span class="line">日期/Date    作者/Author      参考号/Ref    修订说明/Revision Description</span><br><span class="line">20200229      CYNO朔           0.01       加入IP设置</span><br><span class="line"> </span><br><span class="line">***********************************************************************/</span><br><span class="line"> </span><br><span class="line"><span class="comment">#include &lt;ESP8266WiFi.h&gt;</span></span><br><span class="line"><span class="comment">#include &lt;ESP8266WiFiMulti.h&gt;   // 使用WiFiMulti库 </span></span><br><span class="line"><span class="comment">#include &lt;ESP8266WebServer.h&gt;   // 使用WebServer库</span></span><br><span class="line"> </span><br><span class="line">ESP8266WiFiMulti wifiMulti;     // 建立ESP8266WiFiMulti对象,对象名称是 <span class="string">&#x27;wifiMulti&#x27;</span></span><br><span class="line"> </span><br><span class="line">ESP8266WebServer server(80);    // 建立网络服务器对象，该对象用于响应HTTP请求。监听端口（80）</span><br><span class="line"> </span><br><span class="line">IPAddress local_IP(192, 168, 0, 123); // 设置ESP8266-NodeMCU联网后的IP</span><br><span class="line">IPAddress gateway(192, 168, 0, 1);    // 设置网关IP（通常网关IP是WiFI路由IP）</span><br><span class="line">IPAddress subnet(255, 255, 255, 0);   // 设置子网掩码</span><br><span class="line">IPAddress dns(192,168,0,1);           // 设置局域网DNS的IP（通常局域网DNS的IP是WiFI路由IP）</span><br><span class="line"> </span><br><span class="line">void setup(void)&#123;</span><br><span class="line">  Serial.begin(9600);          // 启动串口通讯</span><br><span class="line">  Serial.println(<span class="string">&quot;&quot;</span>);</span><br><span class="line"> </span><br><span class="line">  pinMode(LED_BUILTIN, OUTPUT);   </span><br><span class="line">  digitalWrite(LED_BUILTIN, HIGH);</span><br><span class="line">  </span><br><span class="line">  // 设置开发板网络环境</span><br><span class="line">  <span class="keyword">if</span> (!WiFi.config(local_IP, gateway, subnet)) &#123;</span><br><span class="line">    Serial.println(<span class="string">&quot;Failed to Config ESP8266 IP&quot;</span>); </span><br><span class="line">  &#125; </span><br><span class="line">  </span><br><span class="line">  wifiMulti.addAP(<span class="string">&quot;ssid_from_AP_1&quot;</span>, <span class="string">&quot;your_password_for_AP_1&quot;</span>); // 将需要连接的一系列WiFi ID和密码输入这里</span><br><span class="line">  wifiMulti.addAP(<span class="string">&quot;ssid_from_AP_2&quot;</span>, <span class="string">&quot;your_password_for_AP_2&quot;</span>); // ESP8266-NodeMCU再启动后会扫描当前网络</span><br><span class="line">  wifiMulti.addAP(<span class="string">&quot;ssid_from_AP_3&quot;</span>, <span class="string">&quot;your_password_for_AP_3&quot;</span>); // 环境查找是否有这里列出的WiFi ID。如果有</span><br><span class="line">  Serial.println(<span class="string">&quot;Connecting ...&quot;</span>);                            // 则尝试使用此处存储的密码进行连接。</span><br><span class="line">  </span><br><span class="line">  // 尝试进行wifi连接。</span><br><span class="line">  <span class="keyword">while</span> (wifiMulti.run() != WL_CONNECTED) &#123; </span><br><span class="line">    delay(250);</span><br><span class="line">    Serial.<span class="built_in">print</span>(<span class="string">&#x27;.&#x27;</span>);</span><br><span class="line">  &#125;</span><br><span class="line"> </span><br><span class="line">  // WiFi连接成功后将通过串口监视器输出连接成功信息 </span><br><span class="line">  Serial.println(<span class="string">&#x27;\n&#x27;</span>);</span><br><span class="line">  Serial.<span class="built_in">print</span>(<span class="string">&quot;Connected to &quot;</span>);</span><br><span class="line">  Serial.println(WiFi.SSID());              // 通过串口监视器输出连接的WiFi名称</span><br><span class="line">  Serial.<span class="built_in">print</span>(<span class="string">&quot;IP address:\t&quot;</span>);</span><br><span class="line">  Serial.println(WiFi.localIP());           // 通过串口监视器输出ESP8266-NodeMCU的IP</span><br><span class="line"> </span><br><span class="line">  server.on(<span class="string">&quot;/update&quot;</span>, handleUpdate);        // 处理服务器更新函数</span><br><span class="line">  </span><br><span class="line">  server.begin();                            // 启动网站服务</span><br><span class="line">  Serial.println(<span class="string">&quot;HTTP server started&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">void loop(void)&#123;</span><br><span class="line">  server.handleClient();                    // 检查http服务器访问</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">void <span class="function"><span class="title">handleUpdate</span></span>()&#123;</span><br><span class="line">  <span class="built_in">float</span> floatValue = server.arg(<span class="string">&quot;float&quot;</span>).toFloat();  // 获取客户端发送HTTP信息中的浮点数值</span><br><span class="line">  int intValue = server.arg(<span class="string">&quot;int&quot;</span>).toInt();        // 获取客户端发送HTTP信息中的整数数值</span><br><span class="line">  int buttonValue = server.arg(<span class="string">&quot;button&quot;</span>).toInt();  // 获取客户端发送HTTP信息中的按键控制量</span><br><span class="line">  </span><br><span class="line">  server.send(200, <span class="string">&quot;text/plain&quot;</span>, <span class="string">&quot;Received&quot;</span>);                 // 发送http响应</span><br><span class="line"> </span><br><span class="line">  buttonValue == 0 ? digitalWrite(LED_BUILTIN, LOW) : digitalWrite(LED_BUILTIN, HIGH);</span><br><span class="line"> </span><br><span class="line">  // 通过串口监视器输出获取到的变量数值</span><br><span class="line">  Serial.<span class="built_in">print</span>(<span class="string">&quot;floatValue = &quot;</span>);  Serial.println(floatValue);  </span><br><span class="line">  Serial.<span class="built_in">print</span>(<span class="string">&quot;intValue = &quot;</span>);  Serial.println(intValue); </span><br><span class="line">  Serial.<span class="built_in">print</span>(<span class="string">&quot;buttonValue = &quot;</span>);  Serial.println(buttonValue);   </span><br><span class="line">  Serial.println(<span class="string">&quot;=================&quot;</span>);    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="客户端程序："><a href="#客户端程序：" class="headerlink" title="客户端程序："></a>客户端程序：</h3><ul>
+<li>客户端通过HTTP协议向服务器发送信息</li>
+<li>信息中包含客户端按键开关引脚状态用于控制服务器板上LED的点亮和熄灭</li>
+<li>信息中还包含测试数据以便我们更好的了解如何使用ESP8266发送和接收物联网数据信息</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br></pre></td><td class="code"><pre><span class="line">/**********************************************************************</span><br><span class="line">项目名称/Project          : 零基础入门学用物联网</span><br><span class="line">程序名称/Program name     : csd_client</span><br><span class="line">团队/Team                : 太极创客团队 / Taichi-Maker (www.taichi-maker.com)</span><br><span class="line">作者/Author              : CYNO朔</span><br><span class="line">日期/Date（YYYYMMDD）     : 20200228</span><br><span class="line">程序目的/Purpose          : </span><br><span class="line">演示如何实现两个NodeMCU间通过WiFi进行通讯。两台NodeMCU一个以服务器模式运行，</span><br><span class="line">一个以客户端模式运行。</span><br><span class="line"> </span><br><span class="line">此代码为客户端代码。此代码主要功能：</span><br><span class="line">    - 通过HTTP协议向服务器发送HTTP请求</span><br><span class="line">    - HTTP请求中包含客户端按键开关引脚状态和程序测试数据</span><br><span class="line">-----------------------------------------------------------------------</span><br><span class="line">修订历史/Revision History  </span><br><span class="line">日期/Date    作者/Author      参考号/Ref    修订说明/Revision Description</span><br><span class="line">-----------------------------------------------------------------------</span><br><span class="line">http信息发送说明</span><br><span class="line">192.168.0.123/update?<span class="built_in">float</span>=1.5&amp;int=2&amp;button=0</span><br><span class="line">***********************************************************************/</span><br><span class="line"><span class="comment">#include &lt;ESP8266WiFi.h&gt;</span></span><br><span class="line"><span class="comment">#include &lt;ESP8266WiFiMulti.h&gt;   // 使用WiFiMulti库 </span></span><br><span class="line"> </span><br><span class="line"><span class="comment">#define buttonPin D3            // 按钮引脚D3</span></span><br><span class="line"> </span><br><span class="line">ESP8266WiFiMulti wifiMulti;     // 建立ESP8266WiFiMulti对象,对象名称是 <span class="string">&#x27;wifiMulti&#x27;</span></span><br><span class="line"> </span><br><span class="line">bool buttonState;       //存储客户端按键控制数据</span><br><span class="line"><span class="built_in">float</span> clientFloatValue; //存储客户端发送的浮点型测试数据</span><br><span class="line">int clientIntValue;     //存储客户端发送的整数型测试数据</span><br><span class="line"> </span><br><span class="line">const char* host = <span class="string">&quot;192.168.0.123&quot;</span>;    // 即将连接服务器网址/IP</span><br><span class="line">const int httpPort = 80;               // 即将连接服务器端口</span><br><span class="line"> </span><br><span class="line">void setup(void)&#123;</span><br><span class="line">  Serial.begin(9600);                  // 启动串口通讯</span><br><span class="line">  Serial.println(<span class="string">&quot;&quot;</span>);</span><br><span class="line"> </span><br><span class="line">  pinMode(buttonPin, INPUT_PULLUP);    // 将按键引脚设置为输入上拉模式</span><br><span class="line">  </span><br><span class="line">  wifiMulti.addAP(<span class="string">&quot;ssid_from_AP_1&quot;</span>, <span class="string">&quot;your_password_for_AP_1&quot;</span>); // 将需要连接的一系列WiFi ID和密码输入这里</span><br><span class="line">  wifiMulti.addAP(<span class="string">&quot;ssid_from_AP_2&quot;</span>, <span class="string">&quot;your_password_for_AP_2&quot;</span>); // ESP8266-NodeMCU再启动后会扫描当前网络</span><br><span class="line">  wifiMulti.addAP(<span class="string">&quot;ssid_from_AP_3&quot;</span>, <span class="string">&quot;your_password_for_AP_3&quot;</span>); // 环境查找是否有这里列出的WiFi ID。如果有</span><br><span class="line">  Serial.println(<span class="string">&quot;Connecting ...&quot;</span>);                            // 则尝试使用此处存储的密码进行连接。</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">while</span> (wifiMulti.run() != WL_CONNECTED) &#123; // 尝试进行wifi连接。</span><br><span class="line">    delay(250);</span><br><span class="line">    Serial.<span class="built_in">print</span>(<span class="string">&#x27;.&#x27;</span>);</span><br><span class="line">  &#125;</span><br><span class="line"> </span><br><span class="line">  // WiFi连接成功后将通过串口监视器输出连接成功信息 </span><br><span class="line">  Serial.println(<span class="string">&#x27;\n&#x27;</span>);</span><br><span class="line">  Serial.<span class="built_in">print</span>(<span class="string">&quot;Connected to &quot;</span>);</span><br><span class="line">  Serial.println(WiFi.SSID());              // 通过串口监视器输出连接的WiFi名称</span><br><span class="line">  Serial.<span class="built_in">print</span>(<span class="string">&quot;IP address:\t&quot;</span>);</span><br><span class="line">  Serial.println(WiFi.localIP());           // 通过串口监视器输出ESP8266-NodeMCU的IP</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">void loop(void)&#123;</span><br><span class="line"> // 获取按键引脚状态</span><br><span class="line"> buttonState = digitalRead(buttonPin); </span><br><span class="line"> </span><br><span class="line"> // 改变测试用变量数值用于服务器端接收数据检测</span><br><span class="line"> clientFloatValue += 1.5;</span><br><span class="line"> clientIntValue += 2;</span><br><span class="line"> </span><br><span class="line"> // 发送请求</span><br><span class="line"> wifiClientRequest();</span><br><span class="line"> delay(1000);</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">void <span class="function"><span class="title">wifiClientRequest</span></span>()&#123;</span><br><span class="line">  WiFiClient client;  </span><br><span class="line"> </span><br><span class="line">  // 将需要发送的数据信息放入客户端请求</span><br><span class="line">  String url = <span class="string">&quot;/update?float=&quot;</span> + String(clientFloatValue) + </span><br><span class="line">               <span class="string">&quot;&amp;int=&quot;</span> + String(clientIntValue) +</span><br><span class="line">               <span class="string">&quot;&amp;button=&quot;</span> + String(buttonState);</span><br><span class="line">                         </span><br><span class="line">  // 建立字符串，用于HTTP请求</span><br><span class="line">  String httpRequest =  String(<span class="string">&quot;GET &quot;</span>) + url + <span class="string">&quot; HTTP/1.1\r\n&quot;</span> +</span><br><span class="line">                        <span class="string">&quot;Host: &quot;</span> + host + <span class="string">&quot;\r\n&quot;</span> +</span><br><span class="line">                        <span class="string">&quot;Connection: close\r\n&quot;</span> +</span><br><span class="line">                        <span class="string">&quot;\r\n&quot;</span>;</span><br><span class="line">                        </span><br><span class="line">  Serial.<span class="built_in">print</span>(<span class="string">&quot;Connecting to &quot;</span>); </span><br><span class="line">  Serial.<span class="built_in">print</span>(host); </span><br><span class="line">  </span><br><span class="line">  <span class="keyword">if</span> (client.connect(host, httpPort)) &#123;  //如果连接失败则串口输出信息告知用户然后返回loop</span><br><span class="line">    Serial.println(<span class="string">&quot; Sucess&quot;</span>);</span><br><span class="line">    </span><br><span class="line">    client.print(httpRequest);          // 向服务器发送HTTP请求</span><br><span class="line">    Serial.println(<span class="string">&quot;Sending request: &quot;</span>);// 通过串口输出HTTP请求信息内容以便查阅</span><br><span class="line">    Serial.println(httpRequest);        </span><br><span class="line">  &#125; <span class="keyword">else</span>&#123;</span><br><span class="line">    Serial.println(<span class="string">&quot; failed&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  client.stop();                         </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>示例程序截图如下：</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/06/07/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E7%BD%91%E7%BB%9C%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1108,90 +1207,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/04/25/ESP8266-NodeMCU%E6%9D%A5%E5%AE%9E%E7%8E%B0%E7%BD%91%E9%A1%B5%E6%9C%8D%E5%8A%A1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="云中锡">
-      <meta itemprop="description" content="心之所向，素履以往">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="明珠的个人博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/04/25/ESP8266-NodeMCU%E6%9D%A5%E5%AE%9E%E7%8E%B0%E7%BD%91%E9%A1%B5%E6%9C%8D%E5%8A%A1/" class="post-title-link" itemprop="url">ESP8266-NodeMCU来实现网页服务</a>
-        </h2>
-
-        <div class="post-meta">
-
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2023-04-25 20:58:51 / 修改时间：22:43:57" itemprop="dateCreated datePublished" datetime="2023-04-25T20:58:51+08:00">2023-04-25</time>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>7.3k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>18 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="ESP8266生成网页-来自ESP8266的hello"><a href="#ESP8266生成网页-来自ESP8266的hello" class="headerlink" title="ESP8266生成网页-来自ESP8266的hello"></a>ESP8266生成网页-来自ESP8266的hello</h2><p>网络服务器有很多种类型，它们的功能也十分丰富。通常承担网络服务器工作的设备都是运算能力比较强大的电脑。ESP866-NodeMCU虽然也能实现网络服务器的一些功能，但是毕竟它的运算能力是无法与那些昂贵的服务器电脑相媲美的，因此ESP8266-NodeMCU只能实现一些基本的网络服务功能。不过这些基本的网络服务功能已经足够我们开发物联网项目了。接下来我们看下如何让ESP8266-NodeMCU来实现网络服务功能(网络服务中的网页服务功能)。</p>
-<p>所谓网页服务就是专门用于网页浏览的服务。这个操作我相信所有看到本文的朋友们都使用过，因为您现在正阅读的这篇文章就是通过网页服务传输到您面前的。</p>
-<p>为了便于理解，我们一起回忆一下在打开这篇文章时曾经历了什么过程。首先，要想访问网站就要在浏览器地址栏输入对应的网站地址如: <a target="_blank" rel="noopener" href="http://www.bilibili.com.当输入完地址并按下回车以后,浏览器会通过dns服务查到b站网站服务器的ip地址.假设b站服务器地址为12.34.56.78.接下来浏览器就会向ip地址12.34.56.78的服务器发送http请求.当网站服务器收到了请求后,会把被请求的网页信息传输给浏览器,然后浏览器就会把收到的网页信息转换成网页显示在浏览器中./">www.bilibili.com。当输入完地址并按下回车以后，浏览器会通过DNS服务查到B站网站服务器的IP地址。假设B站服务器地址为12.34.56.78。接下来浏览器就会向IP地址12.34.56.78的服务器发送http请求。当网站服务器收到了请求后，会把被请求的网页信息传输给浏览器，然后浏览器就会把收到的网页信息转换成网页显示在浏览器中。</a></p>
-<p>为了能够应付来自全世界的粉丝朋友们大量访问，B站网站服务器是一台运算能力很强的计算机。假如</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/04/25/ESP8266-NodeMCU%E6%9D%A5%E5%AE%9E%E7%8E%B0%E7%BD%91%E9%A1%B5%E6%9C%8D%E5%8A%A1/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1263,14 +1278,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">37</span>
+          <span class="site-state-item-count">38</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-count">33</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1317,12 +1332,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">107k</span>
+    <span title="站点总字数">114k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">4:27</span>
+    <span title="站点阅读时长">4:44</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
@@ -1359,7 +1374,7 @@ $(document).ready(function() {
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共53.4k字</span>
+  <span class="post-count">博客全站共55.4k字</span>
 </div>
         
 <div class="busuanzi-count">
