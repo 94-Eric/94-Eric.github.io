@@ -1,0 +1,618 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"94-eric.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="连接MQTT服务端MQTT客户端之间要想实现通讯，必须要通过MQTT服务端。因此MQTT客户端无论是发布消息还是订阅消息，首先都要连接MQTT服务端。下面我们看一下MQTT客户端连接服务端的详细过程。 MQTT客户端连接服务端一共有两步。 首先MQTT客户端将会向服务端发送连接请求。该请求实际上是一个包含有连接请求信息的数据包。这个数据包的官方名称为CONNECT。    MQTT服务端收到客户端">
+<meta property="og:type" content="article">
+<meta property="og:title" content="物联网之连接MQTT服务端">
+<meta property="og:url" content="https://94-eric.github.io/2023/06/20/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E8%BF%9E%E6%8E%A5MQTT%E6%9C%8D%E5%8A%A1%E7%AB%AF/index.html">
+<meta property="og:site_name" content="明珠的个人博客">
+<meta property="og:description" content="连接MQTT服务端MQTT客户端之间要想实现通讯，必须要通过MQTT服务端。因此MQTT客户端无论是发布消息还是订阅消息，首先都要连接MQTT服务端。下面我们看一下MQTT客户端连接服务端的详细过程。 MQTT客户端连接服务端一共有两步。 首先MQTT客户端将会向服务端发送连接请求。该请求实际上是一个包含有连接请求信息的数据包。这个数据包的官方名称为CONNECT。    MQTT服务端收到客户端">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://94-eric.github.io/2023/06/20/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E8%BF%9E%E6%8E%A5MQTT%E6%9C%8D%E5%8A%A1%E7%AB%AF/%E6%8D%95%E8%8E%B71.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2023/06/20/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E8%BF%9E%E6%8E%A5MQTT%E6%9C%8D%E5%8A%A1%E7%AB%AF/%E6%8D%95%E8%8E%B72.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2023/06/20/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E8%BF%9E%E6%8E%A5MQTT%E6%9C%8D%E5%8A%A1%E7%AB%AF/%E6%8D%95%E8%8E%B73.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2023/06/20/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E8%BF%9E%E6%8E%A5MQTT%E6%9C%8D%E5%8A%A1%E7%AB%AF/%E6%8D%95%E8%8E%B74.PNG">
+<meta property="article:published_time" content="2023-06-20T01:50:47.000Z">
+<meta property="article:modified_time" content="2023-06-20T04:10:49.450Z">
+<meta property="article:author" content="云中锡">
+<meta property="article:tag" content="物联网 esp8266 MQTT 连接MQTT服务端">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://94-eric.github.io/2023/06/20/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E8%BF%9E%E6%8E%A5MQTT%E6%9C%8D%E5%8A%A1%E7%AB%AF/%E6%8D%95%E8%8E%B71.PNG">
+
+<link rel="canonical" href="https://94-eric.github.io/2023/06/20/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E8%BF%9E%E6%8E%A5MQTT%E6%9C%8D%E5%8A%A1%E7%AB%AF/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>物联网之连接MQTT服务端 | 明珠的个人博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">明珠的个人博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">是谁告诉你，你是赤裸的？</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-resources">
+
+    <a href="/resources/" rel="section"><i class="fa fa-download fa-fw"></i>资源</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/06/20/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E8%BF%9E%E6%8E%A5MQTT%E6%9C%8D%E5%8A%A1%E7%AB%AF/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="云中锡">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="明珠的个人博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          物联网之连接MQTT服务端
+        </h1>
+
+        <div class="post-meta">
+
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-06-20 09:50:47 / 修改时间：12:10:49" itemprop="dateCreated datePublished" datetime="2023-06-20T09:50:47+08:00">2023-06-20</time>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>10 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="连接MQTT服务端"><a href="#连接MQTT服务端" class="headerlink" title="连接MQTT服务端"></a>连接MQTT服务端</h2><p>MQTT客户端之间要想实现通讯，必须要通过MQTT服务端。因此MQTT客户端无论是发布消息还是订阅消息，首先都要连接MQTT服务端。下面我们看一下MQTT客户端连接服务端的详细过程。</p>
+<p>MQTT客户端连接服务端一共有两步。</p>
+<p>首先MQTT客户端将会向服务端发送连接请求。该请求实际上是一个包含有连接请求信息的数据包。这个数据包的官方名称为CONNECT。</p>
+<img src="/2023/06/20/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E8%BF%9E%E6%8E%A5MQTT%E6%9C%8D%E5%8A%A1%E7%AB%AF/%E6%8D%95%E8%8E%B71.PNG" class title="图片麋鹿无法显示"> 
+
+<p>MQTT服务端收到客户端连接请求后，会向客户端发送连接确认。同样的，该确认也是一个数据包。这个数据包官方名称为CONNACK。</p>
+<img src="/2023/06/20/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E8%BF%9E%E6%8E%A5MQTT%E6%9C%8D%E5%8A%A1%E7%AB%AF/%E6%8D%95%E8%8E%B72.PNG" class title="图片麋鹿无法显示"> 
+
+<p>以上就是MQTT客户端在连接服务端的两步操作。</p>
+<h2 id="CONNECT-–-连接服务端"><a href="#CONNECT-–-连接服务端" class="headerlink" title="CONNECT – 连接服务端"></a>CONNECT – 连接服务端<span id="more"></span></h2><p>MQTT客户端要想连接服务端，首先要向服务端发送CONNECT报文。如果此CONNECT报文的格式或内容不符合MQTT规范，则服务器会拒绝客户端的连接请求。<br>接下来，我们一起来了解一下客户端在连接服务端时所发送的CONNECT报文内容。</p>
+<p>下图是CONNECT报文所包含的信息内容。</p>
+<img src="/2023/06/20/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E8%BF%9E%E6%8E%A5MQTT%E6%9C%8D%E5%8A%A1%E7%AB%AF/%E6%8D%95%E8%8E%B73.PNG" class title="图片麋鹿无法显示"> 
+
+<p>在接下来我们将会频繁接触到两个概念。第一个概念是报文，第二个概念是信息。</p>
+<p>所谓报文就是一个MQTT数据包。这个数据包中可能包含有多个信息。比如以上图片就是描绘了一个CONNECT报文（数据包）的详细内容。</p>
+<p>在这个CONNECT报文（数据包）中包含有多个信息。上图左侧栏中的内容是CONNECT报文所包含的信息名称。右侧是信息的具体内容。如上图示例中，此CONNECT报文包含有名称为clientId的信息，该信息的内容是”client-1″。当然，上图只是一个示例，不是所有的CONNECT报文中的clientId信息内容都是”client-1″。</p>
+<p>另外也请注意，上图中有些信息名称旁边标注了“可选”字样，而有些则没有。那些没有标注“可选”字样的信息是必须包含在CONNECT报文中的。而对于标注了“可选”字样的信息，CONNECT报文既可以包含它们也可以没有它们。</p>
+<p>先从最基础的内容开始：未标注“可选”字样的信息以及它们的功能，后续再看标有“可选”字样的信息。</p>
+<h3 id="clientId-–-客户端ID"><a href="#clientId-–-客户端ID" class="headerlink" title="clientId – 客户端ID"></a>clientId – 客户端ID</h3><p>ClientId是MQTT客户端的标识。MQTT服务端用该标识来识别客户端。因此ClientId必须是独立的。如果两个MQTT客户端使用相同ClientId标识，服务端会把它们当成同一个客户端来处理。通常ClientId是由一串字符所构成的，如上图所示，此示例中的clientID是“client-1”。</p>
+<h3 id="cleanSession-–-清除会话"><a href="#cleanSession-–-清除会话" class="headerlink" title="cleanSession – 清除会话"></a>cleanSession – 清除会话</h3><p>所谓“清除会话”这一翻译源自MQTT官方文档中文版。要说明cleanSession的具体含义，首先要从MQTT网络环境讲起。</p>
+<p>MQTT客户端与服务端的连接可能不是非常稳定，在不稳定的网络环境下，要想保证所有信息传输都能够做到准确无误，这是非常困难的。因此，我们就要根据客户端对系统运行的重要性来区别对待。</p>
+<p>有些MQTT客户端对整个系统运行起着关键作用，这些客户端一定要准确无误的收到服务端发来的报文。比如一辆自动驾驶汽车的导航系统。假如这个导航系统错过了服务端发来的报文，可能会导致交通事故甚至人员伤亡。因此，即使网络不是非常稳定，我们仍然要求汽车导航系统一定要准确无误的收到服务端所发来的报文。</p>
+<p>但是有些MQTT客户端对整个系统运行并不是很重要。比如同样是这辆自动驾驶汽车。它的音乐播放系统如果没有及时收到服务端发来的音乐播放报文，这对驾驶系统来说影响不大。</p>
+<p>以上所举的两个例子说明，MQTT通讯中有些客户端必须准确无误的收到报文，有些则不需要。(TCP和UDP的区别)</p>
+<p>为了保证重要的MQTT报文可以被客户端准确无误的收到。在服务端向客户端发送报文后，客户端会向服务端返回一个确认报文。如果服务端没有收到客户端返回的确认报文，那么服务端就会认为刚刚发送给客户端的报文没有被准确无误的送达。在这种情况下，服务端将会执行以下两个操作：</p>
+<p>操作1：将尚未被客户端确认的报文保存起来</p>
+<p>操作2：再次尝试向客户端发送报文，并且再次等待客户端发来确认信息。</p>
+<p>讲到这里就要看看cleanSession的作用了。</p>
+<p>如果cleanSession 被设置为“true”。那么服务端不需要客户端确认收到报文，也不会保存任何报文。在这种情况下，即使客户端错过了服务端发来的报文，也没办法让服务端再次发送报文。其实从字面上也很容易理解。cleanSession 的第一个词是clean。这个词的意思是clean（干净）的。服务端一旦发送完报文，就会把报文忘得“干干净净”了。</p>
+<p>反过来，如果我们将cleanSession 设置为”false”。那么服务端就知道，后续通讯中，客户端可能会要求我保存没有收到的报文。</p>
+<p>从以上的描述不难看出，如果某个客户端用于收发非常重要的信息（比如前文示例中汽车自动驾驶系统），那么该客户端在连接服务端时，应该将cleanSession设置为”false”。这样才能让服务端保存那些没有得到客户端接收确认的信息。以便服务端再次尝试将这些重要信息再次发送给客户端。</p>
+<p>相反的，如果某个客户端用于收发不重要的信息（比如前文示例中车载音乐系统）那么该客户端在连接服务端时，应该将cleanSession设置为”true”。</p>
+<p>请注意，如果需要服务端保存重要报文，光设置cleanSession 为false是不够的，还需要传递的MQTT信息QoS级别大于0。</p>
+<p>关于QoS的概念，后续详细讲解。到目前务必牢记，如果想让服务器记住重要报文，那么客户端在连接服务端时，需要把cleanSession中设置为false。这一点非常关键，请务必牢记。</p>
+<h3 id="keepAlive-–-心跳时间间隔"><a href="#keepAlive-–-心跳时间间隔" class="headerlink" title="keepAlive – 心跳时间间隔"></a>keepAlive – 心跳时间间隔</h3><p>MQTT服务端运行过程中，当有客户端因为某种原因断开了与服务端的连接，服务端需要实时了解这一情况。KeepAlive （心跳时间间隔）正是用于服务端了解客户端连接情况的。不过关于KeepAlive目前只需要记住，KeepAlive用于服务端实时了解客户端是否与其保持连接的情况。</p>
+<p>以上就是CONNECT报文的主要内容。关于CONNECT报文中的其它内容，后续分享。</p>
+<p>下面再看看MQTT服务端接收到客户端发来的连接请求后所回复的CONNACK报文详细内容。</p>
+<h2 id="CONNACK-–-确认连接请求"><a href="#CONNACK-–-确认连接请求" class="headerlink" title="CONNACK – 确认连接请求"></a>CONNACK – 确认连接请求</h2><p>下图是CONNACK报文所包含的信息内容。</p>
+<img src="/2023/06/20/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E8%BF%9E%E6%8E%A5MQTT%E6%9C%8D%E5%8A%A1%E7%AB%AF/%E6%8D%95%E8%8E%B74.PNG" class title="图片麋鹿无法显示"> 
+
+<p>CONNACK报文包括两个信息。一个是returnCode(连接返回码)，另一个是sessionPresent (当前会话)。以下是这两个信息的说明：</p>
+<h3 id="returnCode-–-连接返回码"><a href="#returnCode-–-连接返回码" class="headerlink" title="returnCode – 连接返回码"></a>returnCode – 连接返回码</h3><p>当服务端收到了客户端的连接请求后，会向客户端发送returnCode(连接返回码)，用以说明连接情况。如果客户端与服务端成功连接，则返回数字“0”。如果未能成功连接，连接返回码将会是一个非零的数值，具体这个数值的含义如下：</p>
+<table>
+<thead>
+<tr>
+<th align="left">返回码</th>
+<th align="left">返回码描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">0</td>
+<td align="left">成功连接</td>
+</tr>
+<tr>
+<td align="left">1</td>
+<td align="left">连接被服务端拒绝，原因是不支持客户端的MQTT协议版本</td>
+</tr>
+<tr>
+<td align="left">2</td>
+<td align="left">连接被服务端拒绝，原因是不支持客户端标识符的编码。可能造成此原因的是客户端标识符编码是UTF-8，但是服务端不允许使用此编码。</td>
+</tr>
+<tr>
+<td align="left">3</td>
+<td align="left">连接被服务端拒绝，原因是服务端不可用。即，网络连接已经建立，但MQTT服务不可用。</td>
+</tr>
+<tr>
+<td align="left">4</td>
+<td align="left">连接被服务端拒绝，原因是用户名或密码无效。</td>
+</tr>
+<tr>
+<td align="left">5</td>
+<td align="left">连接被服务端拒绝，原因是客户端未被授权连接到此服务端。</td>
+</tr>
+</tbody></table>
+<h3 id="sessionPresent-–-当前会话"><a href="#sessionPresent-–-当前会话" class="headerlink" title="sessionPresent – 当前会话"></a>sessionPresent – 当前会话</h3><p>要说明sessionPresent，首先我们要回顾一下CONNECT报文中的cleanSession – 清除会话。</p>
+<p>我们还用自动驾驶汽车为例。对于自动驾驶汽车来说，自动导航系统属于非常重要的MQTT客户端。服务端发送给导航系统的报文必须要准确无误的送达。相反，音乐播放系统就不那么重要了。即使音乐播放系统错过服务端发送的报文也没有关系。</p>
+<p>对于不重要的MQTT客户端，它们在向服务器发送连接请求时，CONNECT报文中的cleanSession通常设置为true。原因是这类不重要的MQTT客户端即使丢失信息也不会影响整体系统运行。因此服务端在看到客户端的cleanSession为true时，就不会保存发送给它们的信息。</p>
+<p>然而对于汽车导航系统这类重要的MQTT客户端来说。当它在连接服务端时，cleanSession肯定时设置为false。原因是重要客户端需要服务端确保信息发送准确无误。如果服务端发现发送给重要客户端的信息没有得到确认，会将报文进行保存。</p>
+<p>当重要客户端连接服务端时，服务端可能保存着没有得到确认的报文。如果是这样的话，那么客户端在连接服务端时，就会通过sessionPresent来了解服务端是否有之前未能确认的信息。</p>
+<p>下面我们分几种情况来讲述sessionPresent的作用。</p>
+<p>首先，当客户端发送的CONNECT报文中的cleanSession设置为true。在这种情况下，客户端是不需要服务端保存任何报文的。那么服务端发送的确认连接CONNACK报文中，sessionPresent肯定是false，也就是说，服务端没有保存任何报文。</p>
+<p>当客户端发送的CONNECT报文中的cleanSession设置为false时，客户端是要求服务端保存报文的。在这种情况下，如果服务端的确保存了没有收到客户端接收确认的报文信息，那么cleanSession为true，否则为false。</p>
+<p>简言之，CONNACK报文的sessionPresent与CONNECT报文的cleanSession相互配合。其作用是客户端发送连接请求时，服务端告知客户端有没有保存报文信息。这个被服务端保存的报文信息是来自于上一次客户端连接时，服务端曾经发送此报文给客户端，但是发送后没有收到客户端接收确认。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%89%A9%E8%81%94%E7%BD%91-esp8266-MQTT-%E8%BF%9E%E6%8E%A5MQTT%E6%9C%8D%E5%8A%A1%E7%AB%AF/" rel="tag"># 物联网 esp8266 MQTT 连接MQTT服务端</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/06/18/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%8D%8F%E8%AE%AE/" rel="prev" title="物联网之MQTT协议">
+      <i class="fa fa-chevron-left"></i> 物联网之MQTT协议
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/06/20/%E9%9A%8F%E6%83%B3-%E8%B4%B9%E7%B1%B3%E6%8E%A8%E5%AE%9A/" rel="next" title="随想3-费米推定">
+      随想3-费米推定 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC81NzY4OC8zNDE1MQ=="></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5MQTT%E6%9C%8D%E5%8A%A1%E7%AB%AF"><span class="nav-number">1.</span> <span class="nav-text">连接MQTT服务端</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CONNECT-%E2%80%93-%E8%BF%9E%E6%8E%A5%E6%9C%8D%E5%8A%A1%E7%AB%AF"><span class="nav-number">2.</span> <span class="nav-text">CONNECT – 连接服务端</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#clientId-%E2%80%93-%E5%AE%A2%E6%88%B7%E7%AB%AFID"><span class="nav-number">2.1.</span> <span class="nav-text">clientId – 客户端ID</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cleanSession-%E2%80%93-%E6%B8%85%E9%99%A4%E4%BC%9A%E8%AF%9D"><span class="nav-number">2.2.</span> <span class="nav-text">cleanSession – 清除会话</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#keepAlive-%E2%80%93-%E5%BF%83%E8%B7%B3%E6%97%B6%E9%97%B4%E9%97%B4%E9%9A%94"><span class="nav-number">2.3.</span> <span class="nav-text">keepAlive – 心跳时间间隔</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CONNACK-%E2%80%93-%E7%A1%AE%E8%AE%A4%E8%BF%9E%E6%8E%A5%E8%AF%B7%E6%B1%82"><span class="nav-number">3.</span> <span class="nav-text">CONNACK – 确认连接请求</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#returnCode-%E2%80%93-%E8%BF%9E%E6%8E%A5%E8%BF%94%E5%9B%9E%E7%A0%81"><span class="nav-number">3.1.</span> <span class="nav-text">returnCode – 连接返回码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sessionPresent-%E2%80%93-%E5%BD%93%E5%89%8D%E4%BC%9A%E8%AF%9D"><span class="nav-number">3.2.</span> <span class="nav-text">sessionPresent – 当前会话</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="云中锡"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">云中锡</p>
+  <div class="site-description" itemprop="description">心之所向，素履以往</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">44</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">37</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/94-eric" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;94-eric" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:809594015@qq.com" title="E-Mail → mailto:809594015@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/hear%20the%20wind%20within" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;hear the wind within" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">云中锡</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">125k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">5:13</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <span id="busuanzi_container_site_pv">总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">总访客数<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+<!-- 不蒜子计数初始值纠正 -->
+<script>
+$(document).ready(function() {
+
+    var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+    var countOffset = 20000;  // 初始化首次数据
+
+    function fixCount() {            
+       if (document.getElementById("busuanzi_container_site_pv").style.display != "none")
+        {
+            $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + countOffset); 
+            clearInterval(int);
+        }                  
+        if ($("#busuanzi_container_site_pv").css("display") != "none")
+        {
+            $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + countOffset); // 加上初始数据 
+            clearInterval(int); // 停止检测
+        }  
+    }
+       	
+});
+</script> 
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共62.4k字</span>
+</div>
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='255,0,0' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
+
+</body>
+</html>
+
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/love.js"></script>
