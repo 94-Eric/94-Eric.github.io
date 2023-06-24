@@ -27,11 +27,13 @@
 <meta property="og:site_name" content="明珠的个人博客">
 <meta property="og:description" content="简介ESP8266开发板以网络客户端的角色向服务器发送HTTP请求，并且获取何处理服务器响应信息。通过这一操作，我们可以实现ESP8266开发板间的物联网数据通信。  如上图所示，接下来我们将需要两块ESP8266-NodeMCU开发板。其中一块作为服务器，另一块作为客户端。 使用ESP8266客户端向ESP8266服务器发送数据先上栗子。在这个示例中，ESP8266客户端将会通过HTTP协议向E">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://94-eric.github.io/2023/06/11/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E5%90%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%8F%91%E9%80%81%E4%BF%A1%E6%81%AF/%E6%8D%95%E8%8E%B71.PNG">
 <meta property="article:published_time" content="2023-06-11T05:07:36.000Z">
 <meta property="article:modified_time" content="2023-06-24T01:53:28.011Z">
 <meta property="article:author" content="云中锡">
 <meta property="article:tag" content="物联网 esp8266 网络客户端	服务器响应">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://94-eric.github.io/2023/06/11/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E5%90%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%8F%91%E9%80%81%E4%BF%A1%E6%81%AF/%E6%8D%95%E8%8E%B71.PNG">
 
 <link rel="canonical" href="https://94-eric.github.io/2023/06/11/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E5%90%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%8F%91%E9%80%81%E4%BF%A1%E6%81%AF/">
 
@@ -239,7 +241,7 @@
 
       
         <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>ESP8266开发板以网络客户端的角色向服务器发送HTTP请求，并且获取何处理服务器响应信息。通过这一操作，我们可以实现ESP8266开发板间的物联网数据通信。</p>
-
+<img src="/2023/06/11/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E5%90%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%8F%91%E9%80%81%E4%BF%A1%E6%81%AF/%E6%8D%95%E8%8E%B71.PNG" class title="图片麋鹿无法显示">
 <p>如上图所示，接下来我们将需要两块ESP8266-NodeMCU开发板。其中一块作为服务器，另一块作为客户端。</p>
 <h2 id="使用ESP8266客户端向ESP8266服务器发送数据"><a href="#使用ESP8266客户端向ESP8266服务器发送数据" class="headerlink" title="使用ESP8266客户端向ESP8266服务器发送数据"></a>使用ESP8266客户端向ESP8266服务器发送数据</h2><p>先上栗子。在这个示例中，ESP8266客户端将会通过HTTP协议向ESP8266服务器发送信息。在运行过程中，客户端ESP8266将会实时检测板上的按键状态，并且把按键状态发送给服务器。服务器在接收到客户端按键状态后，可以根据客户端按键状态来控制服务器端板上的LED点亮和熄灭。最终实现的效果是，我们可以通过客户端ESP8266开发板上的按键来“遥控”服务器上的LED点亮和熄灭。</p>
 <p><strong>注意，服务器端和客户端ESP8266必须连接同一WiFi网络，方可实现数据通讯。</strong></p>
@@ -456,7 +458,7 @@ $(document).ready(function() {
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共62.4k字</span>
+  <span class="post-count">博客全站共61k字</span>
 </div>
         
 <div class="busuanzi-count">
