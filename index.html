@@ -215,14 +215,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2.8k</span>
+              <span>3.6k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>14 分钟</span>
+              <span>9 分钟</span>
             </span>
 
         </div>
@@ -239,6 +239,106 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2023/04/21/%E6%96%B0%E7%9A%84%E5%BC%80%E5%A7%8B%E4%B9%8B%E7%89%A9%E8%81%94%E7%BD%91/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/06/24/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E8%AF%B7%E6%B1%82JSON%E4%BF%A1%E6%81%AF/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="云中锡">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="明珠的个人博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/06/24/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E8%AF%B7%E6%B1%82JSON%E4%BF%A1%E6%81%AF/" class="post-title-link" itemprop="url">物联网之请求JSON信息</a>
+        </h2>
+
+        <div class="post-meta">
+
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-06-24 15:45:44" itemprop="dateCreated datePublished" datetime="2023-06-24T15:45:44+08:00">2023-06-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-06-25 09:14:54" itemprop="dateModified" datetime="2023-06-25T09:14:54+08:00">2023-06-25</time>
+              </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>25k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1:01</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="ESP8266客户端请求JSON信息"><a href="#ESP8266客户端请求JSON信息" class="headerlink" title="ESP8266客户端请求JSON信息"></a>ESP8266客户端请求JSON信息</h2><p>由于易于解析且量级很轻，JSON成为了常用的物联网信息传输格式之一。本次内容如下：</p>
+<ol>
+<li>使用ESP8266来建立物联网服务器，该服务器可以向客户端发送JSON格式响应信息从而实现物联网信息通讯。</li>
+<li>使用ESP8266来通过网络向物联网服务器请求JSON信息</li>
+<li>使用ESP8266来通过ArduinoJson库解析JSON信息</li>
+</ol>
+<p>在接下来的讲解中，我们将需要两块ESP8266-NodeMCU开发板。其中一块作为服务器，另一块作为客户端。如下图所示，客户端将会向服务器发送请求信息。服务器端在接收到客户端请求后，会将JSON信息加入服务器响应信息中发送给客户端。</p>
+<img src="/2023/06/24/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E8%AF%B7%E6%B1%82JSON%E4%BF%A1%E6%81%AF/%E6%8D%95%E8%8E%B71.PNG" class title="图片麋鹿无法显示">
+
+<h2 id="示例一-ESP8266客户端请求单一JSON数据信息"><a href="#示例一-ESP8266客户端请求单一JSON数据信息" class="headerlink" title="示例一 ESP8266客户端请求单一JSON数据信息"></a>示例一 ESP8266客户端请求单一JSON数据信息</h2><p>本示例分为两部分，一部分为服务器程序，另一部分为客户端程序。</p>
+<h3 id="服务器端程序"><a href="#服务器端程序" class="headerlink" title="服务器端程序"></a>服务器端程序</h3><p>服务器端程序主要功能：</p>
+<ol>
+<li>实时读取A0、 D1、D2以及D3引脚的读数。</li>
+<li>当有客户端请求时，通过响应信息将引脚读数和测试数据信息发送给客户端。<br>信息发送格式为json格式。以下为该json信息的示例：</li></ol>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2023/06/24/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E8%AF%B7%E6%B1%82JSON%E4%BF%A1%E6%81%AF/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -294,7 +394,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-06-24 10:15:29" itemprop="dateModified" datetime="2023-06-24T10:15:29+08:00">2023-06-24</time>
+                <time title="修改时间：2023-06-24 10:33:45" itemprop="dateModified" datetime="2023-06-24T10:33:45+08:00">2023-06-24</time>
               </span>
 
           <br>
@@ -303,14 +403,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>973</span>
+              <span>3.1k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>5 分钟</span>
+              <span>8 分钟</span>
             </span>
 
         </div>
@@ -327,7 +427,7 @@
 <p>通过MQTTfx软件，电脑将会成为一台MQTT客户端。</p>
 <p>可以通过以下两个途径下载到MQTTfx软件。</p>
 <p>首先，可以通过MQTT官网下载到MQTTfx软件。MQTTfx的官网地址是：<a target="_blank" rel="noopener" href="http://mqttfx.org/">http://mqttfx.org</a></p>
-<p>也可以通过我们太极创客网站的下载页面获取此软件。请<a target="_blank" rel="noopener" href="http://www.taichi-maker.com/homepage/download/#mqtt">点击这里</a>进入太极创客网站MQTTfx下载链接列表。</p>
+<p>也可以通过太极创客网站的下载页面获取此软件。请<a target="_blank" rel="noopener" href="http://www.taichi-maker.com/homepage/download/#mqtt">点击这里</a>进入太极创客网站MQTTfx下载链接列表。</p>
 <p>特别提示一点，尽量使用以上的MQTTfx官网下载此软件，因为官网上的软件版本肯定是最新的，用新不用旧。</p>
 <p>接下来实际使用MQTTfx客户端来尝试连接服务端。具体操作方法，请见如下链接里的视频：<br><a target="_blank" rel="noopener" href="http://www.taichi-maker.com/homepage/esp8266-nodemcu-iot/iot-tuttorial/mqtt-tutorial/client-connect-mqtt-server/">MQTTfx客户端设置和连接客户端</a></p>
 <h2 id="ESP8266连接MQTT服务端"><a href="#ESP8266连接MQTT服务端" class="headerlink" title="ESP8266连接MQTT服务端"></a>ESP8266连接MQTT服务端</h2><p>ESP8266的Arduino开发环境里有多个MQTT库，我们使用最为流行的PubSubClient库来作为本文的主要介绍对象，来学习如何使用ESP8266通过PubSubClient库来实现MQTT物联网应用。关于PubSubClient库,以下是其基本信息：</p>
@@ -398,14 +498,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>608</span>
+              <span>761</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
+              <span>2 分钟</span>
             </span>
 
         </div>
@@ -486,14 +586,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2.9k</span>
+              <span>3.9k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>15 分钟</span>
+              <span>10 分钟</span>
             </span>
 
         </div>
@@ -576,14 +676,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2.4k</span>
+              <span>3k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>12 分钟</span>
+              <span>8 分钟</span>
             </span>
 
         </div>
@@ -668,7 +768,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>57</span>
+              <span>484</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -688,12 +788,12 @@
 
       
           
-        <div id="aplayer-UHgUPbSE" class="aplayer aplayer-tag-marker" style="margin-bottom: 20px;">
+        <div id="aplayer-VgujwKAN" class="aplayer aplayer-tag-marker" style="margin-bottom: 20px;">
             <pre class="aplayer-lrc-content"></pre>
         </div>
         <script>
           var ap = new APlayer({
-            element: document.getElementById("aplayer-UHgUPbSE"),
+            element: document.getElementById("aplayer-VgujwKAN"),
             narrow: false,
             autoplay: true,
             showlrc: false,
@@ -761,7 +861,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>73</span>
+              <span>134</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -838,7 +938,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-06-24 09:53:28" itemprop="dateModified" datetime="2023-06-24T09:53:28+08:00">2023-06-24</time>
+                <time title="修改时间：2023-06-24 15:44:43" itemprop="dateModified" datetime="2023-06-24T15:44:43+08:00">2023-06-24</time>
               </span>
 
           <br>
@@ -847,14 +947,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.8k</span>
+              <span>6.8k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>9 分钟</span>
+              <span>17 分钟</span>
             </span>
 
         </div>
@@ -942,14 +1042,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>3k</span>
+              <span>7.9k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>15 分钟</span>
+              <span>20 分钟</span>
             </span>
 
         </div>
@@ -1030,7 +1130,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>290</span>
+              <span>580</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -1119,14 +1219,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>3.6k</span>
+              <span>13k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>18 分钟</span>
+              <span>32 分钟</span>
             </span>
 
         </div>
@@ -1148,91 +1248,6 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2023/06/05/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BJSON%E8%A7%A3%E6%9E%90/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/05/25/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BJSON/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="云中锡">
-      <meta itemprop="description" content="心之所向，素履以往">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="明珠的个人博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/05/25/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BJSON/" class="post-title-link" itemprop="url">物联网之JSON</a>
-        </h2>
-
-        <div class="post-meta">
-
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2023-05-25 22:41:38 / 修改时间：23:18:33" itemprop="dateCreated datePublished" datetime="2023-05-25T22:41:38+08:00">2023-05-25</time>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.2k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>6 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="JSON-JavaScript-Object-Notation"><a href="#JSON-JavaScript-Object-Notation" class="headerlink" title="JSON(JavaScript Object Notation)"></a>JSON(JavaScript Object Notation)</h2><p>JSON(JavaScript Object Notation) 是一种通用的轻量级数据交换文本格式。它很容易阅读和编写，也便于机器进行解析和生成。它使用JavaScript语法来存储和描述数据对象，但是JSON完全独立于JavaScript。JSON可适用于多种流行编程语言。这些特性使JSON成为理想的数据交换格式。</p>
-<h3 id="JSON重点概念"><a href="#JSON重点概念" class="headerlink" title="JSON重点概念"></a>JSON重点概念</h3><p>数据 对象 数组</p>
-<h3 id="JSON语法规则要点"><a href="#JSON语法规则要点" class="headerlink" title="JSON语法规则要点"></a>JSON语法规则要点</h3><ul>
-<li>数据以“名”“值”对呈现</li>
-<li>数据“名”和“值”之间由</li></ul>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/05/25/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BJSON/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -1323,14 +1338,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">44</span>
+          <span class="site-state-item-count">45</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">37</span>
+        <span class="site-state-item-count">38</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1377,12 +1392,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">61k</span>
+    <span title="站点总字数">150k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">5:07</span>
+    <span title="站点阅读时长">6:14</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
@@ -1419,7 +1434,7 @@ $(document).ready(function() {
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共62.4k字</span>
+  <span class="post-count">博客全站共69k字</span>
 </div>
         
 <div class="busuanzi-count">
