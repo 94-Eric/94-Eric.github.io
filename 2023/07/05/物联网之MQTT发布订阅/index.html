@@ -1,0 +1,572 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"94-eric.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="重点：客户端实现发布消息、订阅主题以及取消订阅主题，MQTT报文：  PUBLISH – 发布信息 SUBSCRIBE – 订阅主题 SUBACK – 订阅确认 UNSUBSCRIBE – 取消订阅  PUBLISH – 发布消息MQTT客户端一旦连接到服务端，便可以发布消息。 每条发布的MQTT消息必须包含一个主题。MQTT服务器可以通过主题确定将消息转发给哪些客户端。（注：这里的消息指的是MQ">
+<meta property="og:type" content="article">
+<meta property="og:title" content="物联网之MQTT发布订阅">
+<meta property="og:url" content="https://94-eric.github.io/2023/07/05/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/index.html">
+<meta property="og:site_name" content="明珠的个人博客">
+<meta property="og:description" content="重点：客户端实现发布消息、订阅主题以及取消订阅主题，MQTT报文：  PUBLISH – 发布信息 SUBSCRIBE – 订阅主题 SUBACK – 订阅确认 UNSUBSCRIBE – 取消订阅  PUBLISH – 发布消息MQTT客户端一旦连接到服务端，便可以发布消息。 每条发布的MQTT消息必须包含一个主题。MQTT服务器可以通过主题确定将消息转发给哪些客户端。（注：这里的消息指的是MQ">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://94-eric.github.io/2023/07/05/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/%E6%8D%95%E8%8E%B71.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2023/07/05/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/%E6%8D%95%E8%8E%B72.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2023/07/05/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/%E6%8D%95%E8%8E%B73.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2023/07/05/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/%E6%8D%95%E8%8E%B74.PNG">
+<meta property="article:published_time" content="2023-07-05T02:24:40.000Z">
+<meta property="article:modified_time" content="2023-07-05T03:48:12.894Z">
+<meta property="article:author" content="云中锡">
+<meta property="article:tag" content="物联网 esp8266 MQTT 发布 订阅  取消订阅">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://94-eric.github.io/2023/07/05/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/%E6%8D%95%E8%8E%B71.PNG">
+
+<link rel="canonical" href="https://94-eric.github.io/2023/07/05/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>物联网之MQTT发布订阅 | 明珠的个人博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">明珠的个人博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">是谁告诉你，你是赤裸的？</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-resources">
+
+    <a href="/resources/" rel="section"><i class="fa fa-download fa-fw"></i>资源</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/07/05/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="云中锡">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="明珠的个人博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          物联网之MQTT发布订阅
+        </h1>
+
+        <div class="post-meta">
+
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-07-05 10:24:40 / 修改时间：11:48:12" itemprop="dateCreated datePublished" datetime="2023-07-05T10:24:40+08:00">2023-07-05</time>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>7 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>重点：客户端实现发布消息、订阅主题以及取消订阅主题，MQTT报文：</p>
+<ul>
+<li>PUBLISH – 发布信息</li>
+<li>SUBSCRIBE – 订阅主题</li>
+<li>SUBACK – 订阅确认</li>
+<li>UNSUBSCRIBE – 取消订阅</li>
+</ul>
+<h2 id="PUBLISH-–-发布消息"><a href="#PUBLISH-–-发布消息" class="headerlink" title="PUBLISH – 发布消息"></a>PUBLISH – 发布消息</h2><p>MQTT客户端一旦连接到服务端，便可以发布消息。 每条发布的MQTT消息必须包含一个主题。MQTT服务器可以通过主题确定将消息转发给哪些客户端。（注：这里的消息指的是MQTT报文。）</p>
+<img src="/2023/07/05/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/%E6%8D%95%E8%8E%B71.PNG" class title="图片麋鹿无法显示">
+
+<p>MQTT客户端发布消息时，会向服务端发送PUBLISH报文。以下是PUBLISH报文的详细信息。</p>
+<img src="/2023/07/05/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/%E6%8D%95%E8%8E%B72.PNG" class title="图片麋鹿无法显示">
+
+<h3 id="topicName-–-主题名"><a href="#topicName-–-主题名" class="headerlink" title="topicName – 主题名"></a>topicName – 主题名</h3><p>主题名用于识别此信息应发布到哪一个主题。</p>
+<h3 id="QoS-–-服务质量等级（Quality-of-Service）"><a href="#QoS-–-服务质量等级（Quality-of-Service）" class="headerlink" title="QoS – 服务质量等级（Quality of Service）"></a>QoS – 服务质量等级（Quality of Service）</h3><p>MQTT消息的服务质量等级。QoS有三个级别：0、1和2。QoS决定MQTT通讯有什么样的服务保证，数字越大，信息重要程度越高。</p>
+<h3 id="packetId-–-报文标识符"><a href="#packetId-–-报文标识符" class="headerlink" title="packetId – 报文标识符"></a>packetId – 报文标识符</h3><p>报文标识符可用于对MQTT报文进行标识。不同的MQTT报文所拥有的标识符不同。MQTT设备可以通过该标识符对MQTT报文进行甄别和管理。注意：报文标识符的内容与QoS级别有密不可分的关系。只有QoS级别大于0时，报文标识符才是非零数值。如果QoS等于0，报文标识符为0。</p>
+<h3 id="retainFlag-–-保留标志"><a href="#retainFlag-–-保留标志" class="headerlink" title="retainFlag – 保留标志"></a>retainFlag – 保留标志</h3><p>在默认情况下，当客户端订阅了某一主题后，并不会马上接收到该主题的信息。只有在客户端订阅该主题后，服务端接收到该主题的新信息时，服务端才会将最新接收到的该主题信息推送给客户端。</p>
+<p>但是在有些情况下，我们需要客户端在订阅了某一主题后马上接收到一条该主题的信息。这时候就需要用到保留标志这一信息。(默认自动发布的消息，想想微信关注公众号后都会自动发个问候消息)</p>
+<h3 id="Payload-–-有效载荷"><a href="#Payload-–-有效载荷" class="headerlink" title="Payload – 有效载荷"></a>Payload – 有效载荷</h3><p>有效载荷是我们希望通过MQTT所发送的实际内容。我们可以使用MQTT协议发送文本，图像等格式的内容。这些内容都是通过有效载荷所发送的。</p>
+<h3 id="dupFlag-–-重发标志-duplicate-flag"><a href="#dupFlag-–-重发标志-duplicate-flag" class="headerlink" title="dupFlag – 重发标志(duplicate flag)"></a>dupFlag – 重发标志(duplicate flag)</h3><p>当MQTT报文的接收方没有及时确认收到报文时，发送方会重复发送MQTT报文。在重复发送MQTT报文时，发送方会将此“重发标志”设置为true。注意，重发标志只在QoS级别大于0时使用。</p>
+<h2 id="SUBSCRIBE-–-订阅主题"><a href="#SUBSCRIBE-–-订阅主题" class="headerlink" title="SUBSCRIBE – 订阅主题"></a>SUBSCRIBE – 订阅主题</h2><p>当客户端连接到服务端后，除了可以发布消息，也可以接收消息。所有MQTT消息都有主题，客户端要想接收消息，首先要订阅该消息的主题。这样，当有客户端向该主题发布消息后，订阅了该主题的客户端就能接收到消息了。</p>
+<p>客户端要想订阅主题，首先要向服务端发送主题订阅请求。客户端是通过向服务端发送SUBSCRIBE报文来实现这一请求的。该报文包含有一系列“订阅主题名”。请留意，一个SUBSCRIBE报文可以包含有单个或者多个订阅主题名。也就是说，一个SUBSCRIBE报文可以用于订阅一个或者多个主题。</p>
+<p>客户端在订阅主题时也可以明确QoS。服务端会根据SUBSCRIBE中的QoS来提供相应的服务保证。</p>
+<p>另外每一个SUBSCRIBE报文还包含有“报文标识符”。报文标识符可用于对MQTT报文进行标识。不同的MQTT报文所拥有的标识符不同。MQTT设备可以通过该标识符对MQTT报文进行甄别和管理。</p>
+<h2 id="SUBACK-–-订阅确认"><a href="#SUBACK-–-订阅确认" class="headerlink" title="SUBACK – 订阅确认"></a>SUBACK – 订阅确认</h2><p>服务端接收到客户端的订阅报文后，会向客户端发送SUBACK报文确认订阅。</p>
+<p>SUBACK报文包含有“订阅返回码”和“报文标识符”这两个信息。</p>
+<p>returnCode – 订阅返回码</p>
+<p>客户端向服务端发送订阅请求后，服务端会给客户端返回一个订阅返回码。</p>
+<p>客户端可通过一个SUBSCRIBE报文发送多个主题的订阅请求。服务端会针对SUBSCRIBE报文中的所有订阅主题来逐一回复给客户端一个返回码。</p>
+<p>这个返回码的作用是告知客户端是否成功订阅了主题。以下是返回码的详细说明。</p>
+<img src="/2023/07/05/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/%E6%8D%95%E8%8E%B73.PNG" class title="图片麋鹿无法显示">
+
+<p><strong>注意，如上表所示，针对不同的主题订阅QoS，服务端的返回码会有所不同。</strong></p>
+<p>另外每一个SUBACK报文也包含有“报文标识符”。MQTT设备可以通过该标识符对报文进行管理。</p>
+<h2 id="UNSUBSCRIBE-–-取消订阅"><a href="#UNSUBSCRIBE-–-取消订阅" class="headerlink" title="UNSUBSCRIBE – 取消订阅"></a>UNSUBSCRIBE – 取消订阅</h2><p>顾名思义，当客户端要取消订阅某主题时，可通过向服务端发送UNSUBSCRIBE – 取消订阅报文来实现。</p>
+<img src="/2023/07/05/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/%E6%8D%95%E8%8E%B74.PNG" class title="图片麋鹿无法显示">
+
+<p>以上示意图显示，UNSUBSCRIBE报文包含两个重要信息，第一个是取消订阅的主题名称。同一个UNSUBSCRIBE报文可以同时包含多个取消订阅的主题名称。另外，UNSUBSCRIBE报文也包含“报文标识符”，MQTT设备可以通过该标识符对报文进行管理。</p>
+<p>当服务端接收到UNSUBSCRIBE报文后，会向客户端发送取消订阅确认报文 – UNSUBACK报文。该报文含有客户端所发送的“取消订阅报文标识符”。</p>
+<p>客户端接收到UNSUBACK报文后就可以确认取消主题订阅已经成功完成了。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%89%A9%E8%81%94%E7%BD%91-esp8266-MQTT-%E5%8F%91%E5%B8%83-%E8%AE%A2%E9%98%85-%E5%8F%96%E6%B6%88%E8%AE%A2%E9%98%85/" rel="tag"># 物联网 esp8266 MQTT 发布 订阅  取消订阅</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/07/03/%E9%9A%8F%E6%83%B34%E4%B9%8B%E8%A7%82%E7%94%B5%E5%BD%B1%E6%9C%89%E6%84%9F/" rel="prev" title="随想4之观电影有感">
+      <i class="fa fa-chevron-left"></i> 随想4之观电影有感
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC81NzY4OC8zNDE1MQ=="></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#PUBLISH-%E2%80%93-%E5%8F%91%E5%B8%83%E6%B6%88%E6%81%AF"><span class="nav-number">1.</span> <span class="nav-text">PUBLISH – 发布消息</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#topicName-%E2%80%93-%E4%B8%BB%E9%A2%98%E5%90%8D"><span class="nav-number">1.1.</span> <span class="nav-text">topicName – 主题名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#QoS-%E2%80%93-%E6%9C%8D%E5%8A%A1%E8%B4%A8%E9%87%8F%E7%AD%89%E7%BA%A7%EF%BC%88Quality-of-Service%EF%BC%89"><span class="nav-number">1.2.</span> <span class="nav-text">QoS – 服务质量等级（Quality of Service）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#packetId-%E2%80%93-%E6%8A%A5%E6%96%87%E6%A0%87%E8%AF%86%E7%AC%A6"><span class="nav-number">1.3.</span> <span class="nav-text">packetId – 报文标识符</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#retainFlag-%E2%80%93-%E4%BF%9D%E7%95%99%E6%A0%87%E5%BF%97"><span class="nav-number">1.4.</span> <span class="nav-text">retainFlag – 保留标志</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Payload-%E2%80%93-%E6%9C%89%E6%95%88%E8%BD%BD%E8%8D%B7"><span class="nav-number">1.5.</span> <span class="nav-text">Payload – 有效载荷</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#dupFlag-%E2%80%93-%E9%87%8D%E5%8F%91%E6%A0%87%E5%BF%97-duplicate-flag"><span class="nav-number">1.6.</span> <span class="nav-text">dupFlag – 重发标志(duplicate flag)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SUBSCRIBE-%E2%80%93-%E8%AE%A2%E9%98%85%E4%B8%BB%E9%A2%98"><span class="nav-number">2.</span> <span class="nav-text">SUBSCRIBE – 订阅主题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SUBACK-%E2%80%93-%E8%AE%A2%E9%98%85%E7%A1%AE%E8%AE%A4"><span class="nav-number">3.</span> <span class="nav-text">SUBACK – 订阅确认</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#UNSUBSCRIBE-%E2%80%93-%E5%8F%96%E6%B6%88%E8%AE%A2%E9%98%85"><span class="nav-number">4.</span> <span class="nav-text">UNSUBSCRIBE – 取消订阅</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="云中锡"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">云中锡</p>
+  <div class="site-description" itemprop="description">心之所向，素履以往</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">48</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">41</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/94-eric" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;94-eric" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:809594015@qq.com" title="E-Mail → mailto:809594015@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/hear%20the%20wind%20within" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;hear the wind within" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">云中锡</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">73k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">6:07</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <span id="busuanzi_container_site_pv">总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">总访客数<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+<!-- 不蒜子计数初始值纠正 -->
+<script>
+$(document).ready(function() {
+
+    var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+    var countOffset = 20000;  // 初始化首次数据
+
+    function fixCount() {            
+       if (document.getElementById("busuanzi_container_site_pv").style.display != "none")
+        {
+            $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + countOffset); 
+            clearInterval(int);
+        }                  
+        if ($("#busuanzi_container_site_pv").css("display") != "none")
+        {
+            $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + countOffset); // 加上初始数据 
+            clearInterval(int); // 停止检测
+        }  
+    }
+       	
+});
+</script> 
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共73k字</span>
+</div>
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='255,0,0' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
+
+</body>
+</html>
+
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/love.js"></script>

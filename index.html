@@ -262,6 +262,119 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/07/05/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="云中锡">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="明珠的个人博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/07/05/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/" class="post-title-link" itemprop="url">物联网之MQTT发布订阅</a>
+        </h2>
+
+        <div class="post-meta">
+
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-07-05 10:24:40 / 修改时间：11:48:12" itemprop="dateCreated datePublished" datetime="2023-07-05T10:24:40+08:00">2023-07-05</time>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>7 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>重点：客户端实现发布消息、订阅主题以及取消订阅主题，MQTT报文：</p>
+<ul>
+<li>PUBLISH – 发布信息</li>
+<li>SUBSCRIBE – 订阅主题</li>
+<li>SUBACK – 订阅确认</li>
+<li>UNSUBSCRIBE – 取消订阅</li>
+</ul>
+<h2 id="PUBLISH-–-发布消息"><a href="#PUBLISH-–-发布消息" class="headerlink" title="PUBLISH – 发布消息"></a>PUBLISH – 发布消息</h2><p>MQTT客户端一旦连接到服务端，便可以发布消息。 每条发布的MQTT消息必须包含一个主题。MQTT服务器可以通过主题确定将消息转发给哪些客户端。（注：这里的消息指的是MQTT报文。）</p>
+<img src="/2023/07/05/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/%E6%8D%95%E8%8E%B71.PNG" class title="图片麋鹿无法显示">
+
+<p>MQTT客户端发布消息时，会向服务端发送PUBLISH报文。以下是PUBLISH报文的详细信息。</p>
+<img src="/2023/07/05/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/%E6%8D%95%E8%8E%B72.PNG" class title="图片麋鹿无法显示">
+
+<h3 id="topicName-–-主题名"><a href="#topicName-–-主题名" class="headerlink" title="topicName – 主题名"></a>topicName – 主题名</h3><p>主题名用于识别此信息应发布到哪一个主题。</p>
+<h3 id="QoS-–-服务质量等级（Quality-of-Service）"><a href="#QoS-–-服务质量等级（Quality-of-Service）" class="headerlink" title="QoS – 服务质量等级（Quality of Service）"></a>QoS – 服务质量等级（Quality of Service）</h3><p>MQTT消息的服务质量等级。QoS有三个级别：0、1和2。QoS决定MQTT通讯有什么样的服务保证，数字越大，信息重要程度越高。</p>
+<h3 id="packetId-–-报文标识符"><a href="#packetId-–-报文标识符" class="headerlink" title="packetId – 报文标识符"></a>packetId – 报文标识符</h3><p>报文标识符可用于对MQTT报文进行标识。不同的MQTT报文所拥有的标识符不同。MQTT设备可以通过该标识符对MQTT报文进行甄别和管理。注意：报文标识符的内容与QoS级别有密不可分的关系。只有QoS级别大于0时，报文标识符才是非零数值。如果QoS等于0，报文标识符为0。</p>
+<h3 id="retainFlag-–-保留标志"><a href="#retainFlag-–-保留标志" class="headerlink" title="retainFlag – 保留标志"></a>retainFlag – 保留标志</h3><p>在默认情况下，当客户端订阅了某一主题后，并不会马上接收到该主题的信息。只有在客户端订阅该主题后，服务端接收到该主题的新信息时，服务端才会将最新接收到的该主题信息推送给客户端。</p>
+<p>但是在有些情况下，我们需要客户端在订阅了某一主题后马上接收到一条该主题的信息。这时候就需要用到保留标志这一信息。(默认自动发布的消息，想想微信关注公众号后都会自动发个问候消息)</p>
+<h3 id="Payload-–-有效载荷"><a href="#Payload-–-有效载荷" class="headerlink" title="Payload – 有效载荷"></a>Payload – 有效载荷</h3><p>有效载荷是我们希望通过MQTT所发送的实际内容。我们可以使用MQTT协议发送文本，图像等格式的内容。这些内容都是通过有效载荷所发送的。</p>
+<h3 id="dupFlag-–-重发标志-duplicate-flag"><a href="#dupFlag-–-重发标志-duplicate-flag" class="headerlink" title="dupFlag – 重发标志(duplicate flag)"></a>dupFlag – 重发标志(duplicate flag)</h3><p>当MQTT报文的接收方没有及时确认收到报文时，发送方会重复发送MQTT报文。在重复发送MQTT报文时，发送方会将此“重发标志”设置为true。注意，重发标志只在QoS级别大于0时使用。</p>
+<h2 id="SUBSCRIBE-–-订阅主题"><a href="#SUBSCRIBE-–-订阅主题" class="headerlink" title="SUBSCRIBE – 订阅主题"></a>SUBSCRIBE – 订阅主题</h2><p>当客户端连接到服务端后，除了可以发布消息，也可以接收消息。所有MQTT消息都有主题，客户端要想接收消息，首先要订阅该消息的主题。这样，当有客户端向该主题发布消息后，订阅了该主题的客户端就能接收到消息了。</p>
+<p>客户端要想订阅主题，首先要向服务端发送主题订阅请求。客户端是通过向服务端发送SUBSCRIBE报文来实现这一请求的。该报文包含有一系列“订阅主题名”。请留意，一个SUBSCRIBE报文可以包含有单个或者多个订阅主题名。也就是说，一个SUBSCRIBE报文可以用于订阅一个或者多个主题。</p>
+<p>客户端在订阅主题时也可以明确QoS。服务端会根据SUBSCRIBE中的QoS来提供相应的服务保证。</p>
+<p>另外每一个SUBSCRIBE报文还包含有“报文标识符”。报文标识符可用于对MQTT报文进行标识。不同的MQTT报文所拥有的标识符不同。MQTT设备可以通过该标识符对MQTT报文进行甄别和管理。</p>
+<h2 id="SUBACK-–-订阅确认"><a href="#SUBACK-–-订阅确认" class="headerlink" title="SUBACK – 订阅确认"></a>SUBACK – 订阅确认</h2><p>服务端接收到客户端的订阅报文后，会向客户端发送SUBACK报文确认订阅。</p>
+<p>SUBACK报文包含有“订阅返回码”和“报文标识符”这两个信息。</p>
+<p>returnCode – 订阅返回码</p>
+<p>客户端向服务端发送订阅请求后，服务端会给客户端返回一个订阅返回码。</p>
+<p>客户端可通过一个SUBSCRIBE报文发送多个主题的订阅请求。服务端会针对SUBSCRIBE报文中的所有订阅主题来逐一回复给客户端一个返回码。</p>
+<p>这个返回码的作用是告知客户端是否成功订阅了主题。以下是返回码的详细说明。</p>
+<img src="/2023/07/05/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/%E6%8D%95%E8%8E%B73.PNG" class title="图片麋鹿无法显示">
+
+<p><strong>注意，如上表所示，针对不同的主题订阅QoS，服务端的返回码会有所不同。</strong></p>
+<p>另外每一个SUBACK报文也包含有“报文标识符”。MQTT设备可以通过该标识符对报文进行管理。</p>
+<h2 id="UNSUBSCRIBE-–-取消订阅"><a href="#UNSUBSCRIBE-–-取消订阅" class="headerlink" title="UNSUBSCRIBE – 取消订阅"></a>UNSUBSCRIBE – 取消订阅</h2><p>顾名思义，当客户端要取消订阅某主题时，可通过向服务端发送UNSUBSCRIBE – 取消订阅报文来实现。</p>
+<img src="/2023/07/05/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/%E6%8D%95%E8%8E%B74.PNG" class title="图片麋鹿无法显示">
+
+<p>以上示意图显示，UNSUBSCRIBE报文包含两个重要信息，第一个是取消订阅的主题名称。同一个UNSUBSCRIBE报文可以同时包含多个取消订阅的主题名称。另外，UNSUBSCRIBE报文也包含“报文标识符”，MQTT设备可以通过该标识符对报文进行管理。</p>
+<p>当服务端接收到UNSUBSCRIBE报文后，会向客户端发送取消订阅确认报文 – UNSUBACK报文。该报文含有客户端所发送的“取消订阅报文标识符”。</p>
+<p>客户端接收到UNSUBACK报文后就可以确认取消主题订阅已经成功完成了。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/07/03/%E9%9A%8F%E6%83%B34%E4%B9%8B%E8%A7%82%E7%94%B5%E5%BD%B1%E6%9C%89%E6%84%9F/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1023,12 +1136,12 @@
 
       
           
-        <div id="aplayer-bEqXNhxY" class="aplayer aplayer-tag-marker" style="margin-bottom: 20px;">
+        <div id="aplayer-hSlLuKAl" class="aplayer aplayer-tag-marker" style="margin-bottom: 20px;">
             <pre class="aplayer-lrc-content"></pre>
         </div>
         <script>
           var ap = new APlayer({
-            element: document.getElementById("aplayer-bEqXNhxY"),
+            element: document.getElementById("aplayer-hSlLuKAl"),
             narrow: false,
             autoplay: true,
             showlrc: false,
@@ -1232,100 +1345,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/06/07/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E7%BD%91%E7%BB%9C%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="云中锡">
-      <meta itemprop="description" content="心之所向，素履以往">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="明珠的个人博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/06/07/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E7%BD%91%E7%BB%9C%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/" class="post-title-link" itemprop="url">物联网之网络客户端基本操作</a>
-        </h2>
-
-        <div class="post-meta">
-
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-06-07 21:40:53" itemprop="dateCreated datePublished" datetime="2023-06-07T21:40:53+08:00">2023-06-07</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-06-08 22:40:32" itemprop="dateModified" datetime="2023-06-08T22:40:32+08:00">2023-06-08</time>
-              </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>15 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="网络客户端简介"><a href="#网络客户端简介" class="headerlink" title="网络客户端简介"></a>网络客户端简介</h2><p>在我们上网过程中，经常使用网页浏览器来浏览网站信息。在这一场景中，我们的网站浏览器就是一个网络客户端。网络客户端的主要功能就是向服务器发送网络请求。服务器在接收到客户端请求后会将请求的信息回复给客户端。</p>
-<p>接下来我们使用ESP8266-NodeMCU开发板扮演网络客户端的角色，从而向网络服务器发送HTTP请求以获取服务器响应信息。</p>
-<img src="/2023/06/07/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E7%BD%91%E7%BB%9C%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/%E6%8D%95%E8%8E%B71.PNG" class title="图片麋鹿无法显示">
-
-<p>ESP8266-Arduino库中有两个库用于控制ESP8266与网络服务器进行通讯。他们是WiFiClient库和ESP8266HTTPClient库。</p>
-<p>这两个库虽然功能相似，但是他们却是截然不同的两个库。ESP8266HTTPClient库相对简单易用。该库的库函数可以自动生成客户端请求信息并解析服务器响应信息。但正是由于该库的库函数为我们做了所有底层工作，这就导致该库不如WiFiclient库灵活。假如我们需要用ESP8266建立自定义客户端请求信息时，就要用WiFiClient库来实现了。另外WiFiClient库在解析服务器响应信息时可以使用丰富的STREAM类函数，这也为我们提供了很多便利。</p>
-<p>因此，在我们使用ESP8266开发项目时，更多的时候是使用WiFiClient库来实现物联网通讯功能。换句话说，我个人认为WiFiClient库的重要性和实用性要高于ESP8266HTTPClient库。</p>
-<p>以上描述有些抽象，接下来我们看两个简单示例。这两个示例的功能是相同的。都是通过ESP8266通过互联网向网络服务器发送请求并且将将网站服务器响应的信息输出在屏幕中。不同的是，示例一使用了ESP8266HTTPClient库来实现这一操作，示例二使用了WiFiClient库实现。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/06/07/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E7%BD%91%E7%BB%9C%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1397,14 +1416,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">47</span>
+          <span class="site-state-item-count">48</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">40</span>
+        <span class="site-state-item-count">41</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1451,12 +1470,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">72k</span>
+    <span title="站点总字数">73k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">6:01</span>
+    <span title="站点阅读时长">6:07</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
@@ -1493,7 +1512,7 @@ $(document).ready(function() {
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共73.5k字</span>
+  <span class="post-count">博客全站共73k字</span>
 </div>
         
 <div class="busuanzi-count">
