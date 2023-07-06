@@ -20,25 +20,20 @@
     var CONFIG = {"hostname":"94-eric.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="重点：客户端实现发布消息、订阅主题以及取消订阅主题，MQTT报文：  PUBLISH – 发布信息 SUBSCRIBE – 订阅主题 SUBACK – 订阅确认 UNSUBSCRIBE – 取消订阅  PUBLISH – 发布消息MQTT客户端一旦连接到服务端，便可以发布消息。 每条发布的MQTT消息必须包含一个主题。MQTT服务器可以通过主题确定将消息转发给哪些客户端。（注：这里的消息指的是MQ">
+  <meta name="description" content="红茶简介好喝(严格说起来，红茶不是指茶的品种，而是一种茶叶的加工工艺。) 红茶代表： 金骏眉 正山小种 祁红功夫 滇红功夫 英红九号  工艺 萎凋 揉捻 发酵 干燥 精制  分类方式著名产区 福建武夷山 安徽祁门 云南凤庆  工艺与等级  红碎茶  大叶种红碎茶 中小叶种红碎茶    小种茶  正山小种 烟小种    功夫红茶  大叶种功夫红茶 中小叶种功夫红茶      叶片大小 大叶种 中叶种">
 <meta property="og:type" content="article">
-<meta property="og:title" content="物联网之MQTT发布订阅">
-<meta property="og:url" content="https://94-eric.github.io/2023/07/05/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/index.html">
+<meta property="og:title" content="红茶之入门资料">
+<meta property="og:url" content="https://94-eric.github.io/2023/07/06/%E7%BA%A2%E8%8C%B6%E4%B9%8B%E5%85%A5%E9%97%A8%E8%B5%84%E6%96%99/index.html">
 <meta property="og:site_name" content="明珠的个人博客">
-<meta property="og:description" content="重点：客户端实现发布消息、订阅主题以及取消订阅主题，MQTT报文：  PUBLISH – 发布信息 SUBSCRIBE – 订阅主题 SUBACK – 订阅确认 UNSUBSCRIBE – 取消订阅  PUBLISH – 发布消息MQTT客户端一旦连接到服务端，便可以发布消息。 每条发布的MQTT消息必须包含一个主题。MQTT服务器可以通过主题确定将消息转发给哪些客户端。（注：这里的消息指的是MQ">
+<meta property="og:description" content="红茶简介好喝(严格说起来，红茶不是指茶的品种，而是一种茶叶的加工工艺。) 红茶代表： 金骏眉 正山小种 祁红功夫 滇红功夫 英红九号  工艺 萎凋 揉捻 发酵 干燥 精制  分类方式著名产区 福建武夷山 安徽祁门 云南凤庆  工艺与等级  红碎茶  大叶种红碎茶 中小叶种红碎茶    小种茶  正山小种 烟小种    功夫红茶  大叶种功夫红茶 中小叶种功夫红茶      叶片大小 大叶种 中叶种">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://94-eric.github.io/2023/07/05/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/%E6%8D%95%E8%8E%B71.PNG">
-<meta property="og:image" content="https://94-eric.github.io/2023/07/05/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/%E6%8D%95%E8%8E%B72.PNG">
-<meta property="og:image" content="https://94-eric.github.io/2023/07/05/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/%E6%8D%95%E8%8E%B73.PNG">
-<meta property="og:image" content="https://94-eric.github.io/2023/07/05/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/%E6%8D%95%E8%8E%B74.PNG">
-<meta property="article:published_time" content="2023-07-05T02:24:40.000Z">
-<meta property="article:modified_time" content="2023-07-05T03:50:22.270Z">
+<meta property="article:published_time" content="2023-07-06T01:35:21.000Z">
+<meta property="article:modified_time" content="2023-07-06T02:35:00.369Z">
 <meta property="article:author" content="云中锡">
-<meta property="article:tag" content="物联网 esp8266 MQTT 发布 订阅  取消订阅">
+<meta property="article:tag" content="红茶 分类 评茶术语">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://94-eric.github.io/2023/07/05/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/%E6%8D%95%E8%8E%B71.PNG">
 
-<link rel="canonical" href="https://94-eric.github.io/2023/07/05/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/">
+<link rel="canonical" href="https://94-eric.github.io/2023/07/06/%E7%BA%A2%E8%8C%B6%E4%B9%8B%E5%85%A5%E9%97%A8%E8%B5%84%E6%96%99/">
 
 
 <script id="page-configurations">
@@ -51,7 +46,7 @@
   };
 </script>
 
-  <title>物联网之MQTT发布订阅 | 明珠的个人博客</title>
+  <title>红茶之入门资料 | 明珠的个人博客</title>
   
 
 
@@ -177,7 +172,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/07/05/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/">
+    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/07/06/%E7%BA%A2%E8%8C%B6%E4%B9%8B%E5%85%A5%E9%97%A8%E8%B5%84%E6%96%99/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -190,7 +185,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          物联网之MQTT发布订阅
+          红茶之入门资料
         </h1>
 
         <div class="post-meta">
@@ -202,7 +197,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2023-07-05 10:24:40 / 修改时间：11:50:22" itemprop="dateCreated datePublished" datetime="2023-07-05T10:24:40+08:00">2023-07-05</time>
+              <time title="创建时间：2023-07-06 09:35:21 / 修改时间：10:35:00" itemprop="dateCreated datePublished" datetime="2023-07-06T09:35:21+08:00">2023-07-06</time>
             </span>
 
           
@@ -218,14 +213,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.5k</span>
+              <span>588</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>7 分钟</span>
+              <span>3 分钟</span>
             </span>
 
         </div>
@@ -237,46 +232,66 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>重点：客户端实现发布消息、订阅主题以及取消订阅主题，MQTT报文：</p>
-<ul>
-<li>PUBLISH – 发布信息</li>
-<li>SUBSCRIBE – 订阅主题</li>
-<li>SUBACK – 订阅确认</li>
-<li>UNSUBSCRIBE – 取消订阅</li>
+        <h2 id="红茶简介"><a href="#红茶简介" class="headerlink" title="红茶简介"></a>红茶简介</h2><p>好喝(严格说起来，红茶不是指茶的品种，而是一种茶叶的加工工艺。)</p>
+<h3 id="红茶代表："><a href="#红茶代表：" class="headerlink" title="红茶代表："></a>红茶代表：</h3><ul>
+<li>金骏眉</li>
+<li>正山小种</li>
+<li>祁红功夫</li>
+<li>滇红功夫</li>
+<li>英红九号</li>
 </ul>
-<h2 id="PUBLISH-–-发布消息"><a href="#PUBLISH-–-发布消息" class="headerlink" title="PUBLISH – 发布消息"></a>PUBLISH – 发布消息</h2><p>MQTT客户端一旦连接到服务端，便可以发布消息。 每条发布的MQTT消息必须包含一个主题。MQTT服务器可以通过主题确定将消息转发给哪些客户端。（注：这里的消息指的是MQTT报文。）</p>
-<img src="/2023/07/05/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/%E6%8D%95%E8%8E%B71.PNG" class title="图片麋鹿无法显示">
-
-<p>MQTT客户端发布消息时，会向服务端发送PUBLISH报文。以下是PUBLISH报文的详细信息。</p>
-<img src="/2023/07/05/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/%E6%8D%95%E8%8E%B72.PNG" class title="图片麋鹿无法显示">
-
-<h3 id="topicName-–-主题名"><a href="#topicName-–-主题名" class="headerlink" title="topicName – 主题名"></a>topicName – 主题名</h3><p>主题名用于识别此信息应发布到哪一个主题。</p>
-<h3 id="QoS-–-服务质量等级（Quality-of-Service）"><a href="#QoS-–-服务质量等级（Quality-of-Service）" class="headerlink" title="QoS – 服务质量等级（Quality of Service）"></a>QoS – 服务质量等级（Quality of Service）</h3><p>MQTT消息的服务质量等级。QoS有三个级别：0、1和2。QoS决定MQTT通讯有什么样的服务保证，数字越大，<span id="more"></span>信息重要程度越高。</p>
-<h3 id="packetId-–-报文标识符"><a href="#packetId-–-报文标识符" class="headerlink" title="packetId – 报文标识符"></a>packetId – 报文标识符</h3><p>报文标识符可用于对MQTT报文进行标识。不同的MQTT报文所拥有的标识符不同。MQTT设备可以通过该标识符对MQTT报文进行甄别和管理。注意：报文标识符的内容与QoS级别有密不可分的关系。只有QoS级别大于0时，报文标识符才是非零数值。如果QoS等于0，报文标识符为0。</p>
-<h3 id="retainFlag-–-保留标志"><a href="#retainFlag-–-保留标志" class="headerlink" title="retainFlag – 保留标志"></a>retainFlag – 保留标志</h3><p>在默认情况下，当客户端订阅了某一主题后，并不会马上接收到该主题的信息。只有在客户端订阅该主题后，服务端接收到该主题的新信息时，服务端才会将最新接收到的该主题信息推送给客户端。</p>
-<p>但是在有些情况下，我们需要客户端在订阅了某一主题后马上接收到一条该主题的信息。这时候就需要用到保留标志这一信息。(默认自动发布的消息，想想微信关注公众号后都会自动发个问候消息)</p>
-<h3 id="Payload-–-有效载荷"><a href="#Payload-–-有效载荷" class="headerlink" title="Payload – 有效载荷"></a>Payload – 有效载荷</h3><p>有效载荷是我们希望通过MQTT所发送的实际内容。我们可以使用MQTT协议发送文本，图像等格式的内容。这些内容都是通过有效载荷所发送的。</p>
-<h3 id="dupFlag-–-重发标志-duplicate-flag"><a href="#dupFlag-–-重发标志-duplicate-flag" class="headerlink" title="dupFlag – 重发标志(duplicate flag)"></a>dupFlag – 重发标志(duplicate flag)</h3><p>当MQTT报文的接收方没有及时确认收到报文时，发送方会重复发送MQTT报文。在重复发送MQTT报文时，发送方会将此“重发标志”设置为true。注意，重发标志只在QoS级别大于0时使用。</p>
-<h2 id="SUBSCRIBE-–-订阅主题"><a href="#SUBSCRIBE-–-订阅主题" class="headerlink" title="SUBSCRIBE – 订阅主题"></a>SUBSCRIBE – 订阅主题</h2><p>当客户端连接到服务端后，除了可以发布消息，也可以接收消息。所有MQTT消息都有主题，客户端要想接收消息，首先要订阅该消息的主题。这样，当有客户端向该主题发布消息后，订阅了该主题的客户端就能接收到消息了。</p>
-<p>客户端要想订阅主题，首先要向服务端发送主题订阅请求。客户端是通过向服务端发送SUBSCRIBE报文来实现这一请求的。该报文包含有一系列“订阅主题名”。请留意，一个SUBSCRIBE报文可以包含有单个或者多个订阅主题名。也就是说，一个SUBSCRIBE报文可以用于订阅一个或者多个主题。</p>
-<p>客户端在订阅主题时也可以明确QoS。服务端会根据SUBSCRIBE中的QoS来提供相应的服务保证。</p>
-<p>另外每一个SUBSCRIBE报文还包含有“报文标识符”。报文标识符可用于对MQTT报文进行标识。不同的MQTT报文所拥有的标识符不同。MQTT设备可以通过该标识符对MQTT报文进行甄别和管理。</p>
-<h2 id="SUBACK-–-订阅确认"><a href="#SUBACK-–-订阅确认" class="headerlink" title="SUBACK – 订阅确认"></a>SUBACK – 订阅确认</h2><p>服务端接收到客户端的订阅报文后，会向客户端发送SUBACK报文确认订阅。</p>
-<p>SUBACK报文包含有“订阅返回码”和“报文标识符”这两个信息。</p>
-<p>returnCode – 订阅返回码</p>
-<p>客户端向服务端发送订阅请求后，服务端会给客户端返回一个订阅返回码。</p>
-<p>客户端可通过一个SUBSCRIBE报文发送多个主题的订阅请求。服务端会针对SUBSCRIBE报文中的所有订阅主题来逐一回复给客户端一个返回码。</p>
-<p>这个返回码的作用是告知客户端是否成功订阅了主题。以下是返回码的详细说明。</p>
-<img src="/2023/07/05/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/%E6%8D%95%E8%8E%B73.PNG" class title="图片麋鹿无法显示">
-
-<p><strong>注意，如上表所示，针对不同的主题订阅QoS，服务端的返回码会有所不同。</strong></p>
-<p>另外每一个SUBACK报文也包含有“报文标识符”。MQTT设备可以通过该标识符对报文进行管理。</p>
-<h2 id="UNSUBSCRIBE-–-取消订阅"><a href="#UNSUBSCRIBE-–-取消订阅" class="headerlink" title="UNSUBSCRIBE – 取消订阅"></a>UNSUBSCRIBE – 取消订阅</h2><p>顾名思义，当客户端要取消订阅某主题时，可通过向服务端发送UNSUBSCRIBE – 取消订阅报文来实现。</p>
-<img src="/2023/07/05/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/%E6%8D%95%E8%8E%B74.PNG" class title="图片麋鹿无法显示">
-
-<p>以上示意图显示，UNSUBSCRIBE报文包含两个重要信息，第一个是取消订阅的主题名称。同一个UNSUBSCRIBE报文可以同时包含多个取消订阅的主题名称。另外，UNSUBSCRIBE报文也包含“报文标识符”，MQTT设备可以通过该标识符对报文进行管理。</p>
-<p>当服务端接收到UNSUBSCRIBE报文后，会向客户端发送取消订阅确认报文 – UNSUBACK报文。该报文含有客户端所发送的“取消订阅报文标识符”。</p>
-<p>客户端接收到UNSUBACK报文后就可以确认取消主题订阅已经成功完成了。</p>
+<h3 id="工艺"><a href="#工艺" class="headerlink" title="工艺"></a>工艺</h3><ul>
+<li>萎凋</li>
+<li>揉捻</li>
+<li>发酵</li>
+<li>干燥</li>
+<li>精制</li>
+</ul>
+<h3 id="分类方式"><a href="#分类方式" class="headerlink" title="分类方式"></a>分类方式</h3><h4 id="著名产区"><a href="#著名产区" class="headerlink" title="著名产区"></a>著名产区</h4><ul>
+<li>福建武夷山</li>
+<li>安徽祁门</li>
+<li>云南凤庆</li>
+</ul>
+<h4 id="工艺与等级"><a href="#工艺与等级" class="headerlink" title="工艺与等级"></a>工艺与等级</h4><blockquote>
+<ul>
+<li>红碎茶<blockquote>
+<ul>
+<li>大叶种红碎茶</li>
+<li>中小叶种红碎茶</li>
+</ul>
+</blockquote>
+</li>
+<li>小种茶<blockquote>
+<ul>
+<li>正山小种</li>
+<li>烟小种</li>
+</ul>
+</blockquote>
+</li>
+<li>功夫红茶<blockquote>
+<ul>
+<li>大叶种功夫红茶</li>
+<li>中小叶种功夫红茶</li>
+</ul>
+</blockquote>
+</li>
+</ul>
+</blockquote>
+<h4 id="叶片大小"><a href="#叶片大小" class="headerlink" title="叶片大小"></a>叶片大小</h4><ul>
+<li>大叶种</li>
+<li>中叶种</li>
+<li>小叶种</li>
+</ul>
+<h3 id="冲泡方法"><a href="#冲泡方法" class="headerlink" title="冲泡方法"></a>冲泡方法</h3><ul>
+<li>马克杯冲泡法，顾名思义，马克杯，放茶叶，喝</li>
+<li>工夫茶冲泡法，和想象中古人泡茶一样—个人最喜欢</li>
+<li>冷泡法，冷开水浸泡较长时间的茶叶</li>
+</ul>
+<h2 id="知名红茶简介"><a href="#知名红茶简介" class="headerlink" title="知名红茶简介"></a>知名红茶简介</h2><h3 id="小种茶"><a href="#小种茶" class="headerlink" title="小种茶"></a>小种茶</h3><p>正山小种：产于福建，经过马尾松熏焙，带松烟香、花香、桂圆味。<br>金骏眉：产于福建，由全芽头采制，带花果香、<span id="more"></span>木质香。</p>
+<h3 id="功夫红茶"><a href="#功夫红茶" class="headerlink" title="功夫红茶"></a>功夫红茶</h3><p>祁红工夫：产于安徽，具有似花似蜜似果的香气。<br>滇红功夫：产于云南，汤色红艳，口感滋味浓厚强烈，性价比高。<br>宁红功夫：主产于江西修水，与祁红接近，滋味甜醇。<br>浮红工夫：主产于江西浮梁、景德镇，与祁红接近，甜香。<br>宜红功夫：主产于湖北宜昌、恩施，滋味浓醇，甜香高长。<br>川红功夫：产于四川宜宾，香气鲜爽，还带有橘子香。<br>闽红功夫：又分政和功夫、白琳功夫、坦洋工夫。<br>湖红功夫：产于湖南，滋味甜醇清爽。<br>越红功夫：主产于浙江绍兴、诸暨，外形细紧，内质纯合。</p>
+<h3 id="红碎茶"><a href="#红碎茶" class="headerlink" title="红碎茶"></a>红碎茶</h3><p>叶茶类：FPO，OP，P<br>碎茶类：FBOP，BOP，BP<br>片茶类：BOPF，PF，OF，F<br>末茶类：D</p>
+<h2 id="常用评茶术语"><a href="#常用评茶术语" class="headerlink" title="常用评茶术语"></a>常用评茶术语</h2><p>一款茶的品质如何，是有一套专业的术语进行评价的，大致可分为五个维度：干茶、香气、汤色、滋味、叶底等，而且每一类茶都有专属于自己的评茶术语体系，比如绿茶、红茶、乌龙茶、白茶、黑茶等。</p>
+<h3 id="干茶术语"><a href="#干茶术语" class="headerlink" title="干茶术语"></a>干茶术语</h3><h4 id="外形"><a href="#外形" class="headerlink" title="外形"></a>外形</h4><p>金毫：金黄色茸毫的嫩芽。<br>紧卷：碎茶颗粒卷得很紧。<br>锋苗：芽叶细嫩，紧结有锐度。</p>
 
     </div>
 
@@ -286,7 +301,7 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/%E7%89%A9%E8%81%94%E7%BD%91-esp8266-MQTT-%E5%8F%91%E5%B8%83-%E8%AE%A2%E9%98%85-%E5%8F%96%E6%B6%88%E8%AE%A2%E9%98%85/" rel="tag"># 物联网 esp8266 MQTT 发布 订阅  取消订阅</a>
+              <a href="/tags/%E7%BA%A2%E8%8C%B6-%E5%88%86%E7%B1%BB-%E8%AF%84%E8%8C%B6%E6%9C%AF%E8%AF%AD/" rel="tag"># 红茶 分类 评茶术语</a>
           </div>
 
         
@@ -295,13 +310,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2023/07/03/%E9%9A%8F%E6%83%B34%E4%B9%8B%E8%A7%82%E7%94%B5%E5%BD%B1%E6%9C%89%E6%84%9F/" rel="prev" title="随想4之观电影有感">
-      <i class="fa fa-chevron-left"></i> 随想4之观电影有感
+    <a href="/2023/07/05/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E6%B6%88%E6%81%AF%E5%8F%91%E5%B8%83/" rel="prev" title="物联网之MQTT消息发布">
+      <i class="fa fa-chevron-left"></i> 物联网之MQTT消息发布
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2023/07/05/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E6%B6%88%E6%81%AF%E5%8F%91%E5%B8%83/" rel="next" title="物联网之MQTT消息发布">
-      物联网之MQTT消息发布 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -365,7 +377,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#PUBLISH-%E2%80%93-%E5%8F%91%E5%B8%83%E6%B6%88%E6%81%AF"><span class="nav-number">1.</span> <span class="nav-text">PUBLISH – 发布消息</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#topicName-%E2%80%93-%E4%B8%BB%E9%A2%98%E5%90%8D"><span class="nav-number">1.1.</span> <span class="nav-text">topicName – 主题名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#QoS-%E2%80%93-%E6%9C%8D%E5%8A%A1%E8%B4%A8%E9%87%8F%E7%AD%89%E7%BA%A7%EF%BC%88Quality-of-Service%EF%BC%89"><span class="nav-number">1.2.</span> <span class="nav-text">QoS – 服务质量等级（Quality of Service）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#packetId-%E2%80%93-%E6%8A%A5%E6%96%87%E6%A0%87%E8%AF%86%E7%AC%A6"><span class="nav-number">1.3.</span> <span class="nav-text">packetId – 报文标识符</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#retainFlag-%E2%80%93-%E4%BF%9D%E7%95%99%E6%A0%87%E5%BF%97"><span class="nav-number">1.4.</span> <span class="nav-text">retainFlag – 保留标志</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Payload-%E2%80%93-%E6%9C%89%E6%95%88%E8%BD%BD%E8%8D%B7"><span class="nav-number">1.5.</span> <span class="nav-text">Payload – 有效载荷</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#dupFlag-%E2%80%93-%E9%87%8D%E5%8F%91%E6%A0%87%E5%BF%97-duplicate-flag"><span class="nav-number">1.6.</span> <span class="nav-text">dupFlag – 重发标志(duplicate flag)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SUBSCRIBE-%E2%80%93-%E8%AE%A2%E9%98%85%E4%B8%BB%E9%A2%98"><span class="nav-number">2.</span> <span class="nav-text">SUBSCRIBE – 订阅主题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SUBACK-%E2%80%93-%E8%AE%A2%E9%98%85%E7%A1%AE%E8%AE%A4"><span class="nav-number">3.</span> <span class="nav-text">SUBACK – 订阅确认</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#UNSUBSCRIBE-%E2%80%93-%E5%8F%96%E6%B6%88%E8%AE%A2%E9%98%85"><span class="nav-number">4.</span> <span class="nav-text">UNSUBSCRIBE – 取消订阅</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%A2%E8%8C%B6%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">红茶简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%A2%E8%8C%B6%E4%BB%A3%E8%A1%A8%EF%BC%9A"><span class="nav-number">1.1.</span> <span class="nav-text">红茶代表：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B7%A5%E8%89%BA"><span class="nav-number">1.2.</span> <span class="nav-text">工艺</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E7%B1%BB%E6%96%B9%E5%BC%8F"><span class="nav-number">1.3.</span> <span class="nav-text">分类方式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%91%97%E5%90%8D%E4%BA%A7%E5%8C%BA"><span class="nav-number">1.3.1.</span> <span class="nav-text">著名产区</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B7%A5%E8%89%BA%E4%B8%8E%E7%AD%89%E7%BA%A7"><span class="nav-number">1.3.2.</span> <span class="nav-text">工艺与等级</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%B6%E7%89%87%E5%A4%A7%E5%B0%8F"><span class="nav-number">1.3.3.</span> <span class="nav-text">叶片大小</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%B2%E6%B3%A1%E6%96%B9%E6%B3%95"><span class="nav-number">1.4.</span> <span class="nav-text">冲泡方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9F%A5%E5%90%8D%E7%BA%A2%E8%8C%B6%E7%AE%80%E4%BB%8B"><span class="nav-number">2.</span> <span class="nav-text">知名红茶简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%8F%E7%A7%8D%E8%8C%B6"><span class="nav-number">2.1.</span> <span class="nav-text">小种茶</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%9F%E5%A4%AB%E7%BA%A2%E8%8C%B6"><span class="nav-number">2.2.</span> <span class="nav-text">功夫红茶</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%A2%E7%A2%8E%E8%8C%B6"><span class="nav-number">2.3.</span> <span class="nav-text">红碎茶</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E8%AF%84%E8%8C%B6%E6%9C%AF%E8%AF%AD"><span class="nav-number">3.</span> <span class="nav-text">常用评茶术语</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B2%E8%8C%B6%E6%9C%AF%E8%AF%AD"><span class="nav-number">3.1.</span> <span class="nav-text">干茶术语</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%96%E5%BD%A2"><span class="nav-number">3.1.1.</span> <span class="nav-text">外形</span></a></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
