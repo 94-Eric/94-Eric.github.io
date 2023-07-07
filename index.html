@@ -260,6 +260,175 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/07/07/%E9%9A%8F%E6%83%B35/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="云中锡">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="明珠的个人博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/07/07/%E9%9A%8F%E6%83%B35/" class="post-title-link" itemprop="url">随想5</a>
+        </h2>
+
+        <div class="post-meta">
+
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-07-07 19:10:57 / 修改时间：19:12:34" itemprop="dateCreated datePublished" datetime="2023-07-07T19:10:57+08:00">2023-07-07</time>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>38</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>很喜欢一段话：<br>“任何事和人，时间终究会给我们答案，在细水长流的日子里，不说永远，只说珍惜”</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/07/07/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E4%BF%9D%E7%95%99%E6%B6%88%E6%81%AF/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="云中锡">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="明珠的个人博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/07/07/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E4%BF%9D%E7%95%99%E6%B6%88%E6%81%AF/" class="post-title-link" itemprop="url">物联网之MQTT保留消息</a>
+        </h2>
+
+        <div class="post-meta">
+
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-07-07 18:25:49 / 修改时间：19:10:17" itemprop="dateCreated datePublished" datetime="2023-07-07T18:25:49+08:00">2023-07-07</time>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>12 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>“保留消息”是十分重要的MQTT概念。通过“保留消息”这一名称不难判断，“保留消息”是一种被保留下来的消息。但是这个“保留消息”为何要被保留？而保留消息又是有什么特殊的用途？</p>
+<h2 id="保留消息的作用"><a href="#保留消息的作用" class="headerlink" title="保留消息的作用"></a>保留消息的作用</h2><p>要讲明“保留消息”这一概念，我们先看一个场景。假设我们正在利用MQTT协议开发一套智能家居物联网系统。在该系统中有一台专门用于检测和发布室温信息的MQTT客户端，它每到整点时就会测量当前室温并且向MQTT服务端发布室温测量结果。</p>
+<p>假设在该智能家具物联网系统中，还有一台环境信息显示客户端。这台客户端的作用就是把当前的室温显示在屏幕上以便我们实时了解室内温度。换句话说，这台环境信息显示客户端一启动就会订阅室温主题，这样室温检测客户端一发布消息，显示客户端就能获取到最新的温度消息并显示在屏幕上了。</p>
+<p>假设某天上午7：00，我们的室温检测客户端将最新的室温消息发布到了服务端，那么订阅了室温消息的显示客户端也就马上获取到室温消息并且显示在屏幕上。</p>
+<p>然而在7：10的时候，家里的小狗不小心把显示客户端的电源碰掉了，显示客户端没有电也就自动关机了。我们发现这一问题后，马上把显示客户端重新通电，客户端通电启动后会立刻订阅室温主题。</p>
+<p>但这时候问题出现了，室温测量客户端每到整点才发布一次温度信息。上一次发布时间是7：00，下一次发布时间是8：00。所以，尽管显示客户端订阅了室温主题，它还要等到8：00钟才能收到最新室温消息。在8：00前的几十分钟里，显示客户端无法获知当前室温信息，也就无法将室温信息显示在屏幕上供我们查阅。</p>
+<p>为了避免以上情况出现，我们可以让室温测量客户端在每次向室温主题发布消息时都使用“保留消息”这一模式将温度信息发布到服务端。这样无论显示客户端在任何时间订阅室温主题，都会马上收到该主题中的“保留消息”，也就是温度测量客户端发布的最新室温消息。</p>
+<h2 id="发布保留消息的方法"><a href="#发布保留消息的方法" class="headerlink" title="发布保留消息的方法"></a>发布保留消息的方法</h2><img src="/2023/07/07/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E4%BF%9D%E7%95%99%E6%B6%88%E6%81%AF/%E6%8D%95%E8%8E%B71.PNG" class title="图片麋鹿无法显示">
+
+<p>MQTT设备发布的保留消息的流程与发布普通消息的流程十分类似。唯一区别是，在发布保留消息时，MQTT设备需要将PUBLISH报文中retainFlag设置为true（如上图所示）。</p>
+<p>当然，如果要发布非保留消息，那么PUBLISH报文中retainFlag设置为false。</p>
+<h2 id="修改保留消息的方法"><a href="#修改保留消息的方法" class="headerlink" title="修改保留消息的方法"></a>修改保留消息的方法</h2><p>每一个主题只能有一个“保留消息”，如果客户端想要更新“保留消息”，就需要向该主题发送一条新的“保留消息”，这样服务端会将新的“保留消息”覆盖旧的“保留消息”。当有客户端订阅该主题时，服务端就会将最新的“保留消息”发送给订阅客户端了。</p>
+<h2 id="删除保留消息的方法"><a href="#删除保留消息的方法" class="headerlink" title="删除保留消息的方法"></a>删除保留消息的方法</h2><p>如果要删除主题的“保留消息”，可以通过向该主题发布一条空的“保留消息”，也就是发送一条0字节payload的“保留消息”。</p>
+<h2 id="验证测试"><a href="#验证测试" class="headerlink" title="验证测试"></a>验证测试</h2><p>两个示例程序。这两个程序中，第一个程序使用PubSubClient库发布保留消息，第二个程序使用PubSubClient库删除保留消息。</p>
+<p>老规矩，使用MQTTfx软件验证下：</p>
+<h3 id="示例1-–-发布保留消息"><a href="#示例1-–-发布保留消息" class="headerlink" title="示例1 – 发布保留消息"></a>示例1 – 发布保留消息</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br></pre></td><td class="code"><pre><span class="line">/**********************************************************************</span><br><span class="line">项目名称/Project          : 零基础入门学用物联网</span><br><span class="line">程序名称/Program name     : publish_retained_msg</span><br><span class="line">团队/Team                : 太极创客团队 / Taichi-Maker (www.taichi-maker.com)</span><br><span class="line">作者/Author              : CYNO朔</span><br><span class="line">日期/Date（YYYYMMDD）     : 20201014</span><br><span class="line">程序目的/Purpose          : </span><br><span class="line">本程序旨在演示如何使用PubSubClient库使用ESP8266向MQTT服务器发布保留信息。</span><br><span class="line">此程序在a_publish_ranye_url程序基础上修改。重点修改内容是publish函数添加了</span><br><span class="line">第三个参数，用于设置发布信息是否是保留信息(retained msg)</span><br><span class="line">-----------------------------------------------------------------------</span><br><span class="line">本示例程序为太极创客团队制作的《零基础入门学用物联网》中示例程序。</span><br><span class="line">该教程为对物联网开发感兴趣的朋友所设计和制作。如需了解更多该教程的信息，请参考以下网页：</span><br><span class="line">http://www.taichi-maker.com/homepage/esp8266-nodemcu-iot/iot-c/esp8266-nodemcu-web-client/http-request/</span><br><span class="line">***********************************************************************/</span><br><span class="line"><span class="comment">#include &lt;ESP8266WiFi.h&gt;</span></span><br><span class="line"><span class="comment">#include &lt;PubSubClient.h&gt;</span></span><br><span class="line"> </span><br><span class="line">// 设置wifi接入信息(请根据您的WiFi信息进行修改)</span><br><span class="line">const char* ssid = <span class="string">&quot;taichi-maker&quot;</span>;</span><br><span class="line">const char* password = <span class="string">&quot;12345678&quot;</span>;</span><br><span class="line">const char* mqttServer = <span class="string">&quot;test.ranye-iot.net&quot;</span>;</span><br><span class="line"> </span><br><span class="line">// 如以上MQTT服务器无法正常连接，请前往以下页面寻找解决方案</span><br><span class="line">// http://www.taichi-maker.com/public-mqtt-broker/</span><br><span class="line"> </span><br><span class="line">WiFiClient wifiClient;</span><br><span class="line">PubSubClient mqttClient(wifiClient);</span><br><span class="line"> </span><br><span class="line">void <span class="function"><span class="title">setup</span></span>() &#123;</span><br><span class="line">  Serial.begin(9600);</span><br><span class="line"> </span><br><span class="line">  //设置ESP8266工作模式为无线终端模式</span><br><span class="line">  WiFi.mode(WIFI_STA);</span><br><span class="line">  </span><br><span class="line">  // 连接WiFi</span><br><span class="line">  connectWifi();</span><br><span class="line">  </span><br><span class="line">  // 设置MQTT服务器和端口号</span><br><span class="line">  mqttClient.setServer(mqttServer, 1883);</span><br><span class="line"> </span><br><span class="line">  // 连接MQTT服务器</span><br><span class="line">  connectMQTTServer();</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">if</span> (mqttClient.connected()) &#123; // 如果开发板成功连接服务器</span><br><span class="line">    pubRetMQTTmsg();               // 发布信息   </span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">void <span class="function"><span class="title">loop</span></span>() &#123; </span><br><span class="line">  mqttClient.loop();          // 保持心跳</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">void <span class="function"><span class="title">connectMQTTServer</span></span>()&#123;</span><br><span class="line">  // 根据ESP8266的MAC地址生成客户端ID（避免与其它ESP8266的客户端ID重名）</span><br><span class="line">  String clientId = <span class="string">&quot;esp8266-&quot;</span> + WiFi.macAddress();</span><br><span class="line"> </span><br><span class="line">  // 连接MQTT服务器</span><br><span class="line">  <span class="keyword">if</span> (mqttClient.connect(clientId.c_str())) &#123; </span><br><span class="line">    Serial.println(<span class="string">&quot;MQTT Server Connected.&quot;</span>);</span><br><span class="line">    Serial.println(<span class="string">&quot;Server Address: &quot;</span>);</span><br><span class="line">    Serial.println(mqttServer);</span><br><span class="line">    Serial.println(<span class="string">&quot;ClientId:&quot;</span>);</span><br><span class="line">    Serial.println(clientId);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    Serial.<span class="built_in">print</span>(<span class="string">&quot;MQTT Server Connect Failed. Client State:&quot;</span>);</span><br><span class="line">    Serial.println(mqttClient.state());</span><br><span class="line">    delay(3000);</span><br><span class="line">  &#125;   </span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">// 发布信息</span><br><span class="line">void <span class="function"><span class="title">pubRetMQTTmsg</span></span>()&#123;</span><br><span class="line">  // 建立发布主题。主题名称以Taichi-Maker-为前缀，后面添加设备的MAC地址。</span><br><span class="line">  // 这么做是为确保不同用户进行MQTT信息发布时，ESP8266客户端名称各不相同，</span><br><span class="line">  String topicString = <span class="string">&quot;Taichi-Maker-Ret-&quot;</span> + WiFi.macAddress();</span><br><span class="line">  char publishTopic[topicString.length() + 1];  </span><br><span class="line">  strcpy(publishTopic, topicString.c_str());</span><br><span class="line"> </span><br><span class="line">  // 建立即将发布的保留消息。消息内容为<span class="string">&quot;Retained Msg&quot;</span>。</span><br><span class="line">  String messageString = <span class="string">&quot;Retained Msg&quot;</span>; </span><br><span class="line">  char publishMsg[messageString.length() + 1];   </span><br><span class="line">  strcpy(publishMsg, messageString.c_str());</span><br><span class="line">  </span><br><span class="line">  // 实现ESP8266向主题发布retained信息</span><br><span class="line">  // 以下publish函数第三个参数用于设置保留信息（retained message)</span><br><span class="line">  <span class="keyword">if</span>(mqttClient.publish(publishTopic, publishMsg, <span class="literal">true</span>))&#123;</span><br><span class="line">    Serial.println(<span class="string">&quot;Publish Topic:&quot;</span>);Serial.println(publishTopic);</span><br><span class="line">    Serial.println(<span class="string">&quot;Publish Retained message:&quot;</span>);Serial.println(publishMsg);    </span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    Serial.println(<span class="string">&quot;Message Publish Failed.&quot;</span>); </span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">// ESP8266连接wifi</span><br><span class="line">void <span class="function"><span class="title">connectWifi</span></span>()&#123;</span><br><span class="line"> </span><br><span class="line">  WiFi.begin(ssid, password);</span><br><span class="line"> </span><br><span class="line">  //等待WiFi连接,成功连接后输出成功信息</span><br><span class="line">  <span class="keyword">while</span> (WiFi.status() != WL_CONNECTED) &#123;</span><br><span class="line">    delay(1000);</span><br><span class="line">    Serial.<span class="built_in">print</span>(<span class="string">&quot;.&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  Serial.println(<span class="string">&quot;&quot;</span>);</span><br><span class="line">  Serial.println(<span class="string">&quot;WiFi Connected!&quot;</span>);  </span><br><span class="line">  Serial.println(<span class="string">&quot;&quot;</span>); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>串口输出显示截图如下：</p>
+<img src="/2023/07/07/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E4%BF%9D%E7%95%99%E6%B6%88%E6%81%AF/%E6%8D%95%E8%8E%B72.PNG" class title="图片麋鹿无法显示">
+
+
+<h3 id="示例2-–-删除保留消息"><a href="#示例2-–-删除保留消息" class="headerlink" title="示例2 – 删除保留消息"></a>示例2 – 删除保留消息</h3><p>通过以下示例程序，可以清除上面示例程序所发布的保留消息。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br></pre></td><td class="code"><pre><span class="line">/**********************************************************************</span><br><span class="line">项目名称/Project          : 零基础入门学用物联网</span><br><span class="line">程序名称/Program name     : clear_retained_msg</span><br><span class="line">团队/Team                : 太极创客团队 / Taichi-Maker (www.taichi-maker.com)</span><br><span class="line">作者/Author              : CYNO朔</span><br><span class="line">日期/Date（YYYYMMDD）     : 20201015</span><br><span class="line">程序目的/Purpose          : </span><br><span class="line">本程序演示使用PubSubClient库清除保留消息(retained message)。</span><br><span class="line">如果要删除主题的“保留消息”，可以通过向该主题发布一条空的“保留消息”，</span><br><span class="line">也就是发送一条0字节payload的“保留消息”。</span><br><span class="line">-----------------------------------------------------------------------</span><br><span class="line">本示例程序为太极创客团队制作的《零基础入门学用物联网》中示例程序。</span><br><span class="line">该教程为对物联网开发感兴趣的朋友所设计和制作。如需了解更多该教程的信息，请参考以下网页：</span><br><span class="line">http://www.taichi-maker.com/homepage/esp8266-nodemcu-iot/iot-c/esp8266-nodemcu-web-client/http-request/</span><br><span class="line">***********************************************************************/</span><br><span class="line"><span class="comment">#include &lt;ESP8266WiFi.h&gt;</span></span><br><span class="line"><span class="comment">#include &lt;PubSubClient.h&gt;</span></span><br><span class="line"> </span><br><span class="line">// 设置wifi接入信息(请根据您的WiFi信息进行修改)</span><br><span class="line">const char* ssid = <span class="string">&quot;taichi-maker&quot;</span>;</span><br><span class="line">const char* password = <span class="string">&quot;12345678&quot;</span>;</span><br><span class="line">const char* mqttServer = <span class="string">&quot;test.ranye-iot.net&quot;</span>;</span><br><span class="line"> </span><br><span class="line">// 如以上MQTT服务器无法正常连接，请前往以下页面寻找解决方案</span><br><span class="line">// http://www.taichi-maker.com/public-mqtt-broker/</span><br><span class="line"> </span><br><span class="line">WiFiClient wifiClient;</span><br><span class="line">PubSubClient mqttClient(wifiClient);</span><br><span class="line"> </span><br><span class="line">void <span class="function"><span class="title">setup</span></span>() &#123;</span><br><span class="line">  Serial.begin(9600);</span><br><span class="line"> </span><br><span class="line">  //设置ESP8266工作模式为无线终端模式</span><br><span class="line">  WiFi.mode(WIFI_STA);</span><br><span class="line">  </span><br><span class="line">  // 连接WiFi</span><br><span class="line">  connectWifi();</span><br><span class="line">  </span><br><span class="line">  // 设置MQTT服务器和端口号</span><br><span class="line">  mqttClient.setServer(mqttServer, 1883);</span><br><span class="line"> </span><br><span class="line">  // 连接MQTT服务器</span><br><span class="line">  connectMQTTServer();</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">if</span> (mqttClient.connected()) &#123; // 如果开发板成功连接服务器</span><br><span class="line">    pubRetMQTTmsg();               // 发布信息   </span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">void <span class="function"><span class="title">loop</span></span>() &#123; </span><br><span class="line">  mqttClient.loop();          // 保持心跳</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">void <span class="function"><span class="title">connectMQTTServer</span></span>()&#123;</span><br><span class="line">  // 根据ESP8266的MAC地址生成客户端ID（避免与其它ESP8266的客户端ID重名）</span><br><span class="line">  String clientId = <span class="string">&quot;esp8266-&quot;</span> + WiFi.macAddress();</span><br><span class="line"> </span><br><span class="line">  // 连接MQTT服务器</span><br><span class="line">  <span class="keyword">if</span> (mqttClient.connect(clientId.c_str())) &#123; </span><br><span class="line">    Serial.println(<span class="string">&quot;MQTT Server Connected.&quot;</span>);</span><br><span class="line">    Serial.println(<span class="string">&quot;Server Address: &quot;</span>);</span><br><span class="line">    Serial.println(mqttServer);</span><br><span class="line">    Serial.println(<span class="string">&quot;ClientId:&quot;</span>);</span><br><span class="line">    Serial.println(clientId);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    Serial.<span class="built_in">print</span>(<span class="string">&quot;MQTT Server Connect Failed. Client State:&quot;</span>);</span><br><span class="line">    Serial.println(mqttClient.state());</span><br><span class="line">    delay(3000);</span><br><span class="line">  &#125;   </span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">// 发布信息</span><br><span class="line">void <span class="function"><span class="title">pubRetMQTTmsg</span></span>()&#123;</span><br><span class="line">  // 建立发布主题。主题名称以Taichi-Maker-为前缀，后面添加设备的MAC地址。</span><br><span class="line">  // 这么做是为确保不同用户进行MQTT信息发布时，ESP8266客户端名称各不相同，</span><br><span class="line">  String topicString = <span class="string">&quot;Taichi-Maker-Ret-&quot;</span> + WiFi.macAddress();</span><br><span class="line">  char publishTopic[topicString.length() + 1];  </span><br><span class="line">  strcpy(publishTopic, topicString.c_str());</span><br><span class="line"> </span><br><span class="line">  // 如果要删除主题的“保留消息”，可以通过向该主题发布一条空的“保留消息”，</span><br><span class="line">  // 也就是发送一条0字节payload的“保留消息”。</span><br><span class="line">  String messageString = <span class="string">&quot;&quot;</span>; </span><br><span class="line">  char publishMsg[messageString.length() + 1];   </span><br><span class="line">  strcpy(publishMsg, messageString.c_str());</span><br><span class="line">  </span><br><span class="line">  // 实现ESP8266向主题发布retained信息</span><br><span class="line">  // 以下publish函数第三个参数用于设置保留信息（retained message)</span><br><span class="line">  <span class="keyword">if</span>(mqttClient.publish(publishTopic, publishMsg, <span class="literal">true</span>))&#123;</span><br><span class="line">    Serial.println(<span class="string">&quot;Cleared retained message for topic:&quot;</span>);</span><br><span class="line">    Serial.println(publishTopic);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    Serial.println(<span class="string">&quot;Message Publish Failed.&quot;</span>); </span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">// ESP8266连接wifi</span><br><span class="line">void <span class="function"><span class="title">connectWifi</span></span>()&#123;</span><br><span class="line"> </span><br><span class="line">  WiFi.begin(ssid, password);</span><br><span class="line"> </span><br><span class="line">  //等待WiFi连接,成功连接后输出成功信息</span><br><span class="line">  <span class="keyword">while</span> (WiFi.status() != WL_CONNECTED) &#123;</span><br><span class="line">    delay(1000);</span><br><span class="line">    Serial.<span class="built_in">print</span>(<span class="string">&quot;.&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  Serial.println(<span class="string">&quot;&quot;</span>);</span><br><span class="line">  Serial.println(<span class="string">&quot;WiFi Connected!&quot;</span>);  </span><br><span class="line">  Serial.println(<span class="string">&quot;&quot;</span>); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/07/07/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BQos%E6%9C%8D%E5%8A%A1%E8%B4%A8%E9%87%8F/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1227,190 +1396,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/06/20/%E9%9A%8F%E6%83%B3-%E8%B4%B9%E7%B1%B3%E6%8E%A8%E5%AE%9A/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="云中锡">
-      <meta itemprop="description" content="心之所向，素履以往">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="明珠的个人博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/06/20/%E9%9A%8F%E6%83%B3-%E8%B4%B9%E7%B1%B3%E6%8E%A8%E5%AE%9A/" class="post-title-link" itemprop="url">随想3-费米推定</a>
-        </h2>
-
-        <div class="post-meta">
-
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-06-20 10:09:16" itemprop="dateCreated datePublished" datetime="2023-06-20T10:09:16+08:00">2023-06-20</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-06-21 20:48:37" itemprop="dateModified" datetime="2023-06-21T20:48:37+08:00">2023-06-21</time>
-              </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>608</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>周末的时候看到一篇文章分享的非常有意思的思维：一位面试者提问，面试时被问到“深圳有多少棵树”，该如何回答，这种问题真的有什么意义必要吗？</p>
-<p>答：这类问题有一个专门的术语，叫“费米推定”类问题。</p>
-<p>所谓的费米推定&#x2F;费米估算，指的是：面对少量信息的复杂估算问题，通过将复杂问题拆解成常识性和已知的小问题，进而计算并得到结果。</p>
-<p>本来觉得无厘头的问题，现在却有了解法，这件事本身就是很有趣的！比如计算“芝加哥有几个钢琴调音师”这件事，费米本人是这样干的：</p>
-<p>调音师这种小众岗位没什么协会数据可以查，但是芝加哥有多少架钢琴是可以查出来的，找几个大牌钢琴厂聊聊就可以了。</p>
-<p>给钢琴调音平均一架多久。</p>
-<p>每个调音师一天能工作多久。</p>
-<p>这么拆解以后，就能算出来了。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/06/20/%E9%9A%8F%E6%83%B3-%E8%B4%B9%E7%B1%B3%E6%8E%A8%E5%AE%9A/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/06/20/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E8%BF%9E%E6%8E%A5MQTT%E6%9C%8D%E5%8A%A1%E7%AB%AF/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="云中锡">
-      <meta itemprop="description" content="心之所向，素履以往">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="明珠的个人博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/06/20/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E8%BF%9E%E6%8E%A5MQTT%E6%9C%8D%E5%8A%A1%E7%AB%AF/" class="post-title-link" itemprop="url">物联网之连接MQTT服务端</a>
-        </h2>
-
-        <div class="post-meta">
-
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2023-06-20 09:50:47 / 修改时间：12:10:49" itemprop="dateCreated datePublished" datetime="2023-06-20T09:50:47+08:00">2023-06-20</time>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>2.9k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>15 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="连接MQTT服务端"><a href="#连接MQTT服务端" class="headerlink" title="连接MQTT服务端"></a>连接MQTT服务端</h2><p>MQTT客户端之间要想实现通讯，必须要通过MQTT服务端。因此MQTT客户端无论是发布消息还是订阅消息，首先都要连接MQTT服务端。下面我们看一下MQTT客户端连接服务端的详细过程。</p>
-<p>MQTT客户端连接服务端一共有两步。</p>
-<p>首先MQTT客户端将会向服务端发送连接请求。该请求实际上是一个包含有连接请求信息的数据包。这个数据包的官方名称为CONNECT。</p>
-<img src="/2023/06/20/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E8%BF%9E%E6%8E%A5MQTT%E6%9C%8D%E5%8A%A1%E7%AB%AF/%E6%8D%95%E8%8E%B71.PNG" class title="图片麋鹿无法显示"> 
-
-<p>MQTT服务端收到客户端连接请求后，会向客户端发送连接确认。同样的，该确认也是一个数据包。这个数据包官方名称为CONNACK。</p>
-<img src="/2023/06/20/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E8%BF%9E%E6%8E%A5MQTT%E6%9C%8D%E5%8A%A1%E7%AB%AF/%E6%8D%95%E8%8E%B72.PNG" class title="图片麋鹿无法显示"> 
-
-<p>以上就是MQTT客户端在连接服务端的两步操作。</p>
-<h2 id="CONNECT-–-连接服务端"><a href="#CONNECT-–-连接服务端" class="headerlink" title="CONNECT – 连接服务端"></a>CONNECT – 连接服务端</h2>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/06/20/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E8%BF%9E%E6%8E%A5MQTT%E6%9C%8D%E5%8A%A1%E7%AB%AF/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1482,14 +1467,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">52</span>
+          <span class="site-state-item-count">54</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">45</span>
+        <span class="site-state-item-count">46</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1536,12 +1521,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">84k</span>
+    <span title="站点总字数">87k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">7:01</span>
+    <span title="站点阅读时长">7:13</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
@@ -1578,7 +1563,7 @@ $(document).ready(function() {
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共86.2k字</span>
+  <span class="post-count">博客全站共88.7k字</span>
 </div>
         
 <div class="busuanzi-count">
