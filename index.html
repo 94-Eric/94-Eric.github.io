@@ -260,6 +260,95 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/07/16/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="云中锡">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="明珠的个人博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/07/16/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6/" class="post-title-link" itemprop="url">物联网之MQTT心跳机制和遗嘱</a>
+        </h2>
+
+        <div class="post-meta">
+
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-07-16 17:11:08 / 修改时间：18:40:21" itemprop="dateCreated datePublished" datetime="2023-07-16T17:11:08+08:00">2023-07-16</time>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>24 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="心跳机制"><a href="#心跳机制" class="headerlink" title="心跳机制"></a>心跳机制</h2><p>在医院里，医生利用心跳来判断患者是否还有生命体征。对于MQTT服务器来说，它要判断一台MQTT客户端是否依然保持连接可以检查这台客户端是不是经常发送消息给服务端。如果经常收到客户端的消息，那么没问题，这个客户端肯定在线。</p>
+<p>但是有些客户端并不经常发送消息给服务端。对于这种客户端，服务端可以使用类似心跳检测的方法，来判断客户端是否在线。</p>
+<img src="/2023/07/16/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6/%E5%BF%83%E5%8A%A8.gif" class title="图片麋鹿无法显示">
+
+<p>不过客户端设备没有心脏，自然不会跳动。可是我们可以为它们配上一个类似心脏的机制，这个心脏机制就是让客户端在没有向服务端发送信息时，可以定时向服务端发送一条消息。这条用于心跳机制的消息也被称作心跳请求（PINGREQ）。心跳请求的作用正是用于告知服务端，当前客户端依然在线。服务端在收到客户端的心跳请求后，会回复一条消息。这条回复消息被称作心跳响应（PINGRESP）。</p>
+<img src="/2023/07/16/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6/%E6%8D%95%E8%8E%B71.PNG" class title="图片麋鹿无法显示">
+
+
+<p>由于心跳请求是客户端定时发送的，一旦服务端发现</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2023/07/16/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/07/07/%E9%9A%8F%E6%83%B35/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1292,101 +1381,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/06/20/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E6%9C%8D%E5%8A%A1%E7%AB%AF/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="云中锡">
-      <meta itemprop="description" content="心之所向，素履以往">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="明珠的个人博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/06/20/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E6%9C%8D%E5%8A%A1%E7%AB%AF/" class="post-title-link" itemprop="url">物联网之MQTT服务端</a>
-        </h2>
-
-        <div class="post-meta">
-
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-06-20 14:05:43" itemprop="dateCreated datePublished" datetime="2023-06-20T14:05:43+08:00">2023-06-20</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-06-24 10:33:45" itemprop="dateModified" datetime="2023-06-24T10:33:45+08:00">2023-06-24</time>
-              </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>971</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>5 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>MQTT客户端连接服务端光有理论知识还不够，以下为如何使用电脑客户端和ESP8266客户端来连接MQTT服务端。</p>
-<h2 id="电脑客户端连接MQTT服务端"><a href="#电脑客户端连接MQTT服务端" class="headerlink" title="电脑客户端连接MQTT服务端"></a>电脑客户端连接MQTT服务端</h2><p>首先学习如何使用电脑软件来实现客户端与服务端的连接。我们将为电脑安装一款免费的MQTT客户端软件–MQTTfx。MQTT客户端软件有很多款，免费的MQTTfx软件在易用性和功能性都非常出色。</p>
-<p>通过MQTTfx软件，电脑将会成为一台MQTT客户端。</p>
-<p>可以通过以下两个途径下载到MQTTfx软件。</p>
-<p>首先，可以通过MQTT官网下载到MQTTfx软件。MQTTfx的官网地址是：<a target="_blank" rel="noopener" href="http://mqttfx.org/">http://mqttfx.org</a></p>
-<p>也可以通过太极创客网站的下载页面获取此软件。请<a target="_blank" rel="noopener" href="http://www.taichi-maker.com/homepage/download/#mqtt">点击这里</a>进入太极创客网站MQTTfx下载链接列表。</p>
-<p>特别提示一点，尽量使用以上的MQTTfx官网下载此软件，因为官网上的软件版本肯定是最新的，用新不用旧。</p>
-<p>接下来实际使用MQTTfx客户端来尝试连接服务端。具体操作方法，请见如下链接里的视频：<br><a target="_blank" rel="noopener" href="http://www.taichi-maker.com/homepage/esp8266-nodemcu-iot/iot-tuttorial/mqtt-tutorial/client-connect-mqtt-server/">MQTTfx客户端设置和连接客户端</a></p>
-<h2 id="ESP8266连接MQTT服务端"><a href="#ESP8266连接MQTT服务端" class="headerlink" title="ESP8266连接MQTT服务端"></a>ESP8266连接MQTT服务端</h2><p>ESP8266的Arduino开发环境里有多个MQTT库，我们使用最为流行的PubSubClient库来作为本文的主要介绍对象，来学习如何使用ESP8266通过PubSubClient库来实现MQTT物联网应用。关于PubSubClient库,以下是其基本信息：</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/06/20/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E6%9C%8D%E5%8A%A1%E7%AB%AF/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1458,14 +1452,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">54</span>
+          <span class="site-state-item-count">55</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">46</span>
+        <span class="site-state-item-count">47</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1512,12 +1506,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">87k</span>
+    <span title="站点总字数">92k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">7:13</span>
+    <span title="站点阅读时长">7:38</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
@@ -1554,7 +1548,7 @@ $(document).ready(function() {
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共88.7k字</span>
+  <span class="post-count">博客全站共93.6k字</span>
 </div>
         
 <div class="busuanzi-count">

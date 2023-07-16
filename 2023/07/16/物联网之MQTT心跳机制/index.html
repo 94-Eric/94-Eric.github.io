@@ -1,0 +1,639 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"94-eric.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="心跳机制在医院里，医生利用心跳来判断患者是否还有生命体征。对于MQTT服务器来说，它要判断一台MQTT客户端是否依然保持连接可以检查这台客户端是不是经常发送消息给服务端。如果经常收到客户端的消息，那么没问题，这个客户端肯定在线。 但是有些客户端并不经常发送消息给服务端。对于这种客户端，服务端可以使用类似心跳检测的方法，来判断客户端是否在线。   不过客户端设备没有心脏，自然不会跳动。可是我们可以为">
+<meta property="og:type" content="article">
+<meta property="og:title" content="物联网之MQTT心跳机制和遗嘱">
+<meta property="og:url" content="https://94-eric.github.io/2023/07/16/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6/index.html">
+<meta property="og:site_name" content="明珠的个人博客">
+<meta property="og:description" content="心跳机制在医院里，医生利用心跳来判断患者是否还有生命体征。对于MQTT服务器来说，它要判断一台MQTT客户端是否依然保持连接可以检查这台客户端是不是经常发送消息给服务端。如果经常收到客户端的消息，那么没问题，这个客户端肯定在线。 但是有些客户端并不经常发送消息给服务端。对于这种客户端，服务端可以使用类似心跳检测的方法，来判断客户端是否在线。   不过客户端设备没有心脏，自然不会跳动。可是我们可以为">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://94-eric.github.io/2023/07/16/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6/%E5%BF%83%E5%8A%A8.gif">
+<meta property="og:image" content="https://94-eric.github.io/2023/07/16/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6/%E6%8D%95%E8%8E%B71.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2023/07/16/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6/%E6%8D%95%E8%8E%B72.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2023/07/16/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6/%E6%8D%95%E8%8E%B73.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2023/07/16/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6/%E6%8D%95%E8%8E%B74.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2023/07/16/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6/%E6%8D%95%E8%8E%B75.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2023/07/16/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6/%E6%8D%95%E8%8E%B76.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2023/07/16/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6/%E6%8D%95%E8%8E%B77.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2023/07/16/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6/%E6%8D%95%E8%8E%B78.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2023/07/16/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6/%E6%8D%95%E8%8E%B79.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2023/07/16/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6/%E6%8D%95%E8%8E%B710.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2023/07/16/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6/%E6%8D%95%E8%8E%B711.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2023/07/16/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6/%E6%8D%95%E8%8E%B712.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2023/07/16/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6/%E6%8D%95%E8%8E%B713.PNG">
+<meta property="article:published_time" content="2023-07-16T09:11:08.000Z">
+<meta property="article:modified_time" content="2023-07-16T10:40:21.418Z">
+<meta property="article:author" content="云中锡">
+<meta property="article:tag" content="物联网 esp8266 MQTT 心跳机制 遗嘱">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://94-eric.github.io/2023/07/16/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6/%E5%BF%83%E5%8A%A8.gif">
+
+<link rel="canonical" href="https://94-eric.github.io/2023/07/16/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>物联网之MQTT心跳机制和遗嘱 | 明珠的个人博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">明珠的个人博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">是谁告诉你，你是赤裸的？</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-resources">
+
+    <a href="/resources/" rel="section"><i class="fa fa-download fa-fw"></i>资源</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/07/16/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="云中锡">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="明珠的个人博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          物联网之MQTT心跳机制和遗嘱
+        </h1>
+
+        <div class="post-meta">
+
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-07-16 17:11:08 / 修改时间：18:40:21" itemprop="dateCreated datePublished" datetime="2023-07-16T17:11:08+08:00">2023-07-16</time>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>24 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="心跳机制"><a href="#心跳机制" class="headerlink" title="心跳机制"></a>心跳机制</h2><p>在医院里，医生利用心跳来判断患者是否还有生命体征。对于MQTT服务器来说，它要判断一台MQTT客户端是否依然保持连接可以检查这台客户端是不是经常发送消息给服务端。如果经常收到客户端的消息，那么没问题，这个客户端肯定在线。</p>
+<p>但是有些客户端并不经常发送消息给服务端。对于这种客户端，服务端可以使用类似心跳检测的方法，来判断客户端是否在线。</p>
+<img src="/2023/07/16/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6/%E5%BF%83%E5%8A%A8.gif" class title="图片麋鹿无法显示">
+
+<p>不过客户端设备没有心脏，自然不会跳动。可是我们可以为它们配上一个类似心脏的机制，这个心脏机制就是让客户端在没有向服务端发送信息时，可以定时向服务端发送一条消息。这条用于心跳机制的消息也被称作心跳请求（PINGREQ）。心跳请求的作用正是用于告知服务端，当前客户端依然在线。服务端在收到客户端的心跳请求后，会回复一条消息。这条回复消息被称作心跳响应（PINGRESP）。</p>
+<img src="/2023/07/16/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6/%E6%8D%95%E8%8E%B71.PNG" class title="图片麋鹿无法显示">
+
+
+<p>由于心跳请求是客户端定时发送的，一旦服务端发现<span id="more"></span>客户端停止发送请求信息，那么服务端就会知道，这台客户端已经断开了连接。</p>
+<p>这个心跳机制不仅可以用于服务端判断客户端是否保持连接，也可以用于客户端判断自己与服务端是否保持连接。如果客户端在发送心跳请求（PINGREQ）后，没有收到服务端的心跳响应（PINGRESP），那么客户端就会认为自己与服务端的连接已经被断开了。</p>
+<p>以上是心跳机制(Keep Alive)的简单介绍，为了更深入的了解心跳机制，我们接下来回忆一下MQTT客户端在连接服务端的过程。如下图，客户端连接服务端时会向服务端发送CONNECT报文：</p>
+<img src="/2023/07/16/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6/%E6%8D%95%E8%8E%B72.PNG" class title="图片麋鹿无法显示">
+
+
+<p>刚刚给大家讲过，在心跳机制中，客户端要定时向服务端发送心跳请求(PINGREQ)报文。那么客户端发送心跳请求的时间间隔是多少呢？</p>
+<p>这个心跳时间间隔是我们在开发客户端时进行设置的。假如我们使用ESP8266开发板作为物联网客户端，那么我们在编写控制程序时，会在程序中对心跳时间间隔进行设置。</p>
+<p>设置好心跳时间间隔后，客户端就知道多久要发送一条心跳请求给服务端。但是这里存在一个问题。光是客户端知道心跳时间间隔还不够，服务端也需要知道客户端的心跳时间间隔，这样服务端才能定时检查客户端的心跳请求消息。</p>
+<p>因此，在客户端连接服务端时，会将心跳时间间隔信息放入CONNECT报文。也就是上图中最后一行的信息keepAlive。这个keepAlive正是用于告知服务端心跳时间间隔的。</p>
+<p>以上示例图中我们看到keepAlive数值为60。这就意味着，客户端的心跳间隔时间是60秒。</p>
+<p>有个疑问出来了！！！<strong>假如客户端的心跳间隔时间是60秒，那么服务端是不是每隔60秒就检查一次客户端是否发来心跳请求呢？</strong></p>
+<p>开头说过，如果客户端在心跳时间间隔内发布了消息给服务端，那么服务端不需要客户端发送心跳请求也可以确定该客户端肯定在线。</p>
+<img src="/2023/07/16/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6/%E6%8D%95%E8%8E%B73.PNG" class title="图片麋鹿无法显示">
+
+
+<p>但是当客户端在心跳间隔内没有发布消息给服务端，这时客户端会主动发送一个心跳请求消息给服务端。以表明自己仍让在线。</p>
+<img src="/2023/07/16/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6/%E6%8D%95%E8%8E%B74.PNG" class title="图片麋鹿无法显示">
+
+
+<p>简而言之，客户端在心跳间隔时间内，如果有消息发布，那就直接发布消息而不发布心跳请求，但是在心跳间隔时间内，客户端没有消息发布，那么它就会发布一条心跳请求给服务端，这个心跳请求的目的就是为了告诉服务端，我还在线，你放心吧。</p>
+<p>另外，在实际运行中，如果服务端没有在1.5倍心跳时间间隔内收到客户端发布消息(PUBLISH)或发来心跳请求(PINGREQ)，那么服务端就会认为这个客户端已经掉线。</p>
+<p>举例来说，如果心跳时间间隔是60秒。那么服务端在90秒内没有收到客户端发布的消息也没有收到PINGREQ请求，那么它就会认为客户端已经掉线。</p>
+<p>另外，心跳机制不仅仅用于服务端判断客户端是否在线。客户端也可以利用这一机制来判断自己是否与服务端仍保持连接。如果客户端发送了心跳请求(PINGREQ)给服务端一段时间后，仍然没有收到服务端回复的心跳确认。那么客户端也会认为自己已经断开了与服务端的连接。</p>
+<p>了解了MQTT心跳机制后，又出现了一个疑问：如果服务端知道了某一台客户端已经掉线，它会采取什么措施吗？</p>
+<h2 id="MQTT遗嘱"><a href="#MQTT遗嘱" class="headerlink" title="MQTT遗嘱"></a>MQTT遗嘱</h2><p>QTT协议的心跳机制可以让服务端随时掌握客户端连接情况。当客户端“心跳”正常时，服务端即知道客户端仍然在线（活着）。当心跳一旦停止，服务端就会发现该客户端已经断线（死亡）。</p>
+<img src="/2023/07/16/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6/%E6%8D%95%E8%8E%B75.PNG" class title="图片麋鹿无法显示">
+
+
+<p>为了让客户端可以更好的发挥作用，便于服务端管理，MQTT协议允许客户端在“活着”的时候就写好遗嘱，这样一旦客户端<font color="red"> 意外断线 </font>，服务端就可以将客户端的遗嘱公之于众。</p>
+<p>请注意，在上面的这段话中，我将意外断线这几个字特意做了标注，这是因为，客户端的遗嘱只在意外断线时才会发布，如果客户端正常的断开了与服务端的连接，这个遗嘱机制是不会启动的，服务端也不会将客户端的遗嘱公布。</p>
+<img src="/2023/07/16/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6/%E6%8D%95%E8%8E%B76.PNG" class title="图片麋鹿无法显示">
+
+
+<p>那么什么是<font color="red"> 意外断线 </font>呢？</p>
+<p>当客户端正常断开连接时，会向服务端发送DISCONNECT报文，服务端接收到该报文后，就知道，客户端是正常断开连接，而并非意外断开连接。</p>
+<img src="/2023/07/16/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6/%E6%8D%95%E8%8E%B77.PNG" class title="图片麋鹿无法显示">
+
+
+<p>然而，当服务端在没有收到DISCONNECT报文的情况下，发现客户端“心跳”停止了，这时服务端就知道客户端是意外断线了。</p>
+<p>那究竟是什么原因会导致客户端意外断线呢？我们知道MQTT协议作为物联网协议可能用于不稳定的网络环境，假如客户端的网络信号突然出现问题，就会导致了意外断线。</p>
+<p>另外，有些客户端设备使用电池供电，当电池没电时，也会出现意外断网的情况。当然，造成意外断网的情况还有很多，以上是较为常见的情况。</p>
+<img src="/2023/07/16/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6/%E6%8D%95%E8%8E%B78.PNG" class title="图片麋鹿无法显示">
+
+
+<p>通过以上内容，我们了解了客户端遗嘱的作用，接下来我们仔细看一下关于客户端遗嘱的几个重要话题：</p>
+<ul>
+<li><font color="SpringGreen"> 客户端如何将遗嘱消息发送给服务端 </font></li>
+<li><font color="SpringGreen"> MQTT遗嘱使用建议 </font></li>
+</ul>
+<h3 id="客户端如何将遗嘱消息发送给服务端"><a href="#客户端如何将遗嘱消息发送给服务端" class="headerlink" title="客户端如何将遗嘱消息发送给服务端"></a>客户端如何将遗嘱消息发送给服务端</h3><p>MQTT客户端要想连接服务端，首先要向服务端发送CONNECT报文。下图是CONNECT报文所包含的信息内容。</p>
+<img src="/2023/07/16/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6/%E6%8D%95%E8%8E%B79.PNG" class title="图片麋鹿无法显示">
+
+<p>在上图的CONNECT报文中，我特意使用红色对一系列信息进行了标注。客户端正是在连接服务端时，利用这一系列信息将遗嘱消息发送给服务端。下面我们来分别看一下这些信息的作用。</p>
+<h4 id="lastWillTopic-–-遗嘱主题"><a href="#lastWillTopic-–-遗嘱主题" class="headerlink" title="lastWillTopic – 遗嘱主题"></a>lastWillTopic – 遗嘱主题</h4><p>遗嘱消息和普通MQTT消息很相似，也有主题和正文内容。lastWillTopic的作用正是告知服务端，本客户端的遗嘱主题是什么。只有那些订阅了这一遗嘱主题的客户端才会收到本客户端的遗嘱消息。</p>
+<p>以上图为例，此遗嘱主题为”hans&#x2F;will”。也就是说，只有订阅了主题”hans&#x2F;will”的客户端，才会收到这台客户端的遗嘱消息。</p>
+<h4 id="lastWillMessage-–-遗嘱消息"><a href="#lastWillMessage-–-遗嘱消息" class="headerlink" title="lastWillMessage – 遗嘱消息"></a>lastWillMessage – 遗嘱消息</h4><p>遗嘱消息定义了遗嘱消息内容。在本示例中，那些订阅了主题”hans&#x2F;will”的客户端会在客户端意外断线时，收到服务端发布的“unexpected exit”。</p>
+<h4 id="lastWillQoS-–-遗嘱QoS"><a href="#lastWillQoS-–-遗嘱QoS" class="headerlink" title="lastWillQoS – 遗嘱QoS"></a>lastWillQoS – 遗嘱QoS</h4><p>之前我们学习了服务质量（Qos）的概念。对于遗嘱消息来说，同样可以使用服务质量来控制遗嘱消息的传递和接收。这里的服务质量与普通MQTT消息的服务质量是一样的概念。也可以设置为0、1、2。对于不同的服务质量级别，服务端会使用不同的服务质量来发布遗嘱消息。</p>
+<h4 id="lastWillRetain-–-遗嘱保留"><a href="#lastWillRetain-–-遗嘱保留" class="headerlink" title="lastWillRetain – 遗嘱保留"></a>lastWillRetain – 遗嘱保留</h4><p>遗嘱消息也可以设置为保留消息，关于保留消息的具体内容，我们之前也曾经学习过。遗嘱保留用于设置遗嘱消息是否需要进行保留处理。服务端会根据此处内容，对遗嘱消息进行相应的保留与否处理。</p>
+<h3 id="MQTT遗嘱操作建议"><a href="#MQTT遗嘱操作建议" class="headerlink" title="MQTT遗嘱操作建议"></a>MQTT遗嘱操作建议</h3><p>在使用MQTT遗嘱时，建议通过以下方法让设备的MQTT遗嘱机制可以更好的发挥作用。</p>
+<p>假设我们现在有一台MQTT客户端。它的client id是 client-1。它的遗嘱主题是“client-1-will”</p>
+<ol>
+<li><p>当client-1连接服务端时，CONNECT报文中的遗嘱消息是“offline”。并且它的遗嘱保留设置为true。</p>
+</li>
+<li><p>当client-1成功连接服务端后，立即向遗嘱主题“client-1-will”发布一条消息“online”。同时在发布此消息时，保留标志设置为true。这样，只要client-1在线，那么任何设备一订阅“client-1-will”就能收到设备在线的消息“online”。</p>
+</li>
+<li><p>如果client-1发生意外离线。那么任何设备一订阅“client-1-will”就会收到设备离线的消息”offline”。</p>
+</li>
+<li><p>如果client-1恢复连接，那么它会将遗嘱主题“client-1-will”的保留消息更改为“online”，这样任何设备一订阅“client-1-will”就能收到设备在线的消息“online”。</p>
+</li>
+</ol>
+<h2 id="测试验证"><a href="#测试验证" class="headerlink" title="测试验证"></a>测试验证</h2><p>用MQTTfx软件来实际操作一下如下程序：<br>示例一程序刷好后串口监视器如下图，手动拔掉ESP8266，15秒后服务端将收到遗嘱信息如下下图，呵呵。</p>
+<img src="/2023/07/16/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6/%E6%8D%95%E8%8E%B710.PNG" class title="图片麋鹿无法显示">
+
+<img src="/2023/07/16/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6/%E6%8D%95%E8%8E%B711.PNG" class title="图片麋鹿无法显示">
+
+
+<p>示例二序刷好后串口监视器如下图，只要订阅了这个遗嘱主题，立刻知道设备在线状态与否。首先订阅主题，手动拔掉ESP8266开发板，15秒后服务端将收到遗嘱信息如下图，再次给电ESP8266开发板，连线瞬间收到遗嘱信息“设备已在线”。</p>
+<img src="/2023/07/16/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6/%E6%8D%95%E8%8E%B712.PNG" class title="图片麋鹿无法显示">
+
+
+<img src="/2023/07/16/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6/%E6%8D%95%E8%8E%B713.PNG" class title="图片麋鹿无法显示">
+
+
+<h3 id="示例1：MQTT遗嘱基本应用"><a href="#示例1：MQTT遗嘱基本应用" class="headerlink" title="示例1：MQTT遗嘱基本应用"></a>示例1：MQTT遗嘱基本应用</h3><p>本示例程序将实现ESP8266的最基本MQTT遗嘱应用。程序使用connect函数对遗嘱消息实现设置。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br></pre></td><td class="code"><pre><span class="line">/**********************************************************************</span><br><span class="line">项目名称/Project          : 零基础入门学用物联网</span><br><span class="line">程序名称/Program name     : last_will_no_retain</span><br><span class="line">团队/Team                : 太极创客团队 / Taichi-Maker (www.taichi-maker.com)</span><br><span class="line">作者/Author              : CYNO朔</span><br><span class="line">日期/Date（YYYYMMDD）     : 20201223</span><br><span class="line">程序目的/Purpose          : </span><br><span class="line">本程序旨在演示如何设置客户端遗嘱机制。客户端在连接服务器时，设置遗嘱的主题和信息。</span><br><span class="line"> </span><br><span class="line">MQTT服务器会定时检查客户端是否仍然与服务器连接。为了实现这一检查，服务器将会根据以下</span><br><span class="line">内容进行检查.</span><br><span class="line">1. 客户端连接时会提供心跳时间间隔（Keep Alive）。</span><br><span class="line">2. 如果在心跳时间间隔时长内，客户端向服务器发布了消息，则</span><br><span class="line">   服务器会认为客户端与服务器保持连接无误。</span><br><span class="line">3. 如果在心跳时间间隔时长内，客户端没有向服务端发布消息，</span><br><span class="line">   客户端会向服务端发送pingreq信息。此信息由PubSubClient库自动发送。</span><br><span class="line">4. 我们可以通过setKeepAlive函数控制心跳时间间隔时长，或者可以通过PubSubClient.h</span><br><span class="line">   的<span class="comment">#define MQTT_KEEPALIVE 15来设置心跳时间间隔时长。</span></span><br><span class="line">4. 在心跳时间间隔的1.5倍时长内，如果服务端没有收到客户端信息也没有pingreq。</span><br><span class="line">   那么服务端将会执行客户端遗嘱机制。</span><br><span class="line"> </span><br><span class="line">默认情况下，设备的心跳时间间隔时长为15秒。这是在PubSubClient.h中通过以下语句定义的：</span><br><span class="line"><span class="comment">#define MQTT_KEEPALIVE 15</span></span><br><span class="line"> </span><br><span class="line">若要修改keep-alive时间，可修改以上头文件，或者使用setKeepAlive函数实现。</span><br><span class="line"> </span><br><span class="line">对于PubSubClient,遗嘱QoS允许使用0，1。</span><br><span class="line">-----------------------------------------------------------------------</span><br><span class="line">本示例程序为太极创客团队制作的《零基础入门学用物联网》中示例程序。</span><br><span class="line">该教程为对物联网开发感兴趣的朋友所设计和制作。如需了解更多该教程的信息，请参考以下网页：</span><br><span class="line">http://www.taichi-maker.com/homepage/esp8266-nodemcu-iot/iot-c/esp8266-nodemcu-web-client/http-request/</span><br><span class="line">***********************************************************************/</span><br><span class="line"><span class="comment">#include &lt;ESP8266WiFi.h&gt;</span></span><br><span class="line"><span class="comment">#include &lt;PubSubClient.h&gt;</span></span><br><span class="line"> </span><br><span class="line">// 设置wifi接入信息(请根据您的WiFi信息进行修改)</span><br><span class="line">const char* ssid = <span class="string">&quot;taichi-maker&quot;</span>;</span><br><span class="line">const char* password = <span class="string">&quot;12345678&quot;</span>;</span><br><span class="line">const char* mqttServer = <span class="string">&quot;test.ranye-iot.net&quot;</span>;</span><br><span class="line">// 如以上MQTT服务器无法正常连接，请前往以下页面寻找解决方案</span><br><span class="line">// http://www.taichi-maker.com/public-mqtt-broker/</span><br><span class="line"> </span><br><span class="line">WiFiClient wifiClient;</span><br><span class="line">PubSubClient mqttClient(wifiClient);</span><br><span class="line"> </span><br><span class="line">// 遗嘱设置</span><br><span class="line">const char* willMsg = <span class="string">&quot;CLIENT-OFFLINE&quot;</span>; // 遗嘱消息内容</span><br><span class="line">const int willQoS = 0;                   // 遗嘱QoS</span><br><span class="line">const bool willRetain = <span class="literal">false</span>;           // 遗嘱保留</span><br><span class="line"> </span><br><span class="line">void <span class="function"><span class="title">setup</span></span>() &#123;</span><br><span class="line">  Serial.begin(9600);               // 启动串口通讯</span><br><span class="line">  </span><br><span class="line">  //设置ESP8266工作模式为无线终端模式</span><br><span class="line">  WiFi.mode(WIFI_STA);</span><br><span class="line">  </span><br><span class="line">  // 连接WiFi</span><br><span class="line">  connectWifi();</span><br><span class="line">  </span><br><span class="line">  // 设置MQTT服务器和端口号</span><br><span class="line">  mqttClient.setServer(mqttServer, 1883);</span><br><span class="line">  mqttClient.setKeepAlive(10); // 设置心跳间隔时间</span><br><span class="line">  </span><br><span class="line">  // 连接MQTT服务器</span><br><span class="line">  connectMQTTserver();</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">void <span class="function"><span class="title">loop</span></span>() &#123;</span><br><span class="line">  // 如果开发板未能成功连接服务器，则尝试连接服务器</span><br><span class="line">  <span class="keyword">if</span> (!mqttClient.connected()) &#123;</span><br><span class="line">    connectMQTTserver();</span><br><span class="line">  &#125;</span><br><span class="line"> </span><br><span class="line">   // 处理信息以及心跳</span><br><span class="line">   mqttClient.loop();</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">// 连接MQTT服务器并订阅信息</span><br><span class="line">void <span class="function"><span class="title">connectMQTTserver</span></span>()&#123;</span><br><span class="line">  </span><br><span class="line">  // 根据ESP8266的MAC地址生成客户端ID（避免与其它ESP8266的客户端ID重名）</span><br><span class="line">  String clientId = <span class="string">&quot;esp8266-&quot;</span> + WiFi.macAddress();</span><br><span class="line"> </span><br><span class="line">  // 建立遗嘱主题。主题名称以Taichi-Maker-为前缀，后面添加设备的MAC地址，最后</span><br><span class="line">  // 以“-Will”结尾，这是为确保不同ESP8266客户端的遗嘱主题名称各不相同。</span><br><span class="line">  String willString = <span class="string">&quot;Taichi-Maker-&quot;</span> + WiFi.macAddress() + <span class="string">&quot;-Will&quot;</span>;</span><br><span class="line">  char willTopic[willString.length() + 1];  </span><br><span class="line">  strcpy(willTopic, willString.c_str());</span><br><span class="line"> </span><br><span class="line">  // 连接MQTT服务器，在连接过程中提供以下参数：</span><br><span class="line">  // 客户端ID，遗嘱主题，遗嘱QoS，遗嘱保留，遗嘱信息</span><br><span class="line">  <span class="keyword">if</span> (mqttClient.connect(clientId.c_str(), willTopic, willQoS, willRetain, willMsg))&#123; </span><br><span class="line">    Serial.println(<span class="string">&quot;MQTT Server Connected.&quot;</span>);</span><br><span class="line">    Serial.<span class="built_in">print</span>(<span class="string">&quot;Server Address: &quot;</span>);Serial.println(mqttServer);</span><br><span class="line">    Serial.<span class="built_in">print</span>(<span class="string">&quot;ClientId: &quot;</span>);Serial.println(clientId);</span><br><span class="line">    Serial.<span class="built_in">print</span>(<span class="string">&quot;Will Topic: &quot;</span>);Serial.println(willTopic);    </span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    Serial.<span class="built_in">print</span>(<span class="string">&quot;MQTT Server Connect Failed. Client State:&quot;</span>);</span><br><span class="line">    Serial.println(mqttClient.state());</span><br><span class="line">    delay(5000);</span><br><span class="line">  &#125;   </span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">// ESP8266连接wifi</span><br><span class="line">void <span class="function"><span class="title">connectWifi</span></span>()&#123;</span><br><span class="line"> </span><br><span class="line">  WiFi.begin(ssid, password);</span><br><span class="line"> </span><br><span class="line">  //等待WiFi连接,成功连接后输出成功信息</span><br><span class="line">  <span class="keyword">while</span> (WiFi.status() != WL_CONNECTED) &#123;</span><br><span class="line">    delay(1000);</span><br><span class="line">    Serial.<span class="built_in">print</span>(<span class="string">&quot;.&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  Serial.println(<span class="string">&quot;&quot;</span>);</span><br><span class="line">  Serial.println(<span class="string">&quot;WiFi Connected!&quot;</span>);  </span><br><span class="line">  Serial.println(<span class="string">&quot;&quot;</span>); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="示例2：利用MQTT遗嘱实现设备在线状态发布"><a href="#示例2：利用MQTT遗嘱实现设备在线状态发布" class="headerlink" title="示例2：利用MQTT遗嘱实现设备在线状态发布"></a>示例2：利用MQTT遗嘱实现设备在线状态发布</h3><p>通过以下程序，ESP8266客户端可以利用遗嘱机制来实时的将当前在线与否状态通过服务端进行发布。也就是说，其它客户端只要订阅ESP8266客户端的遗嘱主题就可以马上了解该客户端是否在线。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br></pre></td><td class="code"><pre><span class="line">/**********************************************************************</span><br><span class="line">项目名称/Project          : 零基础入门学用物联网</span><br><span class="line">程序名称/Program name     : last_will_retain</span><br><span class="line">团队/Team                : 太极创客团队 / Taichi-Maker (www.taichi-maker.com)</span><br><span class="line">作者/Author              : CYNO朔</span><br><span class="line">日期/Date（YYYYMMDD）     : 20201223</span><br><span class="line">程序目的/Purpose          : </span><br><span class="line">本程序旨在演示如何设置客户端遗嘱机制。客户端在连接服务器时，设置遗嘱的主题和信息。</span><br><span class="line">本客户端所发布的遗嘱消息为保留消息。其它客户端可通过订阅本客户端的遗嘱主题获取本</span><br><span class="line">客户端是否在线的状态信息。</span><br><span class="line">-----------------------------------------------------------------------</span><br><span class="line">本示例程序为太极创客团队制作的《零基础入门学用物联网》中示例程序。</span><br><span class="line">该教程为对物联网开发感兴趣的朋友所设计和制作。如需了解更多该教程的信息，请参考以下网页：</span><br><span class="line">http://www.taichi-maker.com/homepage/esp8266-nodemcu-iot/iot-c/esp8266-nodemcu-web-client/http-request/</span><br><span class="line">***********************************************************************/</span><br><span class="line"><span class="comment">#include &lt;ESP8266WiFi.h&gt;</span></span><br><span class="line"><span class="comment">#include &lt;PubSubClient.h&gt;</span></span><br><span class="line"> </span><br><span class="line">// 设置wifi接入信息(请根据您的WiFi信息进行修改)</span><br><span class="line">const char* ssid = <span class="string">&quot;taichimaker&quot;</span>;</span><br><span class="line">const char* password = <span class="string">&quot;12345678&quot;</span>;</span><br><span class="line">const char* mqttServer = <span class="string">&quot;test.ranye-iot.net&quot;</span>;</span><br><span class="line">// 如以上MQTT服务器无法正常连接，请前往以下页面寻找解决方案</span><br><span class="line">// http://www.taichi-maker.com/public-mqtt-broker/</span><br><span class="line"> </span><br><span class="line">WiFiClient wifiClient;</span><br><span class="line">PubSubClient mqttClient(wifiClient);</span><br><span class="line"> </span><br><span class="line">// 遗嘱设置</span><br><span class="line">const char* willMsg = <span class="string">&quot;CLIENT-OFFLINE&quot;</span>; // 遗嘱消息内容</span><br><span class="line">const int willQoS = 0;                   // 遗嘱QoS</span><br><span class="line">const bool willRetain = <span class="literal">true</span>;           // 遗嘱保留</span><br><span class="line"> </span><br><span class="line">void <span class="function"><span class="title">setup</span></span>() &#123;</span><br><span class="line">  Serial.begin(9600);               // 启动串口通讯</span><br><span class="line">  </span><br><span class="line">  //设置ESP8266工作模式为无线终端模式</span><br><span class="line">  WiFi.mode(WIFI_STA);</span><br><span class="line">  </span><br><span class="line">  // 连接WiFi</span><br><span class="line">  connectWifi();</span><br><span class="line">  </span><br><span class="line">  // 设置MQTT服务器和端口号</span><br><span class="line">  mqttClient.setServer(mqttServer, 1883);</span><br><span class="line">  mqttClient.setKeepAlive(10); // 设置心跳间隔时间</span><br><span class="line">  </span><br><span class="line">  // 连接MQTT服务器</span><br><span class="line">  connectMQTTserver();</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">void <span class="function"><span class="title">loop</span></span>() &#123;</span><br><span class="line">  // 如果开发板未能成功连接服务器，则尝试连接服务器</span><br><span class="line">  <span class="keyword">if</span> (!mqttClient.connected()) &#123;</span><br><span class="line">    connectMQTTserver();</span><br><span class="line">  &#125;</span><br><span class="line"> </span><br><span class="line">   // 处理信息以及心跳</span><br><span class="line">   mqttClient.loop();</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">// 连接MQTT服务器并订阅信息</span><br><span class="line">void <span class="function"><span class="title">connectMQTTserver</span></span>()&#123;</span><br><span class="line">  </span><br><span class="line">  // 根据ESP8266的MAC地址生成客户端ID（避免与其它ESP8266的客户端ID重名）</span><br><span class="line">  String clientId = <span class="string">&quot;esp8266-&quot;</span> + WiFi.macAddress();</span><br><span class="line"> </span><br><span class="line">  // 建立遗嘱主题。主题名称以Taichi-Maker-为前缀，后面添加设备的MAC地址，最后</span><br><span class="line">  // 以“-Will”结尾，这是为确保不同ESP8266客户端的遗嘱主题名称各不相同。</span><br><span class="line">  String willString = <span class="string">&quot;Taichi-Maker-&quot;</span> + WiFi.macAddress() + <span class="string">&quot;-Will&quot;</span>;</span><br><span class="line">  char willTopic[willString.length() + 1];  </span><br><span class="line">  strcpy(willTopic, willString.c_str());</span><br><span class="line"> </span><br><span class="line">  // 连接MQTT服务器，在连接过程中提供以下参数：</span><br><span class="line">  // 客户端ID，遗嘱主题，遗嘱QoS，遗嘱保留，遗嘱信息</span><br><span class="line">  <span class="keyword">if</span> (mqttClient.connect(clientId.c_str(), willTopic, willQoS, willRetain, willMsg))&#123; </span><br><span class="line">    Serial.println(<span class="string">&quot;MQTT Server Connected.&quot;</span>);</span><br><span class="line">    Serial.<span class="built_in">print</span>(<span class="string">&quot;Server Address: &quot;</span>);Serial.println(mqttServer);</span><br><span class="line">    Serial.<span class="built_in">print</span>(<span class="string">&quot;ClientId: &quot;</span>);Serial.println(clientId);</span><br><span class="line">    Serial.<span class="built_in">print</span>(<span class="string">&quot;Will Topic: &quot;</span>);Serial.println(willTopic);    </span><br><span class="line">    publishOnlineStatus();     //发布在线状态</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    Serial.<span class="built_in">print</span>(<span class="string">&quot;MQTT Server Connect Failed. Client State:&quot;</span>);</span><br><span class="line">    Serial.println(mqttClient.state());</span><br><span class="line">    delay(5000);</span><br><span class="line">  &#125;   </span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">// 发布信息</span><br><span class="line">void <span class="function"><span class="title">publishOnlineStatus</span></span>()&#123;</span><br><span class="line">  // 建立遗嘱主题。主题名称以Taichi-Maker-为前缀，后面添加设备的MAC地址，最后</span><br><span class="line">  // 以“-Will”结尾，这是为确保不同ESP8266客户端的遗嘱主题名称各不相同。</span><br><span class="line">  String willString = <span class="string">&quot;Taichi-Maker-&quot;</span> + WiFi.macAddress() + <span class="string">&quot;-Will&quot;</span>;</span><br><span class="line">  char willTopic[willString.length() + 1];  </span><br><span class="line">  strcpy(willTopic, willString.c_str());</span><br><span class="line"> </span><br><span class="line">  // 建立设备在线的消息。此信息将以保留形式向遗嘱主题发布</span><br><span class="line">  String onlineMessageString = <span class="string">&quot;CLIENT-ONLINE&quot;</span>; </span><br><span class="line">  char onlineMsg[onlineMessageString.length() + 1];   </span><br><span class="line">  strcpy(onlineMsg, onlineMessageString.c_str());</span><br><span class="line">  </span><br><span class="line">  // 向遗嘱主题发布设备在线消息</span><br><span class="line">  <span class="keyword">if</span>(mqttClient.publish(willTopic, onlineMsg, <span class="literal">true</span>))&#123;</span><br><span class="line">    Serial.<span class="built_in">print</span>(<span class="string">&quot;Published Online Message: &quot;</span>);Serial.println(onlineMsg);    </span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    Serial.println(<span class="string">&quot;Online Message Publish Failed.&quot;</span>); </span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">// ESP8266连接wifi</span><br><span class="line">void <span class="function"><span class="title">connectWifi</span></span>()&#123;</span><br><span class="line"> </span><br><span class="line">  WiFi.begin(ssid, password);</span><br><span class="line"> </span><br><span class="line">  //等待WiFi连接,成功连接后输出成功信息</span><br><span class="line">  <span class="keyword">while</span> (WiFi.status() != WL_CONNECTED) &#123;</span><br><span class="line">    delay(1000);</span><br><span class="line">    Serial.<span class="built_in">print</span>(<span class="string">&quot;.&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  Serial.println(<span class="string">&quot;&quot;</span>);</span><br><span class="line">  Serial.println(<span class="string">&quot;WiFi Connected!&quot;</span>);  </span><br><span class="line">  Serial.println(<span class="string">&quot;&quot;</span>); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%89%A9%E8%81%94%E7%BD%91-esp8266-MQTT-%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6-%E9%81%97%E5%98%B1/" rel="tag"># 物联网 esp8266 MQTT 心跳机制 遗嘱</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/07/07/%E9%9A%8F%E6%83%B35/" rel="prev" title="随想5">
+      <i class="fa fa-chevron-left"></i> 随想5
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC81NzY4OC8zNDE1MQ=="></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6"><span class="nav-number">1.</span> <span class="nav-text">心跳机制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MQTT%E9%81%97%E5%98%B1"><span class="nav-number">2.</span> <span class="nav-text">MQTT遗嘱</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%A6%82%E4%BD%95%E5%B0%86%E9%81%97%E5%98%B1%E6%B6%88%E6%81%AF%E5%8F%91%E9%80%81%E7%BB%99%E6%9C%8D%E5%8A%A1%E7%AB%AF"><span class="nav-number">2.1.</span> <span class="nav-text">客户端如何将遗嘱消息发送给服务端</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#lastWillTopic-%E2%80%93-%E9%81%97%E5%98%B1%E4%B8%BB%E9%A2%98"><span class="nav-number">2.1.1.</span> <span class="nav-text">lastWillTopic – 遗嘱主题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#lastWillMessage-%E2%80%93-%E9%81%97%E5%98%B1%E6%B6%88%E6%81%AF"><span class="nav-number">2.1.2.</span> <span class="nav-text">lastWillMessage – 遗嘱消息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#lastWillQoS-%E2%80%93-%E9%81%97%E5%98%B1QoS"><span class="nav-number">2.1.3.</span> <span class="nav-text">lastWillQoS – 遗嘱QoS</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#lastWillRetain-%E2%80%93-%E9%81%97%E5%98%B1%E4%BF%9D%E7%95%99"><span class="nav-number">2.1.4.</span> <span class="nav-text">lastWillRetain – 遗嘱保留</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MQTT%E9%81%97%E5%98%B1%E6%93%8D%E4%BD%9C%E5%BB%BA%E8%AE%AE"><span class="nav-number">2.2.</span> <span class="nav-text">MQTT遗嘱操作建议</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E9%AA%8C%E8%AF%81"><span class="nav-number">3.</span> <span class="nav-text">测试验证</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B1%EF%BC%9AMQTT%E9%81%97%E5%98%B1%E5%9F%BA%E6%9C%AC%E5%BA%94%E7%94%A8"><span class="nav-number">3.1.</span> <span class="nav-text">示例1：MQTT遗嘱基本应用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B2%EF%BC%9A%E5%88%A9%E7%94%A8MQTT%E9%81%97%E5%98%B1%E5%AE%9E%E7%8E%B0%E8%AE%BE%E5%A4%87%E5%9C%A8%E7%BA%BF%E7%8A%B6%E6%80%81%E5%8F%91%E5%B8%83"><span class="nav-number">3.2.</span> <span class="nav-text">示例2：利用MQTT遗嘱实现设备在线状态发布</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="云中锡"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">云中锡</p>
+  <div class="site-description" itemprop="description">心之所向，素履以往</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">55</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">47</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/94-eric" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;94-eric" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:809594015@qq.com" title="E-Mail → mailto:809594015@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/hear%20the%20wind%20within" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;hear the wind within" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">云中锡</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">92k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">7:38</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <span id="busuanzi_container_site_pv">总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">总访客数<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+<!-- 不蒜子计数初始值纠正 -->
+<script>
+$(document).ready(function() {
+
+    var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+    var countOffset = 20000;  // 初始化首次数据
+
+    function fixCount() {            
+       if (document.getElementById("busuanzi_container_site_pv").style.display != "none")
+        {
+            $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + countOffset); 
+            clearInterval(int);
+        }                  
+        if ($("#busuanzi_container_site_pv").css("display") != "none")
+        {
+            $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + countOffset); // 加上初始数据 
+            clearInterval(int); // 停止检测
+        }  
+    }
+       	
+});
+</script> 
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共93.6k字</span>
+</div>
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='255,0,0' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
+
+</body>
+</html>
+
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/love.js"></script>
