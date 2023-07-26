@@ -168,6 +168,99 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/06/05/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BJSON%E8%A7%A3%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="云中锡">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="明珠的个人博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/06/05/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BJSON%E8%A7%A3%E6%9E%90/" class="post-title-link" itemprop="url">物联网之JSON解析</a>
+        </h2>
+
+        <div class="post-meta">
+
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-06-05 19:48:12" itemprop="dateCreated datePublished" datetime="2023-06-05T19:48:12+08:00">2023-06-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-06-06 21:30:29" itemprop="dateModified" datetime="2023-06-06T21:30:29+08:00">2023-06-06</time>
+              </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>18 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="了解JSON"><a href="#了解JSON" class="headerlink" title="了解JSON"></a>了解JSON</h2><p>JSON（JavaScript Object Notation），即JS对象简谱 , 是一种轻量级的数据交换格式。<br>实现客户端与服务器之间的数据交换，以前通用的数据交换语言是XML，但是Douglas crockford觉得xml的生成和解析都太麻烦，所以他提出了一种简化格式，也就是json。<br>相对而言，JSON 简单的语法格式和清晰的层次结构明显要比 XML 容易阅读，并且在数据交换方面，由于 JSON 所使用的字符要比 XML 少得多，可以大大得节约传输数据所占用得带宽。</p>
+<h2 id="JSON对象格式"><a href="#JSON对象格式" class="headerlink" title="JSON对象格式"></a>JSON对象格式</h2><p>举个栗子！试着用不同的语言描述一本书（对象）：书名+内容，能够看出JSON在轻量级这块的优势。</p>
+<ul>
+<li><p>Java</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Public class Test &#123;</span><br><span class="line">	public static void <span class="function"><span class="title">main</span></span>() &#123;</span><br><span class="line">		Book b = new Book();</span><br><span class="line">		b.setName(“金苹果”); </span><br><span class="line">		b.setInfo(“种苹果好辛苦”);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">class Book &#123;</span><br><span class="line">	private String name;</span><br><span class="line">	private String info;</span><br><span class="line">	构造方法;</span><br><span class="line">	get/set方法...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>JavaScript</p></li></ul>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2023/06/05/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BJSON%E8%A7%A3%E6%9E%90/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/05/25/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BJSON/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1079,80 +1172,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/04/22/%E9%9A%8F%E6%83%B31/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="云中锡">
-      <meta itemprop="description" content="心之所向，素履以往">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="明珠的个人博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/04/22/%E9%9A%8F%E6%83%B31/" class="post-title-link" itemprop="url">随想1</a>
-        </h2>
-
-        <div class="post-meta">
-
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2023-04-22 21:43:25 / 修改时间：21:46:38" itemprop="dateCreated datePublished" datetime="2023-04-22T21:43:25+08:00">2023-04-22</time>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>192</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>就今天写安装Arduino的软件文章时突然想到的，朋友教的一个特别有效率的学习方法，就是花钱。比如我想学习某个技能时发现需要用到一些软件，结果安装入门花了大半天还没搞好，不如直接淘宝，那里什么都卖，花几块钱，省半天时间，最主要的是心情不一样。自己半天搞不好任意引起负反馈，学习积极性会受到严重打击，不建议这样…不要在门口徘徊，先入门，习得重点和关键，在获得正反馈后加强学习动力，后续感兴趣可以花时间深入了解这些相对可以先跳过的部分。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1224,7 +1243,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-count">58</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1320,7 +1339,7 @@ $(document).ready(function() {
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共94.9k字</span>
+  <span class="post-count">博客全站共95k字</span>
 </div>
         
 <div class="busuanzi-count">
