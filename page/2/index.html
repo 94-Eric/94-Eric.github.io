@@ -170,6 +170,273 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/07/07/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E4%B8%BB%E9%A2%98%E8%BF%9B%E9%98%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="云中锡">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="明珠的个人博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/07/07/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E4%B8%BB%E9%A2%98%E8%BF%9B%E9%98%B6/" class="post-title-link" itemprop="url">物联网之MQTT主题进阶</a>
+        </h2>
+
+        <div class="post-meta">
+
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-07-07 10:08:01 / 修改时间：11:47:15" itemprop="dateCreated datePublished" datetime="2023-07-07T10:08:01+08:00">2023-07-07</time>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>17k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>44 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>重点：</p>
+<ul>
+<li><ol>
+<li>主题基本形式</li>
+</ol>
+</li>
+<li><ol start="2">
+<li>主题分级</li>
+</ol>
+</li>
+<li><ol start="3">
+<li>主题通配符</li>
+</ol>
+</li>
+<li><ol start="4">
+<li>主题应用注意事项</li>
+</ol>
+</li>
+<li><ol start="5">
+<li>测试验证</li>
+</ol>
+</li>
+<li><ol start="6">
+<li>主题订阅程序示例</li>
+</ol>
+</li>
+</ul>
+<h2 id="主题基本形式"><a href="#主题基本形式" class="headerlink" title="主题基本形式"></a>主题基本形式</h2><p>主题的最基本形式就是一个字符串。以下是几个主题示例：</p>
+<ul>
+<li>myTopic</li>
+<li>motorSpeed</li>
+<li>MotorSpeed</li>
+<li>current time</li>
+</ul>
+<p>注意：</p>
+<ol>
+<li>主题是区分大小写的。如上列表中的主题 motor_speed和Motor_speed是两个完全不同的主题。</li>
+<li>主题可以使用空格 如以上列表中的current time，虽然有空格分隔current和time这两个词，但这实际是一个MQTT主题。<strong>不过，虽然我们可以使用空格，但是！！！强烈建议不要在主题中使用空格。我们在开发时一不小心，可能就会漏掉空格，这将造成不必要的麻烦。</strong></li>
+<li>大部分MQTT服务端是不支持中文主题的，所以我们应使用英文字符或ASCII字符来作为MQTT主题。</li>
+</ol>
+<h2 id="主题分级"><a href="#主题分级" class="headerlink" title="主题分级"></a>主题分级</h2><p>MQTT主题可以是一个简单的字符串，比如motor_speed，myTopic。这些都是单一级别的主题。</p>
+<p>为了更好的对主题进行管理和分类，我们可以对主题进行分级处理。MQTT主题各个级别之间可以使用”&#x2F;”来分隔。如下例所示：</p>
+<p>Tyler-1&#x2F;motor&#x2F;1&#x2F;speed</p>
+<p>在以上示例中一共有四级主题，分别是第1级 Tyler-1、第2级motor、第三级1、第4级speed。主题的每一级至少需要一个字符，比如以上示例中，数字1即是一级主题。</p>
+<p>我们再来看几个分级主题的示例：</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2023/07/07/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E4%B8%BB%E9%A2%98%E8%BF%9B%E9%98%B6/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/07/06/%E7%BA%A2%E8%8C%B6%E4%B9%8B%E5%85%A5%E9%97%A8%E8%B5%84%E6%96%99/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="云中锡">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="明珠的个人博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/07/06/%E7%BA%A2%E8%8C%B6%E4%B9%8B%E5%85%A5%E9%97%A8%E8%B5%84%E6%96%99/" class="post-title-link" itemprop="url">红茶之入门资料</a>
+        </h2>
+
+        <div class="post-meta">
+
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-07-06 09:35:21" itemprop="dateCreated datePublished" datetime="2023-07-06T09:35:21+08:00">2023-07-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-07-07 09:46:37" itemprop="dateModified" datetime="2023-07-07T09:46:37+08:00">2023-07-07</time>
+              </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="红茶简介"><a href="#红茶简介" class="headerlink" title="红茶简介"></a>红茶简介</h2><p>好喝(严格说起来，红茶不是指茶的品种，而是一种茶叶的加工工艺。)</p>
+<h3 id="红茶代表："><a href="#红茶代表：" class="headerlink" title="红茶代表："></a>红茶代表：</h3><ul>
+<li>金骏眉</li>
+<li>正山小种</li>
+<li>祁红功夫</li>
+<li>滇红功夫</li>
+<li>英红九号</li>
+</ul>
+<h3 id="工艺"><a href="#工艺" class="headerlink" title="工艺"></a>工艺</h3><ul>
+<li>萎凋</li>
+<li>揉捻</li>
+<li>发酵</li>
+<li>干燥</li>
+<li>精制</li>
+</ul>
+<h3 id="分类方式"><a href="#分类方式" class="headerlink" title="分类方式"></a>分类方式</h3><h4 id="著名产区"><a href="#著名产区" class="headerlink" title="著名产区"></a>著名产区</h4><ul>
+<li>福建武夷山</li>
+<li>安徽祁门</li>
+<li>云南凤庆</li>
+</ul>
+<h4 id="工艺与等级"><a href="#工艺与等级" class="headerlink" title="工艺与等级"></a>工艺与等级</h4><blockquote>
+<ul>
+<li>红碎茶<blockquote>
+<ul>
+<li>大叶种红碎茶</li>
+<li>中小叶种红碎茶</li>
+</ul>
+</blockquote>
+</li>
+<li>小种茶<blockquote>
+<ul>
+<li>正山小种</li>
+<li>烟小种</li>
+</ul>
+</blockquote>
+</li>
+<li>功夫红茶<blockquote>
+<ul>
+<li>大叶种功夫红茶</li>
+<li>中小叶种功夫红茶</li>
+</ul>
+</blockquote>
+</li>
+</ul>
+</blockquote>
+<h4 id="叶片大小"><a href="#叶片大小" class="headerlink" title="叶片大小"></a>叶片大小</h4><ul>
+<li>大叶种</li>
+<li>中叶种</li>
+<li>小叶种</li>
+</ul>
+<h3 id="冲泡方法"><a href="#冲泡方法" class="headerlink" title="冲泡方法"></a>冲泡方法</h3><ul>
+<li>马克杯冲泡法，顾名思义，马克杯，放茶叶，喝</li>
+<li>工夫茶冲泡法，和想象中古人泡茶一样—个人最喜欢</li>
+<li>冷泡法，冷开水浸泡较长时间的茶叶</li>
+</ul>
+<h2 id="知名红茶简介"><a href="#知名红茶简介" class="headerlink" title="知名红茶简介"></a>知名红茶简介</h2><h3 id="小种茶"><a href="#小种茶" class="headerlink" title="小种茶"></a>小种茶</h3><p>正山小种：产于福建，经过马尾松熏焙，带松烟香、花香、桂圆味。<br>金骏眉：产于福建，由全芽头采制，带花果香、</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2023/07/06/%E7%BA%A2%E8%8C%B6%E4%B9%8B%E5%85%A5%E9%97%A8%E8%B5%84%E6%96%99/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/07/05/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E6%B6%88%E6%81%AF%E5%8F%91%E5%B8%83/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -205,14 +472,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>776</span>
+              <span>3.6k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>4 分钟</span>
+              <span>9 分钟</span>
             </span>
 
         </div>
@@ -289,14 +556,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.5k</span>
+              <span>1.9k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>7 分钟</span>
+              <span>5 分钟</span>
             </span>
 
         </div>
@@ -384,14 +651,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>3.2k</span>
+              <span>3.4k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>16 分钟</span>
+              <span>9 分钟</span>
             </span>
 
         </div>
@@ -534,14 +801,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.4k</span>
+              <span>4.1k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>7 分钟</span>
+              <span>10 分钟</span>
             </span>
 
         </div>
@@ -625,14 +892,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>5.9k</span>
+              <span>25k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>30 分钟</span>
+              <span>1:01</span>
             </span>
 
         </div>
@@ -725,14 +992,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>971</span>
+              <span>3.1k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>5 分钟</span>
+              <span>8 分钟</span>
             </span>
 
         </div>
@@ -820,14 +1087,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>608</span>
+              <span>761</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
+              <span>2 分钟</span>
             </span>
 
         </div>
@@ -908,14 +1175,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2.9k</span>
+              <span>3.9k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>15 分钟</span>
+              <span>10 分钟</span>
             </span>
 
         </div>
@@ -998,14 +1265,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2.4k</span>
+              <span>3k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>12 分钟</span>
+              <span>8 分钟</span>
             </span>
 
         </div>
@@ -1096,7 +1363,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>80</span>
+              <span>505</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -1116,12 +1383,12 @@
 
       
           
-        <div id="aplayer-WKDGkYuU" class="aplayer aplayer-tag-marker" style="margin-bottom: 20px;">
+        <div id="aplayer-FFIqFSzy" class="aplayer aplayer-tag-marker" style="margin-bottom: 20px;">
             <pre class="aplayer-lrc-content"></pre>
         </div>
         <script>
           var ap = new APlayer({
-            element: document.getElementById("aplayer-WKDGkYuU"),
+            element: document.getElementById("aplayer-FFIqFSzy"),
             narrow: false,
             autoplay: true,
             showlrc: false,
@@ -1154,185 +1421,10 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/06/18/Arduino%E5%BA%93%E5%8F%82%E8%80%83%E5%9C%B0%E5%9D%80/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="云中锡">
-      <meta itemprop="description" content="心之所向，素履以往">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="明珠的个人博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/06/18/Arduino%E5%BA%93%E5%8F%82%E8%80%83%E5%9C%B0%E5%9D%80/" class="post-title-link" itemprop="url">Arduino库参考地址</a>
-        </h2>
-
-        <div class="post-meta">
-
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2023-06-18 10:37:19 / 修改时间：10:49:35" itemprop="dateCreated datePublished" datetime="2023-06-18T10:37:19+08:00">2023-06-18</time>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>73</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="ESP8266-Arduino库-开发参考资料"><a href="#ESP8266-Arduino库-开发参考资料" class="headerlink" title="ESP8266-Arduino库 开发参考资料"></a>ESP8266-Arduino库 开发参考资料</h2><p>首先官方资料：<br><a target="_blank" rel="noopener" href="https://arduino-esp8266.readthedocs.io/en/latest/">ESP8266 Arduino Core Documentation</a></p>
-<img src="/2023/06/18/Arduino%E5%BA%93%E5%8F%82%E8%80%83%E5%9C%B0%E5%9D%80/%E6%8D%95%E8%8E%B71.PNG" class title="图片麋鹿无法显示">
-
-<p><a target="_blank" rel="noopener" href="https://github.com/esp8266/Arduino">ESP8266 Arduino Core GitHub</a></p>
-<img src="/2023/06/18/Arduino%E5%BA%93%E5%8F%82%E8%80%83%E5%9C%B0%E5%9D%80/%E6%8D%95%E8%8E%B72.PNG" class title="图片麋鹿无法显示">
-
-<h2 id="ESP8266-Arduino库思维导图及详细功能介绍链接见如下网址"><a href="#ESP8266-Arduino库思维导图及详细功能介绍链接见如下网址" class="headerlink" title="ESP8266-Arduino库思维导图及详细功能介绍链接见如下网址"></a>ESP8266-Arduino库思维导图及详细功能介绍链接见如下网址</h2><p><a target="_blank" rel="noopener" href="http://www.taichi-maker.com/homepage/iot-development/iot-dev-reference/esp8266-c-plus-plus-reference/">ESP8266-Arduino库</a>   </p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/06/11/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E5%90%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%8F%91%E9%80%81%E4%BF%A1%E6%81%AF/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="云中锡">
-      <meta itemprop="description" content="心之所向，素履以往">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="明珠的个人博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/06/11/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E5%90%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%8F%91%E9%80%81%E4%BF%A1%E6%81%AF/" class="post-title-link" itemprop="url">物联网之向服务器发送信息</a>
-        </h2>
-
-        <div class="post-meta">
-
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-06-11 13:07:36" itemprop="dateCreated datePublished" datetime="2023-06-11T13:07:36+08:00">2023-06-11</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-06-24 15:44:43" itemprop="dateModified" datetime="2023-06-24T15:44:43+08:00">2023-06-24</time>
-              </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.9k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>9 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>ESP8266开发板以网络客户端的角色向服务器发送HTTP请求，并且获取何处理服务器响应信息。通过这一操作，我们可以实现ESP8266开发板间的物联网数据通信。</p>
-<img src="/2023/06/11/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E5%90%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%8F%91%E9%80%81%E4%BF%A1%E6%81%AF/%E6%8D%95%E8%8E%B71.PNG" class title="图片麋鹿无法显示">
-<p>如上图所示，接下来我们将需要两块ESP8266-NodeMCU开发板。其中一块作为服务器，另一块作为客户端。</p>
-<h2 id="使用ESP8266客户端向ESP8266服务器发送数据"><a href="#使用ESP8266客户端向ESP8266服务器发送数据" class="headerlink" title="使用ESP8266客户端向ESP8266服务器发送数据"></a>使用ESP8266客户端向ESP8266服务器发送数据</h2><p>先上栗子。在这个示例中，ESP8266客户端将会通过HTTP协议向ESP8266服务器发送信息。在运行过程中，客户端ESP8266将会实时检测板上的按键状态，并且把按键状态发送给服务器。服务器在接收到客户端按键状态后，可以根据客户端按键状态来控制服务器端板上的LED点亮和熄灭。最终实现的效果是，我们可以通过客户端ESP8266开发板上的按键来“遥控”服务器上的LED点亮和熄灭。</p>
-<p><strong>注意，服务器端和客户端ESP8266必须连接同一WiFi网络，方可实现数据通讯。</strong></p>
-<h3 id="服务器端程序："><a href="#服务器端程序：" class="headerlink" title="服务器端程序："></a>服务器端程序：</h3><ul>
-<li>接收客户端发来的http请求并且解析信息中的数据信息</li>
-<li>将解析的数据信息通过串口监视器显示供用户查看</li>
-<li>将解析的客户端按键状态信息用于控制服务器端板上LED的点亮和熄灭</li></ul>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/06/11/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E5%90%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%8F%91%E9%80%81%E4%BF%A1%E6%81%AF/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1400,14 +1492,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">60</span>
+          <span class="site-state-item-count">62</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">49</span>
+        <span class="site-state-item-count">51</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1454,12 +1546,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">93k</span>
+    <span title="站点总字数">213k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">7:45</span>
+    <span title="站点阅读时长">8:54</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
@@ -1496,7 +1588,7 @@ $(document).ready(function() {
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共95k字</span>
+  <span class="post-count">博客全站共95.2k字</span>
 </div>
         
 <div class="busuanzi-count">
