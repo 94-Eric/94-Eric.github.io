@@ -170,6 +170,106 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/06/24/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E8%AF%B7%E6%B1%82JSON%E4%BF%A1%E6%81%AF/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="云中锡">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="明珠的个人博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/06/24/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E8%AF%B7%E6%B1%82JSON%E4%BF%A1%E6%81%AF/" class="post-title-link" itemprop="url">物联网之请求JSON信息</a>
+        </h2>
+
+        <div class="post-meta">
+
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-06-24 15:45:44" itemprop="dateCreated datePublished" datetime="2023-06-24T15:45:44+08:00">2023-06-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-06-25 09:14:54" itemprop="dateModified" datetime="2023-06-25T09:14:54+08:00">2023-06-25</time>
+              </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>30 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="ESP8266客户端请求JSON信息"><a href="#ESP8266客户端请求JSON信息" class="headerlink" title="ESP8266客户端请求JSON信息"></a>ESP8266客户端请求JSON信息</h2><p>由于易于解析且量级很轻，JSON成为了常用的物联网信息传输格式之一。本次内容如下：</p>
+<ol>
+<li>使用ESP8266来建立物联网服务器，该服务器可以向客户端发送JSON格式响应信息从而实现物联网信息通讯。</li>
+<li>使用ESP8266来通过网络向物联网服务器请求JSON信息</li>
+<li>使用ESP8266来通过ArduinoJson库解析JSON信息</li>
+</ol>
+<p>在接下来的讲解中，我们将需要两块ESP8266-NodeMCU开发板。其中一块作为服务器，另一块作为客户端。如下图所示，客户端将会向服务器发送请求信息。服务器端在接收到客户端请求后，会将JSON信息加入服务器响应信息中发送给客户端。</p>
+<img src="/2023/06/24/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E8%AF%B7%E6%B1%82JSON%E4%BF%A1%E6%81%AF/%E6%8D%95%E8%8E%B71.PNG" class title="图片麋鹿无法显示">
+
+<h2 id="示例一-ESP8266客户端请求单一JSON数据信息"><a href="#示例一-ESP8266客户端请求单一JSON数据信息" class="headerlink" title="示例一 ESP8266客户端请求单一JSON数据信息"></a>示例一 ESP8266客户端请求单一JSON数据信息</h2><p>本示例分为两部分，一部分为服务器程序，另一部分为客户端程序。</p>
+<h3 id="服务器端程序"><a href="#服务器端程序" class="headerlink" title="服务器端程序"></a>服务器端程序</h3><p>服务器端程序主要功能：</p>
+<ol>
+<li>实时读取A0、 D1、D2以及D3引脚的读数。</li>
+<li>当有客户端请求时，通过响应信息将引脚读数和测试数据信息发送给客户端。<br>信息发送格式为json格式。以下为该json信息的示例：</li></ol>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2023/06/24/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E8%AF%B7%E6%B1%82JSON%E4%BF%A1%E6%81%AF/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/06/20/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E6%9C%8D%E5%8A%A1%E7%AB%AF/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -602,12 +702,12 @@
 
       
           
-        <div id="aplayer-uXDOdjTp" class="aplayer aplayer-tag-marker" style="margin-bottom: 20px;">
+        <div id="aplayer-uzXAUVSA" class="aplayer aplayer-tag-marker" style="margin-bottom: 20px;">
             <pre class="aplayer-lrc-content"></pre>
         </div>
         <script>
           var ap = new APlayer({
-            element: document.getElementById("aplayer-uXDOdjTp"),
+            element: document.getElementById("aplayer-uzXAUVSA"),
             narrow: false,
             autoplay: true,
             showlrc: false,
@@ -1170,80 +1270,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/05/25/%E9%9A%8F%E6%83%B32/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="云中锡">
-      <meta itemprop="description" content="心之所向，素履以往">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="明珠的个人博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/05/25/%E9%9A%8F%E6%83%B32/" class="post-title-link" itemprop="url">随想2</a>
-        </h2>
-
-        <div class="post-meta">
-
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2023-05-25 00:30:54 / 修改时间：00:36:01" itemprop="dateCreated datePublished" datetime="2023-05-25T00:30:54+08:00">2023-05-25</time>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>99</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id><a href="#" class="headerlink" title></a></h2><p>工作上感受到压力一定是获取到的信息不足，这时候要找同事、领导、老板去沟通获取足够的信息，才可以更好的去辅助解决问题，来减小去除压力。于生活也是一样，迷茫时多读书。STM32的开发板总算到手了，不过，物联网的心知天气还没做好，加油</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1315,14 +1341,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">67</span>
+          <span class="site-state-item-count">68</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">51</span>
+        <span class="site-state-item-count">52</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1374,7 +1400,7 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">7:48</span>
+    <span title="站点阅读时长">7:51</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
@@ -1411,7 +1437,7 @@ $(document).ready(function() {
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共95.4k字</span>
+  <span class="post-count">博客全站共96k字</span>
 </div>
         
 <div class="busuanzi-count">
