@@ -260,6 +260,99 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2024/05/11/%E5%8D%95%E7%89%87%E6%9C%BA%E6%A8%A1%E6%8B%9F%E9%92%A2%E7%90%B4%E6%92%AD%E6%94%BE%E9%9F%B3%E4%B9%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="云中锡">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="明珠的个人博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/05/11/%E5%8D%95%E7%89%87%E6%9C%BA%E6%A8%A1%E6%8B%9F%E9%92%A2%E7%90%B4%E6%92%AD%E6%94%BE%E9%9F%B3%E4%B9%90/" class="post-title-link" itemprop="url">单片机模拟钢琴播放音乐</a>
+        </h2>
+
+        <div class="post-meta">
+
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-05-11 10:26:43" itemprop="dateCreated datePublished" datetime="2024-05-11T10:26:43+08:00">2024-05-11</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-05-14 09:31:03" itemprop="dateModified" datetime="2024-05-14T09:31:03+08:00">2024-05-14</time>
+              </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>9 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>   使用单片机的蜂鸣器模拟钢琴声进而播放出完整乐曲，2点要素：<strong>1.单片机使用无源蜂鸣器</strong>，<strong>2.如何识别乐谱，并转化为单片机可识别的信号</strong>，无源蜂鸣器可以实现不同频率的音调，而音乐，最重要的是搞懂<strong>音调</strong>和<strong>节拍</strong>，音调我们知道就是不同频率的高低→蜂鸣器改变频率，节拍就是时长→单片机的定时器可以实现毫秒级定时。万事俱备，开工。</p>
+<h2 id="硬件条件"><a href="#硬件条件" class="headerlink" title="硬件条件"></a>硬件条件</h2><p>   蜂鸣器是一种将电信号转化为声音信号的器件，常用来产生设备的按键音、报警音等提示音。<br>按照驱动方式可以分为有源蜂鸣器和无源蜂鸣器。<br>有源蜂鸣器：内部自带震荡源，将正负极接上直流电压即可持续发生，频率固定；<br>无源蜂鸣器：内部不带震荡源，需要控制器提供震荡脉冲才可发声，调整提供震荡脉冲的频率，可发出不同频率的声音。<br>    我们想要控制频率来实现歌曲的音调，所以选用的是无源蜂鸣器。</p>
+<p>由于蜂鸣器的工作电流一般比较大，以致于单片机的I&#x2F;O 口是无法直接驱动的*(但AVR可以驱动小功率蜂鸣器)，所以要利用放大电路来驱动，一般使用三极管来放大电流就可以了。</p>
+<img src="/2024/05/11/%E5%8D%95%E7%89%87%E6%9C%BA%E6%A8%A1%E6%8B%9F%E9%92%A2%E7%90%B4%E6%92%AD%E6%94%BE%E9%9F%B3%E4%B9%90/%E6%8D%95%E8%8E%B71.PNG" class title="图片麋鹿无法显示">
+
+<p>上图是普中51单片机开发板的原理图，J7连接的是芯片的一个I&#x2F;O口。可以看到，当 J7 端子有一个高电平进来时，PNP 三极管TP1截止，蜂鸣器(BZ1)不得电，当 J7 端子有一个低电平进来时，PNP 三极管TP1 导通，蜂鸣器得电，如果 J7 端子有一个一定频率的脉冲信号（高低电平不断翻转）时，这个无源蜂鸣器发出声音。<br>硬件基础完毕，接下来是软件编程。</p>
+<h2 id="软件条件"><a href="#软件条件" class="headerlink" title="软件条件"></a>软件条件</h2><p>   想要编程，就得知道音乐是怎么产生的。<br>   首先，我们拿到一张谱子，然后看谱，当我们识别完乐谱后，按照乐谱用手操纵乐器从头到尾按顺序演奏完毕。<br>   所以首先识谱，分辨出音调和节拍。<br>   不过音乐的基本知识就不为难自己了，我是个音乐白痴。。所以我就这么理解了…<br>   隐约记得音乐课上似乎讲过do、re、mi、fa</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2024/05/11/%E5%8D%95%E7%89%87%E6%9C%BA%E6%A8%A1%E6%8B%9F%E9%92%A2%E7%90%B4%E6%92%AD%E6%94%BE%E9%9F%B3%E4%B9%90/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2024/04/15/%E8%80%B6%E9%B2%81%E5%A4%A7%E5%AD%A6%E6%88%91%E6%9D%A5%E4%B9%9F-%E5%8D%9A%E5%BC%88%E8%AE%BA/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1069,83 +1162,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/07/26/%E9%9A%8F%E6%83%B37%E4%B9%8B%E6%8D%A2%E5%B7%A5%E4%BD%9C%E6%9C%89%E6%84%9F/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="云中锡">
-      <meta itemprop="description" content="心之所向，素履以往">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="明珠的个人博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/07/26/%E9%9A%8F%E6%83%B37%E4%B9%8B%E6%8D%A2%E5%B7%A5%E4%BD%9C%E6%9C%89%E6%84%9F/" class="post-title-link" itemprop="url">随想7之换工作有感</a>
-        </h2>
-
-        <div class="post-meta">
-
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2023-07-26 19:25:16 / 修改时间：19:28:08" itemprop="dateCreated datePublished" datetime="2023-07-26T19:25:16+08:00">2023-07-26</time>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>99</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>先分享一段话，不一定大家或者我都认可，但是看了后感觉很有感触，所以拿出来分享下：</p>
-<p>at the beggining of a relationship, everything is thrilling and it’s new, and you feel as a couple nothing can hurt you, and then you gradually start  to realize that actually, anything can hurt you…</p>
-<p>地点报备：工作地点从徐州贾汪换到了徐州铜山万达附近</p>
-<p>一切安好</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1217,14 +1233,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">68</span>
+          <span class="site-state-item-count">69</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">52</span>
+        <span class="site-state-item-count">53</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1271,12 +1287,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">94k</span>
+    <span title="站点总字数">96k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">7:51</span>
+    <span title="站点阅读时长">8:01</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
@@ -1313,7 +1329,7 @@ $(document).ready(function() {
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共96k字</span>
+  <span class="post-count">博客全站共97.8k字</span>
 </div>
         
 <div class="busuanzi-count">

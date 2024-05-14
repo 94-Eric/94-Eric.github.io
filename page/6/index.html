@@ -168,6 +168,80 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/04/09/%E6%B8%A9%E5%BA%A6%E4%BC%A0%E6%84%9F%E5%99%A8%E5%92%8C%E6%97%B6%E9%92%9F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="云中锡">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="明珠的个人博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/04/09/%E6%B8%A9%E5%BA%A6%E4%BC%A0%E6%84%9F%E5%99%A8%E5%92%8C%E6%97%B6%E9%92%9F/" class="post-title-link" itemprop="url">温度传感器和时钟</a>
+        </h2>
+
+        <div class="post-meta">
+
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-04-09 14:41:17 / 修改时间：14:59:04" itemprop="dateCreated datePublished" datetime="2023-04-09T14:41:17+08:00">2023-04-09</time>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>208</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="都是通信的总线，I2C，单总线，SPI…近距离进行CPU与其它外围芯片的连接"><a href="#都是通信的总线，I2C，单总线，SPI…近距离进行CPU与其它外围芯片的连接" class="headerlink" title="都是通信的总线，I2C，单总线，SPI…近距离进行CPU与其它外围芯片的连接"></a>都是通信的总线，I2C，单总线，SPI…近距离进行CPU与其它外围芯片的连接</h2><h3 id="这些芯片级总线多采用串行方式传送数据，即一位一位传送数据，可以节省传送线的条数"><a href="#这些芯片级总线多采用串行方式传送数据，即一位一位传送数据，可以节省传送线的条数" class="headerlink" title="这些芯片级总线多采用串行方式传送数据，即一位一位传送数据，可以节省传送线的条数"></a>这些芯片级总线多采用串行方式传送数据，即一位一位传送数据，可以节省传送线的条数</h3><p>SPI(时钟DS1302)需要3条线：一条时钟线,一条数据接收线,一条数据发送线;<br>I2C 需要2跳线:一条时钟线和一条数据线；<br>单总线(DS18B20数字温度传感器)：用一条数据线来通讯；<br>还有RS-232：用于计算机和计算机或单片机进行数据通讯的<br>还有RS-485 、CAN等工业现场总线：用于远距离通讯 距离可达1000米。</p>
+<h3 id="和I2C总线类似，时序也包含基本的初始化、读写等，参见芯片资料，不赘述"><a href="#和I2C总线类似，时序也包含基本的初始化、读写等，参见芯片资料，不赘述" class="headerlink" title="和I2C总线类似，时序也包含基本的初始化、读写等，参见芯片资料，不赘述"></a>和I2C总线类似，时序也包含基本的初始化、读写等，参见芯片资料，不赘述</h3>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/04/09/I2C%E6%80%BB%E7%BA%BF/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -908,14 +982,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">68</span>
+          <span class="site-state-item-count">69</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">52</span>
+        <span class="site-state-item-count">53</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -962,12 +1036,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">94k</span>
+    <span title="站点总字数">96k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">7:51</span>
+    <span title="站点阅读时长">8:01</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
@@ -1004,7 +1078,7 @@ $(document).ready(function() {
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共96k字</span>
+  <span class="post-count">博客全站共97.8k字</span>
 </div>
         
 <div class="busuanzi-count">

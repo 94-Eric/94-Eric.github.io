@@ -1,0 +1,588 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"94-eric.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="简介   使用单片机的蜂鸣器模拟钢琴声进而播放出完整乐曲，2点要素：1.单片机使用无源蜂鸣器，2.如何识别乐谱，并转化为单片机可识别的信号，无源蜂鸣器可以实现不同频率的音调，而音乐，最重要的是搞懂音调和节拍，音调我们知道就是不同频率的高低→蜂鸣器改变频率，节拍就是时长→单片机的定时器可以实现毫秒级定时。万事俱备，开工。 硬件条件   蜂鸣器是一种将电信号转化为声音信号的器件，常用来产生设备的按键音">
+<meta property="og:type" content="article">
+<meta property="og:title" content="单片机模拟钢琴播放音乐">
+<meta property="og:url" content="https://94-eric.github.io/2024/05/11/%E5%8D%95%E7%89%87%E6%9C%BA%E6%A8%A1%E6%8B%9F%E9%92%A2%E7%90%B4%E6%92%AD%E6%94%BE%E9%9F%B3%E4%B9%90/index.html">
+<meta property="og:site_name" content="明珠的个人博客">
+<meta property="og:description" content="简介   使用单片机的蜂鸣器模拟钢琴声进而播放出完整乐曲，2点要素：1.单片机使用无源蜂鸣器，2.如何识别乐谱，并转化为单片机可识别的信号，无源蜂鸣器可以实现不同频率的音调，而音乐，最重要的是搞懂音调和节拍，音调我们知道就是不同频率的高低→蜂鸣器改变频率，节拍就是时长→单片机的定时器可以实现毫秒级定时。万事俱备，开工。 硬件条件   蜂鸣器是一种将电信号转化为声音信号的器件，常用来产生设备的按键音">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://94-eric.github.io/2024/05/11/%E5%8D%95%E7%89%87%E6%9C%BA%E6%A8%A1%E6%8B%9F%E9%92%A2%E7%90%B4%E6%92%AD%E6%94%BE%E9%9F%B3%E4%B9%90/%E6%8D%95%E8%8E%B71.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2024/05/11/%E5%8D%95%E7%89%87%E6%9C%BA%E6%A8%A1%E6%8B%9F%E9%92%A2%E7%90%B4%E6%92%AD%E6%94%BE%E9%9F%B3%E4%B9%90/%E6%8D%95%E8%8E%B72.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2024/05/11/%E5%8D%95%E7%89%87%E6%9C%BA%E6%A8%A1%E6%8B%9F%E9%92%A2%E7%90%B4%E6%92%AD%E6%94%BE%E9%9F%B3%E4%B9%90/%E6%8D%95%E8%8E%B73.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2024/05/11/%E5%8D%95%E7%89%87%E6%9C%BA%E6%A8%A1%E6%8B%9F%E9%92%A2%E7%90%B4%E6%92%AD%E6%94%BE%E9%9F%B3%E4%B9%90/%E6%8D%95%E8%8E%B74.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2024/05/11/%E5%8D%95%E7%89%87%E6%9C%BA%E6%A8%A1%E6%8B%9F%E9%92%A2%E7%90%B4%E6%92%AD%E6%94%BE%E9%9F%B3%E4%B9%90/%E6%8D%95%E8%8E%B75.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2024/05/11/%E5%8D%95%E7%89%87%E6%9C%BA%E6%A8%A1%E6%8B%9F%E9%92%A2%E7%90%B4%E6%92%AD%E6%94%BE%E9%9F%B3%E4%B9%90/%E6%8D%95%E8%8E%B76.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2024/05/11/%E5%8D%95%E7%89%87%E6%9C%BA%E6%A8%A1%E6%8B%9F%E9%92%A2%E7%90%B4%E6%92%AD%E6%94%BE%E9%9F%B3%E4%B9%90/%E6%8D%95%E8%8E%B77.PNG">
+<meta property="article:published_time" content="2024-05-11T02:26:43.000Z">
+<meta property="article:modified_time" content="2024-05-14T01:31:03.536Z">
+<meta property="article:author" content="云中锡">
+<meta property="article:tag" content="51单片机  蜂鸣器 钢琴 乐谱">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://94-eric.github.io/2024/05/11/%E5%8D%95%E7%89%87%E6%9C%BA%E6%A8%A1%E6%8B%9F%E9%92%A2%E7%90%B4%E6%92%AD%E6%94%BE%E9%9F%B3%E4%B9%90/%E6%8D%95%E8%8E%B71.PNG">
+
+<link rel="canonical" href="https://94-eric.github.io/2024/05/11/%E5%8D%95%E7%89%87%E6%9C%BA%E6%A8%A1%E6%8B%9F%E9%92%A2%E7%90%B4%E6%92%AD%E6%94%BE%E9%9F%B3%E4%B9%90/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>单片机模拟钢琴播放音乐 | 明珠的个人博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">明珠的个人博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">是谁告诉你，你是赤裸的？</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-resources">
+
+    <a href="/resources/" rel="section"><i class="fa fa-download fa-fw"></i>资源</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2024/05/11/%E5%8D%95%E7%89%87%E6%9C%BA%E6%A8%A1%E6%8B%9F%E9%92%A2%E7%90%B4%E6%92%AD%E6%94%BE%E9%9F%B3%E4%B9%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="云中锡">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="明珠的个人博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          单片机模拟钢琴播放音乐
+        </h1>
+
+        <div class="post-meta">
+
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-05-11 10:26:43" itemprop="dateCreated datePublished" datetime="2024-05-11T10:26:43+08:00">2024-05-11</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-05-14 09:31:03" itemprop="dateModified" datetime="2024-05-14T09:31:03+08:00">2024-05-14</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>9 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>   使用单片机的蜂鸣器模拟钢琴声进而播放出完整乐曲，2点要素：<strong>1.单片机使用无源蜂鸣器</strong>，<strong>2.如何识别乐谱，并转化为单片机可识别的信号</strong>，无源蜂鸣器可以实现不同频率的音调，而音乐，最重要的是搞懂<strong>音调</strong>和<strong>节拍</strong>，音调我们知道就是不同频率的高低→蜂鸣器改变频率，节拍就是时长→单片机的定时器可以实现毫秒级定时。万事俱备，开工。</p>
+<h2 id="硬件条件"><a href="#硬件条件" class="headerlink" title="硬件条件"></a>硬件条件</h2><p>   蜂鸣器是一种将电信号转化为声音信号的器件，常用来产生设备的按键音、报警音等提示音。<br>按照驱动方式可以分为有源蜂鸣器和无源蜂鸣器。<br>有源蜂鸣器：内部自带震荡源，将正负极接上直流电压即可持续发生，频率固定；<br>无源蜂鸣器：内部不带震荡源，需要控制器提供震荡脉冲才可发声，调整提供震荡脉冲的频率，可发出不同频率的声音。<br>    我们想要控制频率来实现歌曲的音调，所以选用的是无源蜂鸣器。</p>
+<p>由于蜂鸣器的工作电流一般比较大，以致于单片机的I&#x2F;O 口是无法直接驱动的*(但AVR可以驱动小功率蜂鸣器)，所以要利用放大电路来驱动，一般使用三极管来放大电流就可以了。</p>
+<img src="/2024/05/11/%E5%8D%95%E7%89%87%E6%9C%BA%E6%A8%A1%E6%8B%9F%E9%92%A2%E7%90%B4%E6%92%AD%E6%94%BE%E9%9F%B3%E4%B9%90/%E6%8D%95%E8%8E%B71.PNG" class title="图片麋鹿无法显示">
+
+<p>上图是普中51单片机开发板的原理图，J7连接的是芯片的一个I&#x2F;O口。可以看到，当 J7 端子有一个高电平进来时，PNP 三极管TP1截止，蜂鸣器(BZ1)不得电，当 J7 端子有一个低电平进来时，PNP 三极管TP1 导通，蜂鸣器得电，如果 J7 端子有一个一定频率的脉冲信号（高低电平不断翻转）时，这个无源蜂鸣器发出声音。<br>硬件基础完毕，接下来是软件编程。</p>
+<h2 id="软件条件"><a href="#软件条件" class="headerlink" title="软件条件"></a>软件条件</h2><p>   想要编程，就得知道音乐是怎么产生的。<br>   首先，我们拿到一张谱子，然后看谱，当我们识别完乐谱后，按照乐谱用手操纵乐器从头到尾按顺序演奏完毕。<br>   所以首先识谱，分辨出音调和节拍。<br>   不过音乐的基本知识就不为难自己了，我是个音乐白痴。。所以我就这么理解了…<br>   隐约记得音乐课上似乎讲过do、re、mi、fa<span id="more"></span>、sol、la、si、do…<br>   OK，百度了下，钢琴键盘与五线谱、简谱音高对照表，本次使用简谱。</p>
+<img src="/2024/05/11/%E5%8D%95%E7%89%87%E6%9C%BA%E6%A8%A1%E6%8B%9F%E9%92%A2%E7%90%B4%E6%92%AD%E6%94%BE%E9%9F%B3%E4%B9%90/%E6%8D%95%E8%8E%B72.PNG" class title="图片麋鹿无法显示">
+
+
+<h3 id="钢琴按键音调"><a href="#钢琴按键音调" class="headerlink" title="钢琴按键音调"></a>钢琴按键音调</h3><p>从上图看到，最上面一排是钢琴键盘，左边的音名那里，我们看到钢琴键盘上是CDEFGABC，然后小写字母再循环一遍，然后小写字母加上标再循环一遍，分别叫做大字组，小字组，小字一组，小字二组，以此类推，每组分别是7个白键+5个黑键。其中，大写字母C和小写字母c、c1、c2等相差8度，而钢琴的黑键和白键相差半音，乐谱符号“#”代表升音，“b”代表降音。</p>
+<blockquote>
+<p>引用百度的回答：在音乐中，一个音就叫一度，音阶1234567中，1到2就是两度（有大二度，小二度之分），1到3就是三度（大三度、小三度），。。。。1到7就是七度，而从中音1到高音1就是一个八度。 那么我们就可以说高音1比中音1高一个八度。这就是“一个音比另一个音高八度”的意思。</p>
+</blockquote>
+<p>从上图中可以看出，其实就是7个音调，然后按照音量高低被命名为不同组(大字组、小字组…)，加上黑白键相差的高&#x2F;低半音，一组可以有7+5&#x3D;12个音调，这12个音调有个人工规律，叫十二平均律，音调对应频率的关系为等比数列，推导如下：</p>
+<blockquote>
+<p>条件1：相隔纯八度的两个音，它们的频率比值是1比2，不是其他的比值<br>条件2：十二平均律的原理就是将相隔纯八度的两音之间，划分为十二份，每相邻的两个音，其比值要相同，才能称之为平均，注意，是比值，而不是差值<br>要满足条件1与2，则这个比值只能是2开12次方</p>
+</blockquote>
+<p>我们知道，要做比较必定有基准。国际通用的标准音定义a1&#x3D;440HZ，以C调为例，其音调和评率关系如下：</p>
+<img src="/2024/05/11/%E5%8D%95%E7%89%87%E6%9C%BA%E6%A8%A1%E6%8B%9F%E9%92%A2%E7%90%B4%E6%92%AD%E6%94%BE%E9%9F%B3%E4%B9%90/%E6%8D%95%E8%8E%B73.PNG" class title="图片麋鹿无法显示">
+
+<p>根据公式T（周期）&#x3D;1&#x2F;f（频率），频率我们已经确定了，就可以使用单片机的定时器做出不同频率的音调了，接下来就是节拍(时长)的实现了。</p>
+<h3 id="节拍"><a href="#节拍" class="headerlink" title="节拍"></a>节拍</h3><img src="/2024/05/11/%E5%8D%95%E7%89%87%E6%9C%BA%E6%A8%A1%E6%8B%9F%E9%92%A2%E7%90%B4%E6%92%AD%E6%94%BE%E9%9F%B3%E4%B9%90/%E6%8D%95%E8%8E%B74.PNG" class title="图片麋鹿无法显示">
+
+<p>乐谱的左上方有写“1&#x3D;C 4&#x2F;4”，其中“1&#x3D;C”意思就是乐谱是C调，乐谱里面的1234567(do、re、mi、fa、sol、la、si)相对应的不是ABCDEFG而是CDEFGAB！而如果这里规定是F调的话，那么就说明1唱F，2就要唱G，3要唱A，……7要唱E，就是所谓的要相应的左移或者右移。</p>
+<p>“4&#x2F;4”叫作拍号，图中从下往上读，意思是以四分音符为一拍，每小节四拍。每拍的时间应该多长，在音乐上一般用BPM（beats per minute，每分钟多少拍）来标识。演奏时其实不用真的去追求严格意义上的拍长，感觉对了就行了。就像炒菜一样，淡一点就是少放点盐，不用真的去称出精准的 1.34 克来~</p>
+<p>在五线谱中，会注明每分钟的拍数，</p>
+<img src="/2024/05/11/%E5%8D%95%E7%89%87%E6%9C%BA%E6%A8%A1%E6%8B%9F%E9%92%A2%E7%90%B4%E6%92%AD%E6%94%BE%E9%9F%B3%E4%B9%90/%E6%8D%95%E8%8E%B75.PNG" class title="图片麋鹿无法显示">
+
+<p>OK，现在已经有了一拍的时间长度了，不过肯定是不够用的，如果想表示半拍，或者1&#x2F;4拍，或者 2 拍、4拍，那该怎么办？</p>
+<p>在给出答案前，我们得先学习一个新的东西：音符时值。</p>
+<p>音符时值是个相对时长的单位，它的参考系是拍长，我们先来了解一下各种音符时值的表示符号：</p>
+<img src="/2024/05/11/%E5%8D%95%E7%89%87%E6%9C%BA%E6%A8%A1%E6%8B%9F%E9%92%A2%E7%90%B4%E6%92%AD%E6%94%BE%E9%9F%B3%E4%B9%90/%E6%8D%95%E8%8E%B76.PNG" class title="图片麋鹿无法显示">
+
+
+<ul>
+<li>全音符 &#x3D; 2 * 二分音符 ：一个空心圆</li>
+<li>二分音符 &#x3D; 2 * 四份音符 ：空心圆带一条杠</li>
+<li>四分音符 &#x3D; 2 * 八分音符号 ：实心圆带一条杠</li>
+<li>八分音符 &#x3D; 2 * 十六分音符 ： 符尾一条线</li>
+<li>十六分音符 &#x3D;  2 * 三十二分音符：符尾两条线</li>
+</ul>
+<p>以上都是二分关系，那如果是 1.5 倍关系怎么搞？音乐家们使用附点音符的概念来解决这个问题。</p>
+<img src="/2024/05/11/%E5%8D%95%E7%89%87%E6%9C%BA%E6%A8%A1%E6%8B%9F%E9%92%A2%E7%90%B4%E6%92%AD%E6%94%BE%E9%9F%B3%E4%B9%90/%E6%8D%95%E8%8E%B77.PNG" class title="图片麋鹿无法显示">
+
+<p>这个点表示增加原来时长的一半，而减少时长的线是加在音符下面的，叫减时线，每增加一条减时线，时值减少二分之一。</p>
+<p>这样音乐的时长问题就解决了，从上面再看一遍，时长是2倍关系，和二进制一样，太好了，大道至简,殊途同归。</p>
+<h2 id="程序"><a href="#程序" class="headerlink" title="程序"></a>程序</h2>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/51%E5%8D%95%E7%89%87%E6%9C%BA-%E8%9C%82%E9%B8%A3%E5%99%A8-%E9%92%A2%E7%90%B4-%E4%B9%90%E8%B0%B1/" rel="tag"># 51单片机  蜂鸣器 钢琴 乐谱</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/04/15/%E8%80%B6%E9%B2%81%E5%A4%A7%E5%AD%A6%E6%88%91%E6%9D%A5%E4%B9%9F-%E5%8D%9A%E5%BC%88%E8%AE%BA/" rel="prev" title="耶鲁大学我来也-博弈论-导论">
+      <i class="fa fa-chevron-left"></i> 耶鲁大学我来也-博弈论-导论
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC81NzY4OC8zNDE1MQ=="></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A1%AC%E4%BB%B6%E6%9D%A1%E4%BB%B6"><span class="nav-number">2.</span> <span class="nav-text">硬件条件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BD%AF%E4%BB%B6%E6%9D%A1%E4%BB%B6"><span class="nav-number">3.</span> <span class="nav-text">软件条件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%92%A2%E7%90%B4%E6%8C%89%E9%94%AE%E9%9F%B3%E8%B0%83"><span class="nav-number">3.1.</span> <span class="nav-text">钢琴按键音调</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8A%82%E6%8B%8D"><span class="nav-number">3.2.</span> <span class="nav-text">节拍</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F"><span class="nav-number">4.</span> <span class="nav-text">程序</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="云中锡"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">云中锡</p>
+  <div class="site-description" itemprop="description">心之所向，素履以往</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">69</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">53</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/94-eric" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;94-eric" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:809594015@qq.com" title="E-Mail → mailto:809594015@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/hear%20the%20wind%20within" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;hear the wind within" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">云中锡</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">96k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">8:01</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <span id="busuanzi_container_site_pv">总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">总访客数<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+<!-- 不蒜子计数初始值纠正 -->
+<script>
+$(document).ready(function() {
+
+    var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+    var countOffset = 20000;  // 初始化首次数据
+
+    function fixCount() {            
+       if (document.getElementById("busuanzi_container_site_pv").style.display != "none")
+        {
+            $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + countOffset); 
+            clearInterval(int);
+        }                  
+        if ($("#busuanzi_container_site_pv").css("display") != "none")
+        {
+            $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + countOffset); // 加上初始数据 
+            clearInterval(int); // 停止检测
+        }  
+    }
+       	
+});
+</script> 
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共97.8k字</span>
+</div>
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='255,0,0' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
+
+</body>
+</html>
+
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/love.js"></script>
