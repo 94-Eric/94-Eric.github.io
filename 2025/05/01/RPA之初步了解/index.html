@@ -1,0 +1,683 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"94-eric.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="简介   Robotic Process Automation，机器人流程自动化。   启动程序后可以自动收集指定类型数据，并按照预先设定的规则自动执行任务并返回一定格式的结果。   举个例子，我们想收集某APP上指定作者、内容甚至进一步的相关图片、点赞、评论等数据，并将数据导出到EXCEL表格中，这个过程就可以使用RPA来实现。当然，认真套娃的话，还可以把这个数据进一步封装到指定接口返回个及其他">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RPA之初步了解">
+<meta property="og:url" content="https://94-eric.github.io/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/index.html">
+<meta property="og:site_name" content="明珠的个人博客">
+<meta property="og:description" content="简介   Robotic Process Automation，机器人流程自动化。   启动程序后可以自动收集指定类型数据，并按照预先设定的规则自动执行任务并返回一定格式的结果。   举个例子，我们想收集某APP上指定作者、内容甚至进一步的相关图片、点赞、评论等数据，并将数据导出到EXCEL表格中，这个过程就可以使用RPA来实现。当然，认真套娃的话，还可以把这个数据进一步封装到指定接口返回个及其他">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://94-eric.github.io/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B71.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B72.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B73.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B74.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B75.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B76.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B77.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B78.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B79.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B710.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B711.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B712.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B713.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B714.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B715.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B716.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B717.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B718.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B719.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B720.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B721.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B722.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B723.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B724.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B725.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B726.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B727.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B728.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B729.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B730.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B731.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B731.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B732.PNG">
+<meta property="article:published_time" content="2025-05-01T12:31:12.000Z">
+<meta property="article:modified_time" content="2025-05-02T04:40:00.441Z">
+<meta property="article:author" content="云中锡">
+<meta property="article:tag" content="RPA 流程自动化">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://94-eric.github.io/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B71.PNG">
+
+<link rel="canonical" href="https://94-eric.github.io/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>RPA之初步了解 | 明珠的个人博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">明珠的个人博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">是谁告诉你，你是赤裸的？</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-resources">
+
+    <a href="/resources/" rel="section"><i class="fa fa-download fa-fw"></i>资源</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="云中锡">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="明珠的个人博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          RPA之初步了解
+        </h1>
+
+        <div class="post-meta">
+
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-05-01 20:31:12" itemprop="dateCreated datePublished" datetime="2025-05-01T20:31:12+08:00">2025-05-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-05-02 12:40:00" itemprop="dateModified" datetime="2025-05-02T12:40:00+08:00">2025-05-02</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>12 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>   <strong>Robotic Process Automation</strong>，机器人流程自动化。<br>   启动程序后可以自动收集指定类型数据，并按照预先设定的规则自动执行任务并返回一定格式的结果。<br>   举个例子，我们想收集某APP上指定作者、内容甚至进一步的相关图片、点赞、评论等数据，并将数据导出到EXCEL表格中，这个过程就可以使用RPA来实现。当然，认真套娃的话，还可以把这个数据进一步封装到指定接口返回个及其他程序使用。</p>
+<h2 id="步骤一-下载"><a href="#步骤一-下载" class="headerlink" title="步骤一-下载"></a>步骤一-下载</h2><p>   百闻不如一见，举个栗子做一下：比如我想实现我只要点击开始命令，程序就自动执行在百度里搜索百度老大是谁的动作。<br>   程序的使用总是千篇一律，挑选好上手的工具，这里我们使用来也的产品。<span id="more"></span></p>
+<p>   首先，手机号注册下他们的用户：<br>   点击这里的<a target="_blank" rel="noopener" href="https://login.laiye.com/usercenter/#/register?returnUrl=">注册地址</a></p>
+<img src="/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B71.PNG" class title="图片麋鹿无法显示">
+
+<p>注册好后进入下面页面，吃水不忘挖井人，进官网看下：<a target="_blank" rel="noopener" href="https://www.laiye.com/">来也科技</a></p>
+<img src="/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B72.PNG" class title="图片麋鹿无法显示">
+
+<p>做AI流程的，其中一个界面我非常喜欢，截下来分享下。</p>
+<img src="/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B73.PNG" class title="图片麋鹿无法显示">
+
+<p>言归正传，下载应用正式进入编程。根据个人电脑选择对应产品。</p>
+<img src="/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B74.PNG" class title="图片麋鹿无法显示">
+
+<p>点击安装后如下图。</p>
+<img src="/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B75.PNG" class title="图片麋鹿无法显示">
+
+<p>其中Creator（开发工具）：</p>
+<p>用来创建流程，可以使用拖拽的方式来搭建流程，子流程也可以通过代码的方式来开发。</p>
+<p>Worker（运行）：</p>
+<p>在Creator开发好的流程在本地调试没问题后，需要打包为一个流程包，交给Worker来运行。</p>
+<h2 id="步骤二-安装驱动"><a href="#步骤二-安装驱动" class="headerlink" title="步骤二-安装驱动"></a>步骤二-安装驱动</h2><p>  这里我们首先打开桌面上的Creator，</p>
+  <img src="/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B76.PNG" class title="图片麋鹿无法显示">
+<p>  点击左边的工具，把Chrome扩展程序安装了。</p>
+<img src="/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B77.PNG" class title="图片麋鹿无法显示">
+
+<p>因为有浏览器开着，所以提示我这个，关闭浏览器重新安装Chrome扩展程序。</p>
+<img src="/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B78.PNG" class title="图片麋鹿无法显示">
+
+<p>我们打开Chrome，右上角进入扩展程序，</p>
+<img src="/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B79.PNG" class title="图片麋鹿无法显示">
+
+<p>把laiye的请求打开，此处点击ON即可，本步骤结束。</p>
+<img src="/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B710.PNG" class title="图片麋鹿无法显示">
+
+<h2 id="步骤三-编写自动化流程"><a href="#步骤三-编写自动化流程" class="headerlink" title="步骤三-编写自动化流程"></a>步骤三-编写自动化流程</h2><p>  回到Creator，开始正常的文件新建流程，和word、excel类似的操作，只不过这个应用把需要点击的命令变成了拖拽式的图标和可以进一步编程控制的代码命令。文件名称和位置自己改下即可。</p>
+<img src="/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B711.PNG" class title="图片麋鹿无法显示">
+
+<p>创建完成后如下：</p>
+<img src="/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B712.PNG" class title="图片麋鹿无法显示">
+
+<p>整个界面简洁明了，各命令作用自行熟悉。<br>要想编程，首先我们需要知道我们要做哪些步骤，如果我们想百度，那么我们要做这些步骤：</p>
+<ol>
+<li>打开浏览器</li>
+<li>输入w<a target="_blank" rel="noopener" href="http://www.baidu.com/">www.baidu.com</a></li>
+<li>按下回车键</li>
+<li>在搜索栏输入需要搜索的内容</li>
+<li>鼠标左键单击百度一下按钮，至此实现搜索过程。</li>
+</ol>
+<p>我们人为点击鼠标键盘的动作替换为代码执行，这样我们就可以把这整个流程打包为一个命令按钮，我们用laiye做的就是这一步。OK，继续。</p>
+<p>回到Creator界面，流程块是可编辑的，单击流程块后看界面右侧，我们按需改为自己的内容，本次例子修改如下：</p>
+<img src="/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B713.PNG" class title="图片麋鹿无法显示">
+
+<p>再看流程块本身，有个可编辑图标：</p>
+<img src="/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B714.PNG" class title="图片麋鹿无法显示">
+
+<p>点击后是这样的：</p>
+<img src="/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B715.PNG" class title="图片麋鹿无法显示">
+
+<p>同样的界面，左边命令栏，右边属性栏。在左边的命令栏我们找到浏览器相关的命令：软件自动化→浏览器→启动新的浏览器(双击或者直接拖拽到中间的空白区域)</p>
+<img src="/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B716.PNG" class title="图片麋鹿无法显示">
+
+<p>观察界面右侧属性栏，默认浏览器类型是IE，我们使用的是Chrome，所以改过来。当然，我们如果使用其它浏览器，那么改成相应浏览器即可。<br>再点击可视化，将第一行的行内赋值删除(DIM hWeb)，我们需要一个全局的web对象，方便下个流程来关闭浏览器：</p>
+<img src="/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B717.PNG" class title="图片麋鹿无法显示">
+<img src="/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B718.PNG" class title="图片麋鹿无法显示">
+
+<p>删除后保存，我们从可视化切回，回到流程里，再次点击流程块，右侧变量栏我们新增一个流程输出变量（全局变量），名称叫hWeb，默认值为null（js语法），点击确认：</p>
+<img src="/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B719.PNG" class title="图片麋鹿无法显示">
+
+<img src="/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B720.PNG" class title="图片麋鹿无法显示">
+
+<p>完成后如下：</p>
+<img src="/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B721.PNG" class title="图片麋鹿无法显示">
+
+<p>这时候我们可以点击播放动作，看下我们目前的操作有没有问题，点击流程块的播放按钮，会打开一个空白的浏览器：</p>
+<img src="/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B722.PNG" class title="图片麋鹿无法显示">
+
+<p>当流程执行完成后，这个浏览器也没有关闭，还是会一直打开，这里因为我们并没有对这个浏览器做关闭操作，我们再加一个新的流程，并将打开浏览器的后续连接到新的流程上，叫关闭浏览器：</p>
+<img src="/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B723.PNG" class title="图片麋鹿无法显示">
+
+<p>Ctrl+鼠标左键，放在流程块上就可以把打开和关闭这2个流程块用线链接到一起。</p>
+<p>然后点击关闭浏览器的编辑命令，找到软件自动化→浏览器→关闭标签页。<br>此时回到流程图里，点击打开浏览器的播放按钮，会先打开一个浏览器，然后浏览器又会自动关闭。</p>
+<p>继续，我们再来实现打开<a href="http://www.baidu.com的操作：">www.baidu.com的操作：</a><br>新增一个流程块，我们把名称改为打开百度：</p>
+<img src="/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B724.PNG" class title="图片麋鹿无法显示">
+
+<p>先把关闭浏览器的线条删除，这样调试时就不会每次都关闭一次浏览器<br>打开百度的流程块我们点击编辑属性，在左边的命令栏我们找到浏览器相关的命令：软件自动化→浏览器→打开网页，双击后我们观察到界面右侧属性栏里有加载链接，我们填入<a target="_blank" rel="noopener" href="http://www.baidu.com./">www.baidu.com。</a></p>
+<img src="/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B725.PNG" class title="图片麋鹿无法显示">
+
+<p>保存后，点击界面左上角运行，就会打开Chrome的空白页面并将浏览器地址填充为<a target="_blank" rel="noopener" href="http://www.baidu.com并进入百度页面./">www.baidu.com并进入百度页面。</a></p>
+<img src="/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B726.PNG" class title="图片麋鹿无法显示">
+
+
+<p>继续，截下来就是搜索内容的设置了。这个步骤我们要做的是：聚焦百度页面的搜索框位置，然后输入我们需要搜索的文字，然后点击百度一下的按钮。OK，我们再新增一个流程块：输入并搜索。</p>
+<img src="/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B727.PNG" class title="图片麋鹿无法显示">
+
+<p>首先我们得运行一次全流程，确保打开一个百度页面，这样方便后续的步骤进行。</p>
+<img src="/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B728.PNG" class title="图片麋鹿无法显示">
+
+<p>下面我们需要对页面进行元素选取和设置。</p>
+<p>接下来点击流程块的编辑命令，找到界面操作-&gt;界面元素-&gt;设置元素文本，拖入命令后单击未指定，如下图：</p>
+<img src="/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B729.PNG" class title="图片麋鹿无法显示">
+
+<p>此时进入选取页面，鼠标挪动到不同地方会高亮显示被选中区域，我们只需要选取Chrome的搜索框处就行了，左键单击即可确认。因为我用的98键，不好截屏，这一步略过了，截取成功后自动回到Creator，可以看到这里变成了这样:</p>
+<img src="/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B730.PNG" class title="图片麋鹿无法显示">
+
+<p>在右侧属性栏里，写入文本这一栏我们填入，这样我们就实现要搜索的内容设置了，紧接着我们需要实现点击百度一下按钮。<br>新增一个点击事件，在左侧的命令区选择：鼠标键盘-&gt;鼠标-&gt;点击目标，拖入命令后单击未指定，如下图：</p>
+<img src="/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B731.PNG" class title="图片麋鹿无法显示">
+
+<p>和上面选取高亮区域一样，我们选中百度页面的百度一下这块区域。</p>
+<img src="/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B731.PNG" class title="图片麋鹿无法显示">
+
+<p>这样目前为止我们就把想要实现的功能完成了，运行看下效果：</p>
+<img src="/2025/05/01/RPA%E4%B9%8B%E5%88%9D%E6%AD%A5%E4%BA%86%E8%A7%A3/%E6%8D%95%E8%8E%B732.PNG" class title="图片麋鹿无法显示">
+
+<p>最后再把关闭浏览器的流程块连接起来，这样就实现了从开始到结束的整个过程。人为实现动作需要5秒钟，现在只需要不到一秒，类型情况用在批量动作上，会节约更多成本。</p>
+<p>本篇结束。接下来计划实现收集小红书的一些信息抓取放到Excel里这个动作。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/RPA-%E6%B5%81%E7%A8%8B%E8%87%AA%E5%8A%A8%E5%8C%96/" rel="tag"># RPA 流程自动化</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/02/23/%E7%94%9F%E6%B4%BB%E6%8A%80%E5%B7%A7/" rel="prev" title="生活技巧">
+      <i class="fa fa-chevron-left"></i> 生活技巧
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC81NzY4OC8zNDE1MQ=="></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4%E4%B8%80-%E4%B8%8B%E8%BD%BD"><span class="nav-number">2.</span> <span class="nav-text">步骤一-下载</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4%E4%BA%8C-%E5%AE%89%E8%A3%85%E9%A9%B1%E5%8A%A8"><span class="nav-number">3.</span> <span class="nav-text">步骤二-安装驱动</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4%E4%B8%89-%E7%BC%96%E5%86%99%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%81%E7%A8%8B"><span class="nav-number">4.</span> <span class="nav-text">步骤三-编写自动化流程</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="云中锡"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">云中锡</p>
+  <div class="site-description" itemprop="description">心之所向，素履以往</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">75</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">57</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/94-eric" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;94-eric" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:809594015@qq.com" title="E-Mail → mailto:809594015@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/hear%20the%20wind%20within" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;hear the wind within" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">云中锡</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">100k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">8:19</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <span id="busuanzi_container_site_pv">总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">总访客数<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+<!-- 不蒜子计数初始值纠正 -->
+<script>
+$(document).ready(function() {
+
+    var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+    var countOffset = 20000;  // 初始化首次数据
+
+    function fixCount() {            
+       if (document.getElementById("busuanzi_container_site_pv").style.display != "none")
+        {
+            $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + countOffset); 
+            clearInterval(int);
+        }                  
+        if ($("#busuanzi_container_site_pv").css("display") != "none")
+        {
+            $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + countOffset); // 加上初始数据 
+            clearInterval(int); // 停止检测
+        }  
+    }
+       	
+});
+</script> 
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共101k字</span>
+</div>
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='255,0,0' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
+
+</body>
+</html>
+
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/love.js"></script>
