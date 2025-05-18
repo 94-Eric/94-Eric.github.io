@@ -20,25 +20,20 @@
     var CONFIG = {"hostname":"94-eric.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="继续，这是9&#x2F;3周末的，迟来">
+  <meta name="description" content="随想每次重新装系统，总会出现意外情况。比如这次，使用ESP8266创建网页服务，按照思维惯性，安装好驱动和库文件后先试了下板子的AP模式，没问题后就认定硬件和软件没问题了。然后在使用组网模式时出问题了，WIFI迟迟连接不上，仔细一看，板子支持2.4G，而软件里连接的WIFI是5G，所以一直循环…量力而行，就是这么来的，连接不上5G，是硬件能力不足，需要更换；时间久了，知识就会沉淀，还需要周期性温习">
 <meta property="og:type" content="article">
-<meta property="og:title" content="每日练字五">
-<meta property="og:url" content="https://94-eric.github.io/2023/09/24/%E6%AF%8F%E6%97%A5%E7%BB%83%E5%AD%97%E4%BA%94/index.html">
+<meta property="og:title" content="物联网之随想">
+<meta property="og:url" content="https://94-eric.github.io/2025/05/18/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E9%9A%8F%E6%83%B3/index.html">
 <meta property="og:site_name" content="明珠的个人博客">
-<meta property="og:description" content="继续，这是9&#x2F;3周末的，迟来">
+<meta property="og:description" content="随想每次重新装系统，总会出现意外情况。比如这次，使用ESP8266创建网页服务，按照思维惯性，安装好驱动和库文件后先试了下板子的AP模式，没问题后就认定硬件和软件没问题了。然后在使用组网模式时出问题了，WIFI迟迟连接不上，仔细一看，板子支持2.4G，而软件里连接的WIFI是5G，所以一直循环…量力而行，就是这么来的，连接不上5G，是硬件能力不足，需要更换；时间久了，知识就会沉淀，还需要周期性温习">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://94-eric.github.io/2023/09/24/%E6%AF%8F%E6%97%A5%E7%BB%83%E5%AD%97%E4%BA%94/%E7%BB%83%E5%AD%971.jpg">
-<meta property="og:image" content="https://94-eric.github.io/2023/09/24/%E6%AF%8F%E6%97%A5%E7%BB%83%E5%AD%97%E4%BA%94/%E7%BB%83%E5%AD%972.jpg">
-<meta property="og:image" content="https://94-eric.github.io/2023/09/24/%E6%AF%8F%E6%97%A5%E7%BB%83%E5%AD%97%E4%BA%94/%E7%BB%83%E5%AD%973.jpg">
-<meta property="og:image" content="https://94-eric.github.io/2023/09/24/%E6%AF%8F%E6%97%A5%E7%BB%83%E5%AD%97%E4%BA%94/%E7%BB%83%E5%AD%974.jpg">
-<meta property="article:published_time" content="2023-09-24T02:24:22.000Z">
-<meta property="article:modified_time" content="2023-09-24T02:27:18.460Z">
+<meta property="article:published_time" content="2025-05-18T10:46:14.000Z">
+<meta property="article:modified_time" content="2025-05-18T10:58:35.236Z">
 <meta property="article:author" content="云中锡">
-<meta property="article:tag" content="楷书 练习 随想">
+<meta property="article:tag" content="物联网 esp8266 路由器频段">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://94-eric.github.io/2023/09/24/%E6%AF%8F%E6%97%A5%E7%BB%83%E5%AD%97%E4%BA%94/%E7%BB%83%E5%AD%971.jpg">
 
-<link rel="canonical" href="https://94-eric.github.io/2023/09/24/%E6%AF%8F%E6%97%A5%E7%BB%83%E5%AD%97%E4%BA%94/">
+<link rel="canonical" href="https://94-eric.github.io/2025/05/18/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E9%9A%8F%E6%83%B3/">
 
 
 <script id="page-configurations">
@@ -51,7 +46,7 @@
   };
 </script>
 
-  <title>每日练字五 | 明珠的个人博客</title>
+  <title>物联网之随想 | 明珠的个人博客</title>
   
 
 
@@ -177,7 +172,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/09/24/%E6%AF%8F%E6%97%A5%E7%BB%83%E5%AD%97%E4%BA%94/">
+    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2025/05/18/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E9%9A%8F%E6%83%B3/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -190,7 +185,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          每日练字五
+          物联网之随想
         </h1>
 
         <div class="post-meta">
@@ -202,7 +197,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2023-09-24 10:24:22 / 修改时间：10:27:18" itemprop="dateCreated datePublished" datetime="2023-09-24T10:24:22+08:00">2023-09-24</time>
+              <time title="创建时间：2025-05-18 18:46:14 / 修改时间：18:58:35" itemprop="dateCreated datePublished" datetime="2025-05-18T18:46:14+08:00">2025-05-18</time>
             </span>
 
           
@@ -218,7 +213,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>64</span>
+              <span>162</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -237,12 +232,8 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>继续，这是9&#x2F;3周末的，迟来</p>
-<span id="more"></span>
-<img src="/2023/09/24/%E6%AF%8F%E6%97%A5%E7%BB%83%E5%AD%97%E4%BA%94/%E7%BB%83%E5%AD%971.jpg" class title="图片麋鹿无法显示">
-<img src="/2023/09/24/%E6%AF%8F%E6%97%A5%E7%BB%83%E5%AD%97%E4%BA%94/%E7%BB%83%E5%AD%972.jpg" class title="图片麋鹿无法显示">
-<img src="/2023/09/24/%E6%AF%8F%E6%97%A5%E7%BB%83%E5%AD%97%E4%BA%94/%E7%BB%83%E5%AD%973.jpg" class title="图片麋鹿无法显示">
-<img src="/2023/09/24/%E6%AF%8F%E6%97%A5%E7%BB%83%E5%AD%97%E4%BA%94/%E7%BB%83%E5%AD%974.jpg" class title="图片麋鹿无法显示">
+        <h2 id="随想"><a href="#随想" class="headerlink" title="随想"></a>随想</h2><p>每次重新装系统，总会出现意外情况。比如这次，使用ESP8266创建网页服务，按照思维惯性，安装好驱动和库文件后先试了下板子的AP模式，没问题后就认定硬件和软件没问题了。然后在使用组网模式时出问题了，WIFI迟迟连接不上，仔细一看，板子支持2.4G，而软件里连接的WIFI是5G，所以一直循环…量力而行，就是这么来的，连接不上5G，是硬件能力不足，需要更换；时间久了，知识就会沉淀，还需要周期性温习</p>
+
     </div>
 
     
@@ -251,7 +242,7 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/%E6%A5%B7%E4%B9%A6-%E7%BB%83%E4%B9%A0-%E9%9A%8F%E6%83%B3/" rel="tag"># 楷书 练习 随想</a>
+              <a href="/tags/%E7%89%A9%E8%81%94%E7%BD%91-esp8266-%E8%B7%AF%E7%94%B1%E5%99%A8%E9%A2%91%E6%AE%B5/" rel="tag"># 物联网 esp8266 路由器频段</a>
           </div>
 
         
@@ -260,13 +251,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2023/09/24/%E6%AF%8F%E6%97%A5%E7%BB%83%E5%AD%97%E5%9B%9B/" rel="prev" title="每日练字四">
-      <i class="fa fa-chevron-left"></i> 每日练字四
+    <a href="/2025/05/02/RPA%E4%B9%8B%E7%8E%B0%E5%AD%A6%E7%8E%B0%E7%94%A8/" rel="prev" title="RPA之现学现用">
+      <i class="fa fa-chevron-left"></i> RPA之现学现用
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2023/09/24/%E6%AF%8F%E6%97%A5%E7%BB%83%E5%AD%97%E5%85%AD/" rel="next" title="每日练字六">
-      每日练字六 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -330,6 +318,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9A%8F%E6%83%B3"><span class="nav-number">1.</span> <span class="nav-text">随想</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

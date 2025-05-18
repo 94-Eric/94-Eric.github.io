@@ -168,6 +168,95 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/07/16/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="云中锡">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="明珠的个人博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/07/16/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6/" class="post-title-link" itemprop="url">物联网之MQTT心跳机制和遗嘱</a>
+        </h2>
+
+        <div class="post-meta">
+
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-07-16 17:11:08 / 修改时间：18:40:21" itemprop="dateCreated datePublished" datetime="2023-07-16T17:11:08+08:00">2023-07-16</time>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>24 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="心跳机制"><a href="#心跳机制" class="headerlink" title="心跳机制"></a>心跳机制</h2><p>在医院里，医生利用心跳来判断患者是否还有生命体征。对于MQTT服务器来说，它要判断一台MQTT客户端是否依然保持连接可以检查这台客户端是不是经常发送消息给服务端。如果经常收到客户端的消息，那么没问题，这个客户端肯定在线。</p>
+<p>但是有些客户端并不经常发送消息给服务端。对于这种客户端，服务端可以使用类似心跳检测的方法，来判断客户端是否在线。</p>
+<img src="/2023/07/16/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6/%E5%BF%83%E5%8A%A8.gif" class title="图片麋鹿无法显示">
+
+<p>不过客户端设备没有心脏，自然不会跳动。可是我们可以为它们配上一个类似心脏的机制，这个心脏机制就是让客户端在没有向服务端发送信息时，可以定时向服务端发送一条消息。这条用于心跳机制的消息也被称作心跳请求（PINGREQ）。心跳请求的作用正是用于告知服务端，当前客户端依然在线。服务端在收到客户端的心跳请求后，会回复一条消息。这条回复消息被称作心跳响应（PINGRESP）。</p>
+<img src="/2023/07/16/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6/%E6%8D%95%E8%8E%B71.PNG" class title="图片麋鹿无法显示">
+
+
+<p>由于心跳请求是客户端定时发送的，一旦服务端发现</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2023/07/16/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/07/07/%E9%9A%8F%E6%83%B35/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1295,100 +1384,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/06/20/%E9%9A%8F%E6%83%B3-%E8%B4%B9%E7%B1%B3%E6%8E%A8%E5%AE%9A/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="云中锡">
-      <meta itemprop="description" content="心之所向，素履以往">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="明珠的个人博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/06/20/%E9%9A%8F%E6%83%B3-%E8%B4%B9%E7%B1%B3%E6%8E%A8%E5%AE%9A/" class="post-title-link" itemprop="url">随想3-费米推定</a>
-        </h2>
-
-        <div class="post-meta">
-
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-06-20 10:09:16" itemprop="dateCreated datePublished" datetime="2023-06-20T10:09:16+08:00">2023-06-20</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-06-21 20:48:37" itemprop="dateModified" datetime="2023-06-21T20:48:37+08:00">2023-06-21</time>
-              </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>608</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>周末的时候看到一篇文章分享的非常有意思的思维：一位面试者提问，面试时被问到“深圳有多少棵树”，该如何回答，这种问题真的有什么意义必要吗？</p>
-<p>答：这类问题有一个专门的术语，叫“费米推定”类问题。</p>
-<p>所谓的费米推定&#x2F;费米估算，指的是：面对少量信息的复杂估算问题，通过将复杂问题拆解成常识性和已知的小问题，进而计算并得到结果。</p>
-<p>本来觉得无厘头的问题，现在却有了解法，这件事本身就是很有趣的！比如计算“芝加哥有几个钢琴调音师”这件事，费米本人是这样干的：</p>
-<p>调音师这种小众岗位没什么协会数据可以查，但是芝加哥有多少架钢琴是可以查出来的，找几个大牌钢琴厂聊聊就可以了。</p>
-<p>给钢琴调音平均一架多久。</p>
-<p>每个调音师一天能工作多久。</p>
-<p>这么拆解以后，就能算出来了。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/06/20/%E9%9A%8F%E6%83%B3-%E8%B4%B9%E7%B1%B3%E6%8E%A8%E5%AE%9A/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1460,14 +1455,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">76</span>
+          <span class="site-state-item-count">77</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">57</span>
+        <span class="site-state-item-count">58</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1519,7 +1514,7 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">8:24</span>
+    <span title="站点阅读时长">8:25</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
@@ -1556,7 +1551,7 @@ $(document).ready(function() {
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共102.1k字</span>
+  <span class="post-count">博客全站共102.2k字</span>
 </div>
         
 <div class="busuanzi-count">
