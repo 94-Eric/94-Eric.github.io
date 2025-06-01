@@ -168,6 +168,101 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/06/20/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E6%9C%8D%E5%8A%A1%E7%AB%AF/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="云中锡">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="明珠的个人博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/06/20/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E6%9C%8D%E5%8A%A1%E7%AB%AF/" class="post-title-link" itemprop="url">物联网之MQTT服务端</a>
+        </h2>
+
+        <div class="post-meta">
+
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-06-20 14:05:43" itemprop="dateCreated datePublished" datetime="2023-06-20T14:05:43+08:00">2023-06-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-06-24 10:33:45" itemprop="dateModified" datetime="2023-06-24T10:33:45+08:00">2023-06-24</time>
+              </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>971</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>MQTT客户端连接服务端光有理论知识还不够，以下为如何使用电脑客户端和ESP8266客户端来连接MQTT服务端。</p>
+<h2 id="电脑客户端连接MQTT服务端"><a href="#电脑客户端连接MQTT服务端" class="headerlink" title="电脑客户端连接MQTT服务端"></a>电脑客户端连接MQTT服务端</h2><p>首先学习如何使用电脑软件来实现客户端与服务端的连接。我们将为电脑安装一款免费的MQTT客户端软件–MQTTfx。MQTT客户端软件有很多款，免费的MQTTfx软件在易用性和功能性都非常出色。</p>
+<p>通过MQTTfx软件，电脑将会成为一台MQTT客户端。</p>
+<p>可以通过以下两个途径下载到MQTTfx软件。</p>
+<p>首先，可以通过MQTT官网下载到MQTTfx软件。MQTTfx的官网地址是：<a target="_blank" rel="noopener" href="http://mqttfx.org/">http://mqttfx.org</a></p>
+<p>也可以通过太极创客网站的下载页面获取此软件。请<a target="_blank" rel="noopener" href="http://www.taichi-maker.com/homepage/download/#mqtt">点击这里</a>进入太极创客网站MQTTfx下载链接列表。</p>
+<p>特别提示一点，尽量使用以上的MQTTfx官网下载此软件，因为官网上的软件版本肯定是最新的，用新不用旧。</p>
+<p>接下来实际使用MQTTfx客户端来尝试连接服务端。具体操作方法，请见如下链接里的视频：<br><a target="_blank" rel="noopener" href="http://www.taichi-maker.com/homepage/esp8266-nodemcu-iot/iot-tuttorial/mqtt-tutorial/client-connect-mqtt-server/">MQTTfx客户端设置和连接客户端</a></p>
+<h2 id="ESP8266连接MQTT服务端"><a href="#ESP8266连接MQTT服务端" class="headerlink" title="ESP8266连接MQTT服务端"></a>ESP8266连接MQTT服务端</h2><p>ESP8266的Arduino开发环境里有多个MQTT库，我们使用最为流行的PubSubClient库来作为本文的主要介绍对象，来学习如何使用ESP8266通过PubSubClient库来实现MQTT物联网应用。关于PubSubClient库,以下是其基本信息：</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2023/06/20/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8BMQTT%E6%9C%8D%E5%8A%A1%E7%AB%AF/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/06/20/%E9%9A%8F%E6%83%B3-%E8%B4%B9%E7%B1%B3%E6%8E%A8%E5%AE%9A/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1130,87 +1225,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/05/02/%E7%BD%91%E9%A1%B5%E4%B8%8ALED%E6%8E%A7%E5%88%B6%E5%92%8C%E6%98%BE%E7%A4%BA/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="云中锡">
-      <meta itemprop="description" content="心之所向，素履以往">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="明珠的个人博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/05/02/%E7%BD%91%E9%A1%B5%E4%B8%8ALED%E6%8E%A7%E5%88%B6%E5%92%8C%E6%98%BE%E7%A4%BA/" class="post-title-link" itemprop="url">网页上LED控制和显示</a>
-        </h2>
-
-        <div class="post-meta">
-
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2023-05-02 10:11:58 / 修改时间：10:16:29" itemprop="dateCreated datePublished" datetime="2023-05-02T10:11:58+08:00">2023-05-02</time>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>850</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>4 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="Ajax-控制LED引脚并将A0引脚读数实时显示于网页中"><a href="#Ajax-控制LED引脚并将A0引脚读数实时显示于网页中" class="headerlink" title="(Ajax)控制LED引脚并将A0引脚读数实时显示于网页中"></a>(Ajax)控制LED引脚并将A0引脚读数实时显示于网页中</h2><p>栗：(注意先将附件通过arduino小工具上传到闪存里，再进行程序烧录)</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/05/02/%E7%BD%91%E9%A1%B5%E4%B8%8ALED%E6%8E%A7%E5%88%B6%E5%92%8C%E6%98%BE%E7%A4%BA/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1282,14 +1296,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">77</span>
+          <span class="site-state-item-count">78</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">58</span>
+        <span class="site-state-item-count">59</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1341,7 +1355,7 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">8:25</span>
+    <span title="站点阅读时长">8:27</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
@@ -1378,7 +1392,7 @@ $(document).ready(function() {
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共102.2k字</span>
+  <span class="post-count">博客全站共102.7k字</span>
 </div>
         
 <div class="busuanzi-count">
