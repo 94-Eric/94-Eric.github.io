@@ -1,0 +1,575 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"94-eric.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="FreeRTOS简介FreeRTOS-Free Real Time Operating System在裸机系统中，所有的程序基本都是在一个大循环里按顺序处理业务功能,考虑到产品要实现的功能越来越多，单纯的裸机系统已经不能够完美地解决问题，反而使编程变得更加复杂，如果想降低编程的难度，学习RTOS来实现多任务管理，问渠哪得清如许，为有源头活水来">
+<meta property="og:type" content="article">
+<meta property="og:title" content="FreeRTOS之一-基础知识">
+<meta property="og:url" content="https://94-eric.github.io/2025/06/22/FreeRTOS%E4%B9%8B%E4%B8%80-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/index.html">
+<meta property="og:site_name" content="明珠的个人博客">
+<meta property="og:description" content="FreeRTOS简介FreeRTOS-Free Real Time Operating System在裸机系统中，所有的程序基本都是在一个大循环里按顺序处理业务功能,考虑到产品要实现的功能越来越多，单纯的裸机系统已经不能够完美地解决问题，反而使编程变得更加复杂，如果想降低编程的难度，学习RTOS来实现多任务管理，问渠哪得清如许，为有源头活水来">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-06-22T12:58:38.000Z">
+<meta property="article:modified_time" content="2025-06-22T13:24:08.916Z">
+<meta property="article:author" content="云中锡">
+<meta property="article:tag" content="FreeRTOS 实时操作系统">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://94-eric.github.io/2025/06/22/FreeRTOS%E4%B9%8B%E4%B8%80-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>FreeRTOS之一-基础知识 | 明珠的个人博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">明珠的个人博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">是谁告诉你，你是赤裸的？</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-resources">
+
+    <a href="/resources/" rel="section"><i class="fa fa-download fa-fw"></i>资源</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2025/06/22/FreeRTOS%E4%B9%8B%E4%B8%80-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="云中锡">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="明珠的个人博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          FreeRTOS之一-基础知识
+        </h1>
+
+        <div class="post-meta">
+
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-06-22 20:58:38 / 修改时间：21:24:08" itemprop="dateCreated datePublished" datetime="2025-06-22T20:58:38+08:00">2025-06-22</time>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="FreeRTOS"><a href="#FreeRTOS" class="headerlink" title="FreeRTOS"></a>FreeRTOS</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>FreeRTOS-Free Real Time Operating System<br>在裸机系统中，所有的程序基本都是在一个大循环里按顺序处理业务功能,考虑到产品要实现的功能越来越多，单纯的裸机系统已经不能够完美地解决问题，反而使编程变得更加复杂，如果想降低编程的难度，学习RTOS来实现多任务管理，问渠哪得清如许，为有源头活水来<span id="more"></span></p>
+<h3 id="任务调度简介"><a href="#任务调度简介" class="headerlink" title="任务调度简介"></a>任务调度简介</h3><p>任务调度器就是使用相关的调度算法来决定当前需要执行的哪个任务</p>
+<h4 id="FreeRTOS的任务调度方式"><a href="#FreeRTOS的任务调度方式" class="headerlink" title="FreeRTOS的任务调度方式"></a>FreeRTOS的任务调度方式</h4><p>FreeRTOS一共支持三种任务调度方式：</p>
+<ul>
+<li>抢占式调度 ：主要是针对优先级不同的任务，每一个任务都有一个任务优先级，优先级高的任务可以抢占低优先级的任务的CPU使用权。</li>
+<li>时间片调度 ：主要针对相同优先级的任务，当多个任务的优先级相同时，任务调度器会在每个时钟节拍到来的时候切换任务。</li>
+<li>协程式调度 ：其实就是轮询，当前执行任务将会一直运行，同时高优先级的任务不会抢占低优先级任务。FreeRTOS现在虽然还在支持，但官方已经明确表示不再更新协程式调度。</li>
+</ul>
+<h4 id="抢占式调度过程"><a href="#抢占式调度过程" class="headerlink" title="抢占式调度过程"></a>抢占式调度过程</h4>
+
+<p>运行过程：</p>
+<ol>
+<li>首先Task1在运行中，在这个过程中Task2就绪了，在抢占式调度器的作用下，Task2会抢占Task1的运行。</li>
+<li>Task2运行过程中，Task3就绪了，在抢占式调度器的作用下Task3会抢占Task2的运行。</li>
+<li>Task3运行过程中，Task3阻塞了(系统延时或者等待信号等)，此时就绪中，优先级最高的任务Task2执行。</li>
+<li>Task3阻塞解除了(延时到了或者接收到信号量)，此时Task3恢复到就绪态中，抢占Task2的运行。</li>
+</ol>
+<p><strong>注意：</strong></p>
+<p><strong>高优先级任务，优先执行。</strong><br><strong>高优先级任务不停止，低优先级任务无法执行。</strong><br><strong>被抢占的任务将会进去就绪态。</strong></p>
+<h4 id="时间片"><a href="#时间片" class="headerlink" title="时间片"></a>时间片</h4><p>同等优先级任务轮流享有相同的CPU时间(可设置)，叫做时间片，在FreeRTOS中，一个时间片等于SysTick中断周期</p>
+<h4 id="时间片调度过程"><a href="#时间片调度过程" class="headerlink" title="时间片调度过程"></a>时间片调度过程</h4>
+
+<p>运行过程：</p>
+<ol>
+<li>首先Task1运行完一个时间片后，切换至Task2运行。</li>
+<li>Task2运行完一个时间片后，切换至Task3运行。</li>
+<li>Task3运行过程中(还不到一个时间片)，Task3阻塞了(系统延时或者等待信号量等)，此时直接切换到下一个任务Task1执行。</li>
+<li>Task1运行完一个时间片后，切换至Task2运行。</li>
+</ol>
+<p><strong>注意：</strong></p>
+<p><strong>同等优先级任务，轮流执行。</strong><br><strong>一个时间片大小，取决滴答定时器中断周期。</strong><br><strong>没有用完的时间片不会再使用，任务Task3下次得到执行时间还是按照一个时间片的时钟节拍运行。</strong></p>
+<h3 id="任务状态"><a href="#任务状态" class="headerlink" title="任务状态"></a>任务状态</h3><h5 id="FreeRTOS的任务状态"><a href="#FreeRTOS的任务状态" class="headerlink" title="FreeRTOS的任务状态"></a>FreeRTOS的任务状态</h5><p>FreeRTOS中任务存在4种状态：</p>
+<p>运行态 ：正在执行的任务，该任务就处于运行状态(注意：在STM32中，同一时间仅一个任务处于运行态)。<br>就绪态 ：如果该任务已经能够被执行，但当前还未被执行，那么该任务处于就绪态。<br>阻塞态 ：如果一个任务因为延时或者等待外部事件发生，那么这个任务就处于阻塞态。<br>挂起态 ：类似于暂停，调用函数vTaskSuspend()进入挂起态，需要调用解挂函数vTaskResume()才可以进入就绪态。</p>
+<h5 id="四种任务状态之间的转换关系"><a href="#四种任务状态之间的转换关系" class="headerlink" title="四种任务状态之间的转换关系"></a>四种任务状态之间的转换关系</h5>
+
+<p><strong>注意：</strong></p>
+<p><strong>仅就绪态可以转换成运行态。</strong><br><strong>其他状态的任务想要运行，必须先转换成就绪态。</strong></p>
+<h5 id="任务状态列表"><a href="#任务状态列表" class="headerlink" title="任务状态列表"></a>任务状态列表</h5><p>任务的四种状态中，除了运行态，其他三种任务状态的任务都有其对应的任务状态列表。</p>
+<p>就绪列表 ： pxReadyTasksLists[x]，其中x代表任务优先级数值。<br>阻塞列表 ：pxDelayedTaskList<br>挂起列表 ：xSuspendedTaskList</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/FreeRTOS-%E5%AE%9E%E6%97%B6%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag"># FreeRTOS 实时操作系统</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/06/08/%E7%89%A9%E8%81%94%E7%BD%91%E4%B9%8B%E7%BD%91%E7%AB%99%E9%83%A8%E7%BD%B2%E5%9C%A8%E7%A7%81%E6%9C%89%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8/" rel="prev" title="物联网之网站部署在私有云服务器">
+      <i class="fa fa-chevron-left"></i> 物联网之网站部署在私有云服务器
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC81NzY4OC8zNDE1MQ=="></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#FreeRTOS"><span class="nav-number">1.</span> <span class="nav-text">FreeRTOS</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6%E7%AE%80%E4%BB%8B"><span class="nav-number">1.2.</span> <span class="nav-text">任务调度简介</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#FreeRTOS%E7%9A%84%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6%E6%96%B9%E5%BC%8F"><span class="nav-number">1.2.1.</span> <span class="nav-text">FreeRTOS的任务调度方式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8A%A2%E5%8D%A0%E5%BC%8F%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B"><span class="nav-number">1.2.2.</span> <span class="nav-text">抢占式调度过程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%97%B6%E9%97%B4%E7%89%87"><span class="nav-number">1.2.3.</span> <span class="nav-text">时间片</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%97%B6%E9%97%B4%E7%89%87%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B"><span class="nav-number">1.2.4.</span> <span class="nav-text">时间片调度过程</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%BB%E5%8A%A1%E7%8A%B6%E6%80%81"><span class="nav-number">1.3.</span> <span class="nav-text">任务状态</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#FreeRTOS%E7%9A%84%E4%BB%BB%E5%8A%A1%E7%8A%B6%E6%80%81"><span class="nav-number">1.3.0.1.</span> <span class="nav-text">FreeRTOS的任务状态</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%9B%9B%E7%A7%8D%E4%BB%BB%E5%8A%A1%E7%8A%B6%E6%80%81%E4%B9%8B%E9%97%B4%E7%9A%84%E8%BD%AC%E6%8D%A2%E5%85%B3%E7%B3%BB"><span class="nav-number">1.3.0.2.</span> <span class="nav-text">四种任务状态之间的转换关系</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BB%BB%E5%8A%A1%E7%8A%B6%E6%80%81%E5%88%97%E8%A1%A8"><span class="nav-number">1.3.0.3.</span> <span class="nav-text">任务状态列表</span></a></li></ol></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="云中锡"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">云中锡</p>
+  <div class="site-description" itemprop="description">心之所向，素履以往</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">80</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/94-eric" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;94-eric" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:809594015@qq.com" title="E-Mail → mailto:809594015@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/hear%20the%20wind%20within" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;hear the wind within" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">云中锡</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">228k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">9:31</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <span id="busuanzi_container_site_pv">总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">总访客数<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+<!-- 不蒜子计数初始值纠正 -->
+<script>
+$(document).ready(function() {
+
+    var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+    var countOffset = 20000;  // 初始化首次数据
+
+    function fixCount() {            
+       if (document.getElementById("busuanzi_container_site_pv").style.display != "none")
+        {
+            $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + countOffset); 
+            clearInterval(int);
+        }                  
+        if ($("#busuanzi_container_site_pv").css("display") != "none")
+        {
+            $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + countOffset); // 加上初始数据 
+            clearInterval(int); // 停止检测
+        }  
+    }
+       	
+});
+</script> 
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共104.4k字</span>
+</div>
+  <div class="beian">
+    <a href="http://beian.miit.gov.cn/" rel="noopener" target="_blank">苏ICP备2025187610号-1</a>
+
+    <span class="post-meta-divider">|</span>
+
+    <img src="/images/beian_icon.png" style="display:inline-block;text-decoration:none;height:13px;" />
+
+    <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=32031202001130" rel="noopener" target="_blank">苏公网安备32031202001130号</a>
+
+  </div>
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='255,0,0' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
+
+</body>
+</html>
+
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/love.js"></script>

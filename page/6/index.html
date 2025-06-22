@@ -168,6 +168,91 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/04/22/%E6%96%B0%E7%9A%84%E5%BC%80%E5%A7%8B%E4%B9%8B%E7%89%A9%E8%81%94%E7%BD%91%E7%BB%AD/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="云中锡">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="明珠的个人博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/04/22/%E6%96%B0%E7%9A%84%E5%BC%80%E5%A7%8B%E4%B9%8B%E7%89%A9%E8%81%94%E7%BD%91%E7%BB%AD/" class="post-title-link" itemprop="url">新的开始之物联网续</a>
+        </h2>
+
+        <div class="post-meta">
+
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-04-22 20:37:11 / 修改时间：21:11:22" itemprop="dateCreated datePublished" datetime="2023-04-22T20:37:11+08:00">2023-04-22</time>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>8 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h4 id="传输层"><a href="#传输层" class="headerlink" title="传输层"></a>传输层</h4><p>网络设备通讯时，数据丢失和数据受损的情况经常出现。传输层的TCP（Transmission Control Protocol）和UDP（User Datagram Protocol）协议可以用来解决这一问题。通常我们会选择这两种协议中的一种来保证数据传输的准确性。具体选择哪一种协议要看我们使用的是何种网络应用。因为不同的网络应用对于数据的传输要求是不同的。</p>
+<p>举例来说，对于网络游戏而言，我们对数据的传输速率要求很高。因为玩家在发出了一个游戏控制指令后，这个指令需要以最快的速度传送给游戏服务器。如果传输速度跟不上，游戏体验将会大打折扣。相反，有一些网络应用对数据传输速度要求较低，但是对数据传输的准确性要求是极高的。比如电子邮件应用。当我们发出电子邮件以后，通常我们不太介意这封邮件的传输速度。邮件可以是1分钟后送达，也可以是10分钟后送达。这没有什么影响。但是邮件的信息内容是绝对要保证准确的。</p>
+<p>这就引出了TCP和UDP这两种协议的应用范围。</p>
+<p>TCP协议可以更好的保证数据传输的准确性，但是传输速度比UDP协议而言要慢一些。<strong>TCP协议的特点是可以保证所有数据都能被接收端接收</strong>，数据的传输顺序也不会被打乱，而且如有数据损坏则重发受损数据。基于以上功能特点，TCP通常用于电子邮件及文件上传等。</p>
+<p>UDP协议并不能保证所有数据都被接收端所接受。一旦出现数据受损的情况，UDP协议将会抛弃受损的数据。这些数据一旦被抛弃将会永久性的消失，发送端不会因为数据受损而重新发送。因此<strong>UDP协议远不如TCP协议可靠</strong>。但是既然是这样，为何还有人会选择UDP协议呢？这是因为<strong>UDP比TCP速度快</strong>。因此UDP协议通常用于网络游戏以及语音聊天或视频聊天应用。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2023/04/22/%E6%96%B0%E7%9A%84%E5%BC%80%E5%A7%8B%E4%B9%8B%E7%89%A9%E8%81%94%E7%BD%91%E7%BB%AD/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/04/21/WIFI%E9%80%9A%E4%BF%A1%E5%AE%9E%E6%93%8D/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -203,14 +288,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>441</span>
+              <span>530</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
+              <span>1 分钟</span>
             </span>
 
         </div>
@@ -278,14 +363,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.2k</span>
+              <span>1.6k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>6 分钟</span>
+              <span>4 分钟</span>
             </span>
 
         </div>
@@ -371,14 +456,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>3.3k</span>
+              <span>4.4k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>16 分钟</span>
+              <span>11 分钟</span>
             </span>
 
         </div>
@@ -462,14 +547,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.3k</span>
+              <span>1.7k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>6 分钟</span>
+              <span>4 分钟</span>
             </span>
 
         </div>
@@ -550,14 +635,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>984</span>
+              <span>1.2k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>5 分钟</span>
+              <span>3 分钟</span>
             </span>
 
         </div>
@@ -655,7 +740,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>60</span>
+              <span>47</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -738,14 +823,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2.6k</span>
+              <span>3.4k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>13 分钟</span>
+              <span>9 分钟</span>
             </span>
 
         </div>
@@ -827,14 +912,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.5k</span>
+              <span>1.6k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>7 分钟</span>
+              <span>4 分钟</span>
             </span>
 
         </div>
@@ -914,7 +999,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>102</span>
+              <span>110</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -988,14 +1073,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.9k</span>
+              <span>2.3k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>9 分钟</span>
+              <span>6 分钟</span>
             </span>
 
         </div>
@@ -1071,7 +1156,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>208</span>
+              <span>270</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -1092,89 +1177,6 @@
       
           <h2 id="都是通信的总线，I2C，单总线，SPI…近距离进行CPU与其它外围芯片的连接"><a href="#都是通信的总线，I2C，单总线，SPI…近距离进行CPU与其它外围芯片的连接" class="headerlink" title="都是通信的总线，I2C，单总线，SPI…近距离进行CPU与其它外围芯片的连接"></a>都是通信的总线，I2C，单总线，SPI…近距离进行CPU与其它外围芯片的连接</h2><h3 id="这些芯片级总线多采用串行方式传送数据，即一位一位传送数据，可以节省传送线的条数"><a href="#这些芯片级总线多采用串行方式传送数据，即一位一位传送数据，可以节省传送线的条数" class="headerlink" title="这些芯片级总线多采用串行方式传送数据，即一位一位传送数据，可以节省传送线的条数"></a>这些芯片级总线多采用串行方式传送数据，即一位一位传送数据，可以节省传送线的条数</h3><p>SPI(时钟DS1302)需要3条线：一条时钟线,一条数据接收线,一条数据发送线;<br>I2C 需要2跳线:一条时钟线和一条数据线；<br>单总线(DS18B20数字温度传感器)：用一条数据线来通讯；<br>还有RS-232：用于计算机和计算机或单片机进行数据通讯的<br>还有RS-485 、CAN等工业现场总线：用于远距离通讯 距离可达1000米。</p>
 <h3 id="和I2C总线类似，时序也包含基本的初始化、读写等，参见芯片资料，不赘述"><a href="#和I2C总线类似，时序也包含基本的初始化、读写等，参见芯片资料，不赘述" class="headerlink" title="和I2C总线类似，时序也包含基本的初始化、读写等，参见芯片资料，不赘述"></a>和I2C总线类似，时序也包含基本的初始化、读写等，参见芯片资料，不赘述</h3>
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2023/04/09/I2C%E6%80%BB%E7%BA%BF/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="云中锡">
-      <meta itemprop="description" content="心之所向，素履以往">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="明珠的个人博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/04/09/I2C%E6%80%BB%E7%BA%BF/" class="post-title-link" itemprop="url">I2C总线</a>
-        </h2>
-
-        <div class="post-meta">
-
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2023-04-09 10:01:57 / 修改时间：10:43:27" itemprop="dateCreated datePublished" datetime="2023-04-09T10:01:57+08:00">2023-04-09</time>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>2.6k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>13 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="51单片机I2C总线总结"><a href="#51单片机I2C总线总结" class="headerlink" title="51单片机I2C总线总结"></a>51单片机I2C总线总结</h2><h3 id="EEPROM简介"><a href="#EEPROM简介" class="headerlink" title="EEPROM简介"></a>EEPROM简介</h3><p>在实际的应用中，保存在单片机RAM中的数据，掉电后就丢失了，保存在单片机的FLASH中的数据，又不能随意改变，也就是不能用它来记录变化的数值。但是在某些场合，我们又确实需要记录下某些数据，而它们还时常需要改变或更新，掉电之后数据还不能丢失。比如，我们的家用电表度数，电视机里边的频道记忆，一般都是使用EEPROM来保存数据，特点就是掉电后存储的数据不丢失。<br>一般情况下，EEPROM拥有30万到100万次的寿命，也就是它可以反复写入30-100万次，而读取次数是无限的。<br>24C02是一个常用的基于IIC通信协议的EEPROM元件，例如ATMEL公司的AT24C02、CATALYST公司的CAT24C02和ST公司的ST24C02等芯片。<br>所谓单片机读EEPROM的数据出来，其实就是EEPROM在SDA线上不停地拉高拉低变化，而单片机就是不断地判断第一位是0或者1，第二位是0或者1······<br>而单片机在接收完EEPROM发送回来的数据（这个数据就是当初写进去的数据）之后，不产生拉低应答（是单片机不产生应答，不是说EEPROM不产生应答），这样EEPROM就不会再发送数据回来了，达到了只读一个字节的功能。</p>
-<h3 id="I2C简介"><a href="#I2C简介" class="headerlink" title="I2C简介"></a>I2C简介</h3><p>I2C（Inter－Integrated Circuit）总线是由 PHILIPS 公司开发的两线式串行总线，用于连接微控制器及其外围设备。I2C 总线只有两根双向信号线。一根是数据线 SDA，另一根是时钟线 SCL。由于其管脚少，硬件实现简单，可扩展性强等特点，因此被广泛的使用在各大集成芯片内。<br>IIC是一个通信协议，它拥有严密的通信时序逻辑要求，而EEPROM是一个元件，只是这个元件采用了IIC协议的接口与单片机相连而已，二者并没有必然的联系，EEPROM可以用其它接口，I2C也可以用在其它很多器件上。</p>
-<h4 id="I2C-总线常用术语："><a href="#I2C-总线常用术语：" class="headerlink" title="I2C 总线常用术语："></a>I2C 总线常用术语：</h4><p>主机：启动数据传送并产生时钟信号的设备；<br>从机：被主机寻址的器件；<br>多主机：同时有多于一个主机尝试控制总线但不破坏传输；<br>主模式：用 I2CNDAT 支持自动字节计数的模式，位I2CRM,</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/04/09/I2C%E6%80%BB%E7%BA%BF/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
       
     </div>
 
@@ -1260,14 +1262,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-count">80</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">60</span>
+        <span class="site-state-item-count">61</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1313,12 +1315,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">102k</span>
+    <span title="站点总字数">228k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">8:31</span>
+    <span title="站点阅读时长">9:31</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
@@ -1355,7 +1357,7 @@ $(document).ready(function() {
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共103.4k字</span>
+  <span class="post-count">博客全站共104.4k字</span>
 </div>
   <div class="beian">
     <a href="http://beian.miit.gov.cn/" rel="noopener" target="_blank">苏ICP备2025187610号-1</a>
