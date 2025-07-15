@@ -33,7 +33,7 @@
 <meta property="og:image" content="https://94-eric.github.io/2025/07/05/FreeRTOS%E4%B9%8B%E4%BA%8C-%E5%88%9D%E6%AD%A5%E8%AE%A4%E8%AF%86%E4%BB%BB%E5%8A%A1%E5%88%9B%E5%BB%BA%E5%92%8C%E5%88%A0%E9%99%A4/%E6%8D%95%E8%8E%B75.PNG">
 <meta property="og:image" content="https://94-eric.github.io/2025/07/05/FreeRTOS%E4%B9%8B%E4%BA%8C-%E5%88%9D%E6%AD%A5%E8%AE%A4%E8%AF%86%E4%BB%BB%E5%8A%A1%E5%88%9B%E5%BB%BA%E5%92%8C%E5%88%A0%E9%99%A4/%E6%8D%95%E8%8E%B73.PNG">
 <meta property="article:published_time" content="2025-07-05T13:19:34.000Z">
-<meta property="article:modified_time" content="2025-07-05T16:28:29.037Z">
+<meta property="article:modified_time" content="2025-07-06T10:16:27.938Z">
 <meta property="article:author" content="云中锡">
 <meta property="article:tag" content="FreeRTOS 实时操作系统	任务创建和删除">
 <meta name="twitter:card" content="summary">
@@ -209,7 +209,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-07-06 00:28:29" itemprop="dateModified" datetime="2025-07-06T00:28:29+08:00">2025-07-06</time>
+                <time title="修改时间：2025-07-06 18:16:27" itemprop="dateModified" datetime="2025-07-06T18:16:27+08:00">2025-07-06</time>
               </span>
 
           
@@ -225,14 +225,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.4k</span>
+              <span>1.7k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>7 分钟</span>
+              <span>9 分钟</span>
             </span>
 
         </div>
@@ -247,12 +247,12 @@
         <h2 id="FreeRTOS任务创建和删除"><a href="#FreeRTOS任务创建和删除" class="headerlink" title="FreeRTOS任务创建和删除"></a>FreeRTOS任务创建和删除</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>任务创建和删除的本质就是调用FreeRTOS的API函数，和运用数学公式同理，证明过程已经有大神帮我们铺好路了，我们要做的就是应用即可。先从这3个开启第一步<span id="more"></span></p>
 <img src="/2025/07/05/FreeRTOS%E4%B9%8B%E4%BA%8C-%E5%88%9D%E6%AD%A5%E8%AE%A4%E8%AF%86%E4%BB%BB%E5%8A%A1%E5%88%9B%E5%BB%BA%E5%92%8C%E5%88%A0%E9%99%A4/%E6%8D%95%E8%8E%B71.PNG" class title="图片麋鹿无法显示">
 
-<p>**动态创建任务:**任务的任务控制块以及任务的栈空间所需的内存，均由FreeRTOS从FreeRTOS管理的堆中分配。优点：动态创建使用起来相对简单。在实际的应用中，动态方式创建任务是比较常用的，除非有特殊的需求，一般都会使用动态方式创建任务。</p>
+<p><strong>动态创建任务</strong><br>任务的任务控制块以及任务的栈空间所需的内存，均由FreeRTOS从FreeRTOS管理的堆中分配。优点：动态创建使用起来相对简单。在实际的应用中，动态方式创建任务是比较常用的，除非有特殊的需求，一般都会使用动态方式创建任务。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">BaseType_t xTaskCreate</span><br><span class="line">(</span><br><span class="line">       TaskFunction_t          pxTaskCode,                             /* 指向任务函数的指针 */</span><br><span class="line">       const                   char * const pcName,                    /* 任务名字，最大长度 configMAX_TASK_NAME_LEN */</span><br><span class="line">       const                   configSTACK_DEPTH_TYPE usStackDepth,    /* 任务堆栈大小，注意字为单位 */</span><br><span class="line">       void * const            pvParameters,                           /* 传递给任务函数的参数 */</span><br><span class="line">       UBaseType_t             uxPriority,                             /* 任务优先级，范围： 0 ~ configMAX_PRIORITIES - 1 */</span><br><span class="line">       TaskHandle_t * const    pxCreatedTask                           /* 任务句柄，就是任务的任务控制块 */</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
 
 <img src="/2025/07/05/FreeRTOS%E4%B9%8B%E4%BA%8C-%E5%88%9D%E6%AD%A5%E8%AE%A4%E8%AF%86%E4%BB%BB%E5%8A%A1%E5%88%9B%E5%BB%BA%E5%92%8C%E5%88%A0%E9%99%A4/%E6%8D%95%E8%8E%B72.PNG" class title="图片麋鹿无法显示">
 
-<p>**静态创建任务:**任务的任务控制块以及任务的栈空间所需的内存，需用户分配提供。优点：静态创建可将任务堆栈放置在特定的内存位置，并且无需关心对内存分配失败的处理。</p>
+<p><strong>静态创建任务</strong><br>任务的任务控制块以及任务的栈空间所需的内存，需用户分配提供。优点：静态创建可将任务堆栈放置在特定的内存位置，并且无需关心对内存分配失败的处理。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">TaskHandle_t xTaskCreateStatic</span><br><span class="line">(</span><br><span class="line">TaskFunction_t           pxTaskCode,                             /* 指向任务函数的指针 */</span><br><span class="line">const char * const       pcName,                                 /* 任务函数名 */</span><br><span class="line">const uint32_t           ulStackDepth,                           /* 任务堆栈大小注意字为单位 */</span><br><span class="line">void * const             pvParameters,                           /* 传递的任务函数参数 */</span><br><span class="line">UBaseType_t              uxPriority,                             /* 任务优先级 */</span><br><span class="line">StackType_t * const      puxStackBuffer,                         /* 任务堆栈，一般为数组，由用户分配 */</span><br><span class="line">StaticTask_t * const     pxTaskBuffer                            /* 任务控制块指针，由用户分配 */</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
 
 <img src="/2025/07/05/FreeRTOS%E4%B9%8B%E4%BA%8C-%E5%88%9D%E6%AD%A5%E8%AE%A4%E8%AF%86%E4%BB%BB%E5%8A%A1%E5%88%9B%E5%BB%BA%E5%92%8C%E5%88%A0%E9%99%A4/%E6%8D%95%E8%8E%B74.PNG" class title="图片麋鹿无法显示">
@@ -263,7 +263,7 @@
 <p><strong>寄存器PC被初始化为任务函数指针(任务A，即我们写的任务函数的地址)，这样当某次任务切换后，任务A获得CPU控制权，任务函数(任务A)被出栈到PC寄存器，之后会执行任务A的代码</strong></p>
 <p><strong>LR寄存器初始化为函数指针prvTaskExitError，这个函数是FreeRTOS提供的，是一个出错处理函数</strong></p>
 <p><strong>子函数的调用通过寄存器R0~R3传递参数，创建任务时，我们传入的参数被保存到R0中，用来向任务传递参数。</strong></p>
-<h3 id="任务控制块结构体"><a href="#任务控制块结构体" class="headerlink" title="任务控制块结构体"></a>任务控制块结构体</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">typedef struct tskTaskControlBlock</span><br><span class="line">&#123;</span><br><span class="line">volatile StackType_t * pxTopOfStack; /* 任务栈栈顶，必须为 TCB 的第一个成员</span><br><span class="line">*/</span><br><span class="line">ListItem_t xStateListItem; /* 任务状态列表项 */</span><br><span class="line">ListItem_t xEventListItem; /* 任务事件列表项 */</span><br><span class="line">UBaseType_t uxPriority; /* 任务优先级，数值越大，优先级越大 */</span><br><span class="line">StackType_t * pxStack; /* 任务栈起始地址 */</span><br><span class="line">char pcTaskName[ configMAX_TASK_NAME_LEN ]; /* 任务名字 */</span><br><span class="line">…</span><br><span class="line">省略很多条件编译的成员</span><br><span class="line">&#125; tskTCB;</span><br></pre></td></tr></table></figure>
+<h3 id="任务控制块结构体"><a href="#任务控制块结构体" class="headerlink" title="任务控制块结构体"></a>任务控制块结构体</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">typedef struct tskTaskControlBlock</span><br><span class="line">&#123;</span><br><span class="line">volatile StackType_t            *pxTopOfStack;                                 /* 任务栈栈顶，必须为 TCB 的第一个成员*/</span><br><span class="line">ListItem_t                      xStateListItem;                                /* 任务状态列表项 */</span><br><span class="line">ListItem_t                      xEventListItem;                                /* 任务事件列表项 */</span><br><span class="line">UBaseType_t                     uxPriority;                                    /* 任务优先级，数值越大，优先级越大 */</span><br><span class="line">StackType_t                     *pxStack;                                      /* 任务栈起始地址 */</span><br><span class="line">char                            pcTaskName[ configMAX_TASK_NAME_LEN ];         /* 任务名字 */</span><br><span class="line">…</span><br><span class="line">省略很多条件编译的成员</span><br><span class="line">&#125; tskTCB;</span><br></pre></td></tr></table></figure>
 
 <p><strong>任务栈栈顶，在任务切换时的任务上下文保存、任务恢复息息相关。</strong><br><strong>每个任务都有属于自己的任务控制块，类似身份证。</strong></p>
 <h3 id="实现动态创建任务流程"><a href="#实现动态创建任务流程" class="headerlink" title="实现动态创建任务流程"></a>实现动态创建任务流程</h3><h4 id="使用方法："><a href="#使用方法：" class="headerlink" title="使用方法："></a>使用方法：</h4><ol>
@@ -305,6 +305,10 @@
 <li><p>添加新任务到就绪列表中</p>
 </li>
 </ol>
+<p><strong>注意，堆栈申请时有可能会造成预留空间过多无法满足所有任务的堆栈需求，因此用函数 uxTaskGetStackHighWaterMark()函数可以更准确的查询任务所需堆栈大小</strong></p>
+<p>每个任务都有自己的堆栈，堆栈的总大小在创建任务的时候就确定了，此函数用于检查任务从创建好到现在的历史剩余最小值，这个值越小说明任务堆栈溢出的可能性就越大！<br>FreeRTOS 把这个历史剩余最小值叫做“高水位线”。此函数相对来说会多耗费一点时间，所以在代码调试阶段可以使用，产品发布的时候最好不要使用。要使用此函数的话宏INCLUDE_uxTaskGetStackHighWaterMark 必须为 1，</p>
+<p>此函数原型如下：<br>UBaseType_t uxTaskGetStackHighWaterMark( TaskHandle_t xTask )<br>参数：<br>xTask： 要查询的任务的任务句柄，当这个参数为 NULL 的话说明查询自身任务(即调用函数 uxTaskGetStackHighWaterMark()的任务)的“高水位线”</p>
+<p>返回值： 任务堆栈的“高水位线”值，也就是堆栈的历史剩余最小值</p>
 <h3 id="任务删除函数"><a href="#任务删除函数" class="headerlink" title="任务删除函数"></a>任务删除函数</h3><h4 id="用于删除已被创建的任务"><a href="#用于删除已被创建的任务" class="headerlink" title="用于删除已被创建的任务"></a>用于删除已被创建的任务</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">void vTaskDelete(TaskHandle_t xTaskToDelete);</span><br></pre></td></tr></table></figure>
 
 <img src="/2025/07/05/FreeRTOS%E4%B9%8B%E4%BA%8C-%E5%88%9D%E6%AD%A5%E8%AE%A4%E8%AF%86%E4%BB%BB%E5%8A%A1%E5%88%9B%E5%BB%BA%E5%92%8C%E5%88%A0%E9%99%A4/%E6%8D%95%E8%8E%B73.PNG" class title="图片麋鹿无法显示">
@@ -354,7 +358,10 @@
     <a href="/2025/06/22/FreeRTOS%E4%B9%8B%E4%B8%80-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" rel="prev" title="FreeRTOS之一-基础知识">
       <i class="fa fa-chevron-left"></i> FreeRTOS之一-基础知识
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2025/07/15/FreeRTOS%E4%B9%8B%E4%B8%89-%E4%BB%BB%E5%8A%A1%E6%8C%82%E8%B5%B7%E4%B8%8E%E6%81%A2%E5%A4%8D%E5%8F%8A%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/" rel="next" title="FreeRTOS之三-任务挂起与恢复及中断管理">
+      FreeRTOS之三-任务挂起与恢复及中断管理 <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -434,14 +441,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">81</span>
+          <span class="site-state-item-count">82</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">62</span>
+        <span class="site-state-item-count">63</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -487,12 +494,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">105k</span>
+    <span title="站点总字数">107k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">8:44</span>
+    <span title="站点阅读时长">8:53</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
@@ -529,7 +536,7 @@ $(document).ready(function() {
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共105.8k字</span>
+  <span class="post-count">博客全站共107k字</span>
 </div>
   <div class="beian">
     <a href="http://beian.miit.gov.cn/" rel="noopener" target="_blank">苏ICP备2025187610号-1</a>

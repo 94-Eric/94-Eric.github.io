@@ -1,0 +1,597 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"94-eric.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="FreeRTOS任务挂起与恢复简介挂起：挂起任务类似暂停，可恢复；删除任务，无法恢复，类似“人死两清”恢复：恢复被挂起的任务FromISR：带有FromISR后缀是在中断函数中专用的API函数 对应使用到的API函数： 顾名思义，英文翻译还是很清楚的 vTaskSuspend()          挂起任务vTaskResume()           恢复被挂起的任务vTaskResumeFro">
+<meta property="og:type" content="article">
+<meta property="og:title" content="FreeRTOS之三-任务挂起与恢复及中断管理">
+<meta property="og:url" content="https://94-eric.github.io/2025/07/15/FreeRTOS%E4%B9%8B%E4%B8%89-%E4%BB%BB%E5%8A%A1%E6%8C%82%E8%B5%B7%E4%B8%8E%E6%81%A2%E5%A4%8D%E5%8F%8A%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/index.html">
+<meta property="og:site_name" content="明珠的个人博客">
+<meta property="og:description" content="FreeRTOS任务挂起与恢复简介挂起：挂起任务类似暂停，可恢复；删除任务，无法恢复，类似“人死两清”恢复：恢复被挂起的任务FromISR：带有FromISR后缀是在中断函数中专用的API函数 对应使用到的API函数： 顾名思义，英文翻译还是很清楚的 vTaskSuspend()          挂起任务vTaskResume()           恢复被挂起的任务vTaskResumeFro">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://94-eric.github.io/2025/07/15/FreeRTOS%E4%B9%8B%E4%B8%89-%E4%BB%BB%E5%8A%A1%E6%8C%82%E8%B5%B7%E4%B8%8E%E6%81%A2%E5%A4%8D%E5%8F%8A%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/%E6%8D%95%E8%8E%B71.PNG">
+<meta property="og:image" content="https://94-eric.github.io/2025/07/15/FreeRTOS%E4%B9%8B%E4%B8%89-%E4%BB%BB%E5%8A%A1%E6%8C%82%E8%B5%B7%E4%B8%8E%E6%81%A2%E5%A4%8D%E5%8F%8A%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/%E6%8D%95%E8%8E%B72.PNG">
+<meta property="article:published_time" content="2025-07-15T15:00:23.000Z">
+<meta property="article:modified_time" content="2025-07-15T15:54:30.392Z">
+<meta property="article:author" content="云中锡">
+<meta property="article:tag" content="FreeRTOS 实时操作系统	任务挂起与恢复 中断管理">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://94-eric.github.io/2025/07/15/FreeRTOS%E4%B9%8B%E4%B8%89-%E4%BB%BB%E5%8A%A1%E6%8C%82%E8%B5%B7%E4%B8%8E%E6%81%A2%E5%A4%8D%E5%8F%8A%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/%E6%8D%95%E8%8E%B71.PNG">
+
+<link rel="canonical" href="https://94-eric.github.io/2025/07/15/FreeRTOS%E4%B9%8B%E4%B8%89-%E4%BB%BB%E5%8A%A1%E6%8C%82%E8%B5%B7%E4%B8%8E%E6%81%A2%E5%A4%8D%E5%8F%8A%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>FreeRTOS之三-任务挂起与恢复及中断管理 | 明珠的个人博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">明珠的个人博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">是谁告诉你，你是赤裸的？</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-resources">
+
+    <a href="/resources/" rel="section"><i class="fa fa-download fa-fw"></i>资源</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://94-eric.github.io/2025/07/15/FreeRTOS%E4%B9%8B%E4%B8%89-%E4%BB%BB%E5%8A%A1%E6%8C%82%E8%B5%B7%E4%B8%8E%E6%81%A2%E5%A4%8D%E5%8F%8A%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="云中锡">
+      <meta itemprop="description" content="心之所向，素履以往">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="明珠的个人博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          FreeRTOS之三-任务挂起与恢复及中断管理
+        </h1>
+
+        <div class="post-meta">
+
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-07-15 23:00:23 / 修改时间：23:54:30" itemprop="dateCreated datePublished" datetime="2025-07-15T23:00:23+08:00">2025-07-15</time>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>7 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="FreeRTOS任务挂起与恢复"><a href="#FreeRTOS任务挂起与恢复" class="headerlink" title="FreeRTOS任务挂起与恢复"></a>FreeRTOS任务挂起与恢复</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>挂起：挂起任务类似暂停，可恢复；删除任务，无法恢复，类似“人死两清”<br>恢复：恢复被挂起的任务<br>FromISR：带有FromISR后缀是在中断函数中专用的API函数</p>
+<p>对应使用到的API函数：</p>
+<p>顾名思义，英文翻译还是很清楚的</p>
+<p>vTaskSuspend()          挂起任务<br>vTaskResume()           恢复被挂起的任务<br>vTaskResumeFromISR()    在中断中恢复被挂起的任务   </p>
+<span id="more"></span>
+
+<h3 id="任务挂起"><a href="#任务挂起" class="headerlink" title="任务挂起"></a>任务挂起</h3><h4 id="任务挂起函数"><a href="#任务挂起函数" class="headerlink" title="任务挂起函数"></a>任务挂起函数</h4><p>void vTaskSuspend(TaskHandle_t xTaskToSuspend)</p>
+<p>xTaskToSuspend为形参，是挂起任务的任务句柄</p>
+<p>任务挂起函数用于挂起任务，使用时需要将将FreeRTOSConfig.h文件中宏INCLUDE_vTaskSuspend配置为1</p>
+<p>无论优先级如何，被挂起的任务都将不再被执行，直到任务被恢复</p>
+<p><strong>注意：当传入的参数是NULL，则代表挂起任务自身(当前正在运行的任务)</strong></p>
+<h4 id="任务挂起函数内部实现"><a href="#任务挂起函数内部实现" class="headerlink" title="任务挂起函数内部实现"></a>任务挂起函数内部实现</h4><ol>
+<li>获取所要挂起任务的控制块 <strong>根据任务句柄获取任务控制块，如果任务句柄为NULL，表示挂起任务本身</strong></li>
+<li>移除所在列表 （将要挂起的任务从相应的状态列表和事件列表中移除）</li>
+<li>插入挂起任务列表 （将待挂起任务的任务状态列表项插入到挂起状态列表末尾）</li>
+<li>判断任务调度器是否运行 （判断任务调度器是否运行，在运行，更新下一次阻塞时间，防止被挂起任务为下一个阻塞超时任务）</li>
+<li>判断待挂起任务是否为当前任务 （如果挂起的是任务自身，且调度器正在运行，需要进行一次任务切换；调度器没有运行，判断挂起任务数是否等于任务总数，是：当前控制块赋值为NULL，否：寻找下一个最高优先级任务）</li>
+</ol>
+<h3 id="任务恢复"><a href="#任务恢复" class="headerlink" title="任务恢复"></a>任务恢复</h3><h4 id="任务恢复函数"><a href="#任务恢复函数" class="headerlink" title="任务恢复函数"></a>任务恢复函数</h4><p>void vTaskResume(TaskHandle_t xTaskToResume)</p>
+<p>xTaskToResume为形参，是待恢复任务的任务句柄</p>
+<p>使用该函数时需要将FreeRTOSConfig.h文件中宏INCLUDE_vTaskSuspend配置为1</p>
+<p><strong>注意：任务无论被vTaskSuspend()挂起多少次，只需在任务中调用vTaskResume()恢复一次就能继续运行，且被恢复的任务会进入就绪态</strong></p>
+<h4 id="任务恢复函数-任务中恢复-内部实现"><a href="#任务恢复函数-任务中恢复-内部实现" class="headerlink" title="任务恢复函数(任务中恢复)内部实现"></a>任务恢复函数(任务中恢复)内部实现</h4><ol>
+<li>恢复任务不能是正在运行任务</li>
+<li>判断任务是否在挂起列表中 （是：就会将该任务在挂起列表中移除，将该任务添加到就绪列表中）</li>
+<li>判断恢复任务优先级 （判断恢复的任务优先级是否大于当前正在运行的任务，是的话，执行任务切换）</li>
+</ol>
+<h4 id="任务恢复函数介绍-中断中恢复"><a href="#任务恢复函数介绍-中断中恢复" class="headerlink" title="任务恢复函数介绍(中断中恢复)"></a>任务恢复函数介绍(中断中恢复)</h4><p>BaseType_t xTaskResumeFromISR(TaskHandle_t xTaskToResume)</p>
+<p>xTaskToResume为形参，是待恢复任务的任务句柄<br>返回值为pdTRUE，任务恢复后需要进行任务切换<br>返回值为pdFALSE，任务恢复后不需要进行任务切换</p>
+<p>使用该函数注意要将FreeRTOSConfig.h文件中宏INCLUDE_vTaskSuspend和INCLUDE_xTaskResumeFromISR配置为1</p>
+<p>该函数专用于中断服务函数中，用于解挂被挂起任务</p>
+<p><strong>注意：中断服务程序中要调用freeRTOS的API函数则中断优先级不能高于FreeRTOS所管理的最高优先级</strong></p>
+<h4 id="任务恢复函数-中断中恢复-内部实现"><a href="#任务恢复函数-中断中恢复-内部实现" class="headerlink" title="任务恢复函数(中断中恢复)内部实现"></a>任务恢复函数(中断中恢复)内部实现</h4><ol>
+<li>关闭freertos可管理中断，防止被其他的中断打断，并返回关闭前basepri寄存器的值</li>
+<li>判断是否有挂起任务</li>
+<li>将前面保存的basepri的值，恢复回来</li>
+<li>返回xYieldRequired的值 用于决定是否需要进行任务切换</li>
+</ol>
+<h3 id="中断管理"><a href="#中断管理" class="headerlink" title="中断管理"></a>中断管理</h3><p>和51单片机上的中断一样，简介略，中断执行机制简单概括为三步：</p>
+<ol>
+<li><strong>中断请求</strong> ：外设产生中断请求(如：GPIO外部中断、定时器中断…)</li>
+<li><strong>响应中断</strong> ：CPU停止执行当前程序，转而执行中断处理程序(ISR)</li>
+<li><strong>退出中断</strong> ：执行完毕，返回被打断的程序处，继续往下执行</li>
+</ol>
+<h4 id="中断优先级分组设置"><a href="#中断优先级分组设置" class="headerlink" title="中断优先级分组设置"></a>中断优先级分组设置</h4><p>ARM Cortex-M 使用了8位宽的寄存器来配置中断的优先等级，这个寄存器就是中断优先级配置寄存器。但STM32只用了中断优先级配置寄存器的高4位[7:4]，所以STM32提供了最大16级(0~15)的中断优先等级</p>
+<img src="/2025/07/15/FreeRTOS%E4%B9%8B%E4%B8%89-%E4%BB%BB%E5%8A%A1%E6%8C%82%E8%B5%B7%E4%B8%8E%E6%81%A2%E5%A4%8D%E5%8F%8A%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/%E6%8D%95%E8%8E%B71.PNG" class title="图片麋鹿无法显示">
+
+<p>记得这里在之前看51时确实有点模糊，现在看了正点原子的课程后感觉讲解非常清晰，呵呵，横看成岭侧成峰，远近高低各不同，有时候感觉到困难时，不妨稍作休息换个思路，或许可以柳暗花明又一村</p>
+<p>STM32的中断优先级可以分为抢占优先级和子优先级：</p>
+<p>抢占优先级 ：抢占优先级的中断可以打断正在执行但抢占优先级低的中断</p>
+<p>子优先级 ：当同时发生具有相同抢占优先级的两个中断时，子优先级数小的优先执行</p>
+<p><strong>注意 ：中断优先级(抢占优先级和子优先级)数值越小，优先级越高，和任务优先级刚刚好相反，任务是数值大优先</strong></p>
+<p>中断优先级一共有5种配置方式，对应着中断优先级分组的5个组：</p>
+<img src="/2025/07/15/FreeRTOS%E4%B9%8B%E4%B8%89-%E4%BB%BB%E5%8A%A1%E6%8C%82%E8%B5%B7%E4%B8%8E%E6%81%A2%E5%A4%8D%E5%8F%8A%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/%E6%8D%95%E8%8E%B72.PNG" class title="图片麋鹿无法显示">
+
+
+<p><strong>注意：FreeRTOS中为了方便管理，采用第4号(NVIC_PriorityGroup_4)分配方式</strong><br><strong>低于configMAX_SYSCALL_INTERRUPT_PRIORITY优先级的中断里才允许调用FreeRTOS的API函数，厂商决定，5-15</strong><br><strong>建议将所有优先级位指定为抢占优先级位，方便FreeRTOS管理</strong><br><strong>中断优先级数值越小越优先，任务优先级数值越大越优先</strong></p>
+<p>TBC…</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/FreeRTOS-%E5%AE%9E%E6%97%B6%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E4%BB%BB%E5%8A%A1%E6%8C%82%E8%B5%B7%E4%B8%8E%E6%81%A2%E5%A4%8D-%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86/" rel="tag"># FreeRTOS 实时操作系统	任务挂起与恢复 中断管理</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/07/05/FreeRTOS%E4%B9%8B%E4%BA%8C-%E5%88%9D%E6%AD%A5%E8%AE%A4%E8%AF%86%E4%BB%BB%E5%8A%A1%E5%88%9B%E5%BB%BA%E5%92%8C%E5%88%A0%E9%99%A4/" rel="prev" title="FreeRTOS之二-初步认识任务创建和删除">
+      <i class="fa fa-chevron-left"></i> FreeRTOS之二-初步认识任务创建和删除
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC81NzY4OC8zNDE1MQ=="></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#FreeRTOS%E4%BB%BB%E5%8A%A1%E6%8C%82%E8%B5%B7%E4%B8%8E%E6%81%A2%E5%A4%8D"><span class="nav-number">1.</span> <span class="nav-text">FreeRTOS任务挂起与恢复</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%BB%E5%8A%A1%E6%8C%82%E8%B5%B7"><span class="nav-number">1.2.</span> <span class="nav-text">任务挂起</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%BB%E5%8A%A1%E6%8C%82%E8%B5%B7%E5%87%BD%E6%95%B0"><span class="nav-number">1.2.1.</span> <span class="nav-text">任务挂起函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%BB%E5%8A%A1%E6%8C%82%E8%B5%B7%E5%87%BD%E6%95%B0%E5%86%85%E9%83%A8%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.2.2.</span> <span class="nav-text">任务挂起函数内部实现</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%BB%E5%8A%A1%E6%81%A2%E5%A4%8D"><span class="nav-number">1.3.</span> <span class="nav-text">任务恢复</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%BB%E5%8A%A1%E6%81%A2%E5%A4%8D%E5%87%BD%E6%95%B0"><span class="nav-number">1.3.1.</span> <span class="nav-text">任务恢复函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%BB%E5%8A%A1%E6%81%A2%E5%A4%8D%E5%87%BD%E6%95%B0-%E4%BB%BB%E5%8A%A1%E4%B8%AD%E6%81%A2%E5%A4%8D-%E5%86%85%E9%83%A8%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.3.2.</span> <span class="nav-text">任务恢复函数(任务中恢复)内部实现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%BB%E5%8A%A1%E6%81%A2%E5%A4%8D%E5%87%BD%E6%95%B0%E4%BB%8B%E7%BB%8D-%E4%B8%AD%E6%96%AD%E4%B8%AD%E6%81%A2%E5%A4%8D"><span class="nav-number">1.3.3.</span> <span class="nav-text">任务恢复函数介绍(中断中恢复)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%BB%E5%8A%A1%E6%81%A2%E5%A4%8D%E5%87%BD%E6%95%B0-%E4%B8%AD%E6%96%AD%E4%B8%AD%E6%81%A2%E5%A4%8D-%E5%86%85%E9%83%A8%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.3.4.</span> <span class="nav-text">任务恢复函数(中断中恢复)内部实现</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%AD%E6%96%AD%E7%AE%A1%E7%90%86"><span class="nav-number">1.4.</span> <span class="nav-text">中断管理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%AD%E6%96%AD%E4%BC%98%E5%85%88%E7%BA%A7%E5%88%86%E7%BB%84%E8%AE%BE%E7%BD%AE"><span class="nav-number">1.4.1.</span> <span class="nav-text">中断优先级分组设置</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="云中锡"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">云中锡</p>
+  <div class="site-description" itemprop="description">心之所向，素履以往</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">82</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">63</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/94-eric" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;94-eric" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:809594015@qq.com" title="E-Mail → mailto:809594015@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/hear%20the%20wind%20within" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;hear the wind within" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">云中锡</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">107k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">8:53</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <span id="busuanzi_container_site_pv">总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">总访客数<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+<!-- 不蒜子计数初始值纠正 -->
+<script>
+$(document).ready(function() {
+
+    var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+    var countOffset = 20000;  // 初始化首次数据
+
+    function fixCount() {            
+       if (document.getElementById("busuanzi_container_site_pv").style.display != "none")
+        {
+            $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + countOffset); 
+            clearInterval(int);
+        }                  
+        if ($("#busuanzi_container_site_pv").css("display") != "none")
+        {
+            $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + countOffset); // 加上初始数据 
+            clearInterval(int); // 停止检测
+        }  
+    }
+       	
+});
+</script> 
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共107k字</span>
+</div>
+  <div class="beian">
+    <a href="http://beian.miit.gov.cn/" rel="noopener" target="_blank">苏ICP备2025187610号-1</a>
+
+    <span class="post-meta-divider">|</span>
+
+    <img src="/images/beian_icon.png" style="display:inline-block;text-decoration:none;height:13px;" />
+
+    <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=32031202001130" rel="noopener" target="_blank">苏公网安备32031202001130号</a>
+
+  </div>
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='255,0,0' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
+
+</body>
+</html>
+
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/love.js"></script>
